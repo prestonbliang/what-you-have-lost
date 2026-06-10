@@ -182,19 +182,17 @@ def make_sky_chart(visible, lost, title, year, radiance, limit):
     ax.text(2.3, 0.6, "lost since 2012", color="#AA4444", fontsize=6, va="center")
 
     # Label top 10 brightest stars by magnitude
-    brightest = sorted(visible + lost, key=lambda x: x[1])[:10]
-    np.random.seed(42)
     all_stars = visible + lost
-    positions = []
-    for _ in all_stars:
-        positions.append((np.random.uniform(0.3, 9.7), np.random.uniform(0.8, 9.5)))
-    for i, (name, mag) in enumerate(all_stars):
-        if (name, mag) in brightest:
-            x, y = positions[i]
-            offset_y = 0.35 if y < 8.5 else -0.35
-            color = "#AA4444" if (name, mag) in lost else "#6688AA"
-            ax.text(x, y + offset_y, name, color=color, fontsize=5.5,
-                    ha="center", va="center", style="italic")
+    brightest = sorted(all_stars, key=lambda x: x[1])[:10]
+    np.random.seed(42)
+    positions = {(name, mag): (np.random.uniform(0.3, 9.7), np.random.uniform(0.8, 9.5)) 
+                 for name, mag in all_stars}
+    for name, mag in brightest:
+        x, y = positions[(name, mag)]
+        offset_y = 0.35 if y < 8.5 else -0.35
+        color = "#AA4444" if (name, mag) in lost else "#6688AA"
+        ax.text(x, y + offset_y, name, color=color, fontsize=5.5,
+                ha="center", va="center", style="italic")
 
     return fig
 
