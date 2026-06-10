@@ -238,7 +238,7 @@ if search and zipcode:
             fig1 = make_sky_chart(still_visible + lost, [], "2012", 2012, radiance_2012, limit_2012)
             st.pyplot(fig1, use_container_width=True)
         with mid:
-            st.markdown("<div style='border-left:1px solid #111133; height:500px; margin:0 auto;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='border-left:1px solid #334466; height:500px; margin:0 auto;'></div>", unsafe_allow_html=True)
         np.random.seed(42)
         with col_b:
             fig2 = make_sky_chart(still_visible, lost, "2023", 2023, radiance_2023, limit_2023)
