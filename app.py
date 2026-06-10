@@ -1,4 +1,3 @@
-%%writefile app.py
 
 import streamlit as st
 import numpy as np
@@ -13,11 +12,12 @@ st.markdown("""
     h1, h2, h3, p, label { color: white !important; }
     .stTextInput input { background-color: #111122; color: white; }
     .stButton button { background-color: #3333AA; color: white; width: 100%; }
+    .stMetric { background-color: #111122; border-radius: 8px; padding: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align:center; color:white;'>🌟 What Have You Lost?</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#AAAACC;'>Enter your zip code to see which stars disappeared from your sky since 2012</p>", unsafe_allow_html=True)
+st.markdown("<h1 style=\'text-align:center; color:white;\'>🌟 What Have You Lost?</h1>", unsafe_allow_html=True)
+st.markdown("<p style=\'text-align:center; color:#AAAACC;\'>Enter your zip code to see which stars disappeared from your sky since 2012</p>", unsafe_allow_html=True)
 
 stars = [
     ("Sirius", -1.46), ("Arcturus", -0.05), ("Vega", 0.03),
@@ -109,7 +109,7 @@ if search and zipcode:
         still_visible = [(n, m) for n, m in stars if m <= limit_2023]
         lost = [(n, m) for n, m in stars if limit_2023 < m <= limit_2012]
         pct_change = ((radiance_2023 - radiance_2012) / radiance_2012) * 100
-        st.markdown(f"<h2 style='text-align:center; color:white;'>Results for {zipcode}</h2>", unsafe_allow_html=True)
+        st.markdown(f"<h2 style=\'text-align:center; color:white;\'>Results for {zipcode}</h2>", unsafe_allow_html=True)
         m1, m2, m3 = st.columns(3)
         m1.metric("Light Pollution Increase", f"+{pct_change:.1f}%")
         m2.metric("Stars Lost Since 2012", len(lost))
@@ -124,20 +124,10 @@ if search and zipcode:
             fig2 = make_sky_chart(still_visible, lost, "Your Sky — 2023", 2023, radiance_2023, limit_2023)
             st.pyplot(fig2)
         if lost:
-            st.markdown("<h3 style='color:white;'>What you can no longer see:</h3>", unsafe_allow_html=True)
+            st.markdown("<h3 style=\'color:white;\'>What you can no longer see:</h3>", unsafe_allow_html=True)
             cols = st.columns(3)
             for i, (name, mag) in enumerate(sorted(lost, key=lambda x: x[1])):
-                cols[i % 3].markdown(f"<p style='color:#FF6666;'>✗ {name} (mag {mag:.2f})</p>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align:center; color:#555577; font-size:12px;'>Source: NASA Black Marble VNP46A4</p>", unsafe_allow_html=True)
+                cols[i % 3].markdown(f"<p style=\'color:#FF6666;\'>✗ {name} (mag {mag:.2f})</p>", unsafe_allow_html=True)
+        st.markdown("<p style=\'text-align:center; color:#555577; font-size:12px;\'>Source: NASA Black Marble VNP46A4</p>", unsafe_allow_html=True)
     else:
         st.error("Zip code not found.")
-
-st.markdown("---")
-st.markdown("<h3 style='text-align:center; color:white;'>How is this different?</h3>", unsafe_allow_html=True)
-st.markdown("""
-<div style='max-width:700px; margin:0 auto; color:#AAAACC; font-size:15px; line-height:1.8;'>
-<p>Other tools like <b style='color:white;'>Light Pollution Map</b>, <b style='color:white;'>NASA Worldview</b>, and <b style='color:white;'>Globe at Night</b> show raw radiance data or static snapshots. They are built for researchers.</p>
-<p>This tool does something none of them do — it translates light pollution data into <b style='color:white;'>human terms</b>. Not numbers. Stars. The ones you have actually lost from your specific sky, by name.</p>
-<p style='text-align:center; color:#555577; font-size:12px;'>Built by a student researcher in San Diego using real NASA Black Marble VNP46A4 satellite data</p>
-</div>
-""", unsafe_allow_html=True)
