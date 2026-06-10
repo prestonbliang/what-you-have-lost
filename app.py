@@ -3,7 +3,6 @@ import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import requests
-import pandas as pd
 
 st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wide")
 
@@ -17,18 +16,15 @@ st.markdown("""
     h1, h2, h3 { font-family: 'Space Grotesk', sans-serif !important; color: white !important; font-weight: 300 !important; letter-spacing: 0.05em !important; }
     p, label, div { color: #8888AA !important; }
     .stTextInput input { background-color: #0d0d1a !important; border: 1px solid #222244 !important; border-radius: 4px !important; color: white !important; padding: 0.75rem 1rem !important; font-size: 16px !important; }
-    .stTextInput input:focus { border-color: #4444AA !important; }
     .stButton button { background-color: transparent !important; border: 1px solid #4444AA !important; border-radius: 4px !important; color: #8888CC !important; padding: 0.75rem 2rem !important; font-size: 14px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; width: 100% !important; }
-    .stButton button:hover { background-color: #4444AA22 !important; border-color: #8888CC !important; color: white !important; }
+    .stButton button:hover { background-color: #4444AA22 !important; color: white !important; }
     .stMetric { background-color: #0d0d1a !important; border: 1px solid #111133 !important; border-radius: 4px !important; padding: 1.5rem !important; }
     .stMetric label { color: #555577 !important; font-size: 11px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; }
     .stMetric [data-testid="stMetricValue"] { color: white !important; font-size: 2rem !important; font-weight: 300 !important; }
-    .stSlider { padding: 1rem 0 !important; }
     hr { border-color: #111133 !important; margin: 3rem 0 !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# San Diego scaled radiance by year
 RADIANCE_BY_YEAR = {
     2012: 19.77, 2013: 21.00, 2014: 21.17, 2015: 20.64,
     2016: 20.53, 2017: 20.36, 2018: 20.70, 2019: 20.86,
@@ -89,27 +85,21 @@ def make_sky_chart(visible, lost, year, radiance, limit):
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 10)
     ax.axis("off")
-
-    # Light pollution glow gets stronger over time
-    glow_alpha = max(0, (radiance - 19) / 30)
     from matplotlib.patches import Circle
+    glow_alpha = max(0, (radiance - 19) / 30)
     glow = Circle((5, 0), 7, color="#FF6600", alpha=glow_alpha)
     ax.add_patch(glow)
-
     for name, mag in visible:
         x = np.random.uniform(0.3, 9.7)
         y = np.random.uniform(0.8, 9.5)
         size = max(6, 90 / (mag + 2))
         brightness = min(1.0, max(0.3, 1.0 - (mag / 10)))
         ax.scatter(x, y, s=size, color="white", alpha=brightness, zorder=3)
-
     for name, mag in lost:
         x = np.random.uniform(0.3, 9.7)
         y = np.random.uniform(0.8, 9.5)
         size = max(5, 50 / (mag + 2)) * 1.5
         ax.scatter(x, y, s=size, color="#FF4444", alpha=0.5, zorder=2, marker="*")
-
-    # Labels for brightest stars
     all_stars = visible + lost
     brightest = sorted(all_stars, key=lambda x: x[1])[:10]
     np.random.seed(42)
@@ -121,85 +111,87 @@ def make_sky_chart(visible, lost, year, radiance, limit):
         color = "#AA4444" if (name, mag) in lost else "#6688AA"
         ax.text(x, y + offset_y, name, color=color, fontsize=5.5,
                 ha="center", va="center", style="italic")
-
-    # Legend
     ax.scatter([0.4], [0.6], s=20, color="white", alpha=0.9, zorder=5)
     ax.text(0.7, 0.6, "visible", color="#8899BB", fontsize=6, va="center")
     ax.scatter([2.0], [0.6], s=18, color="#FF4444", alpha=0.5, marker="*", zorder=5)
     ax.text(2.3, 0.6, "lost since 2012", color="#AA4444", fontsize=6, va="center")
-
-    ax.text(5, 9.75, str(year), ha="center", color="white", fontsize=14, fontweight="normal")
+    ax.text(5, 9.75, str(year), ha="center", color="white", fontsize=14)
     ax.text(5, 9.35, f"{radiance:.2f} nW/cm²/sr  ·  mag {limit}",
             ha="center", color="#444466", fontsize=7)
     ax.text(5, 0.25, f"{len(visible)} objects visible",
             ha="center", color="#333355", fontsize=8)
     return fig
 
-# Header
+# Session state
+if "searched" not in st.session_state:
+    st.session_state.searched = False
+if "zipcode" not in st.session_state:
+    st.session_state.zipcode = ""
+
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; margin-top:0.5rem;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
-    zipcode = st.text_input("", placeholder="zip code", label_visibility="collapsed")
-    search = st.button("search", use_container_width=True)
+    zipcode_input = st.text_input("", placeholder="zip code", label_visibility="collapsed")
+    if st.button("search", use_container_width=True):
+        lat, lon, display_name = zip_to_coords(zipcode_input)
+        if lat:
+            st.session_state.searched = True
+            st.session_state.zipcode = zipcode_input
+        else:
+            st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-if search and zipcode:
-    lat, lon, display_name = zip_to_coords(zipcode)
-    if lat:
-        radiance_2012 = RADIANCE_BY_YEAR[2012]
-        radiance_2023 = RADIANCE_BY_YEAR[2023]
-        limit_2012 = radiance_to_limiting_magnitude(radiance_2012)
-        limit_2023 = radiance_to_limiting_magnitude(radiance_2023)
-        all_lost = [(n, m) for n, m in stars if limit_2023 < m <= limit_2012]
-        pct_change = ((radiance_2023 - radiance_2012) / radiance_2012) * 100
+if st.session_state.searched:
+    zipcode = st.session_state.zipcode
+    radiance_2012 = RADIANCE_BY_YEAR[2012]
+    radiance_2023 = RADIANCE_BY_YEAR[2023]
+    limit_2012 = radiance_to_limiting_magnitude(radiance_2012)
+    limit_2023 = radiance_to_limiting_magnitude(radiance_2023)
+    all_lost = [(n, m) for n, m in stars if limit_2023 < m <= limit_2012]
+    pct_change = ((radiance_2023 - radiance_2012) / radiance_2012) * 100
 
+    st.markdown(f"<p style='text-align:center; letter-spacing:0.15em; font-size:0.75rem; color:#444466;'>ZIP CODE {zipcode}</p>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    m1, m2, m3 = st.columns(3)
+    m1.metric("light pollution increase", f"+{pct_change:.1f}%")
+    m2.metric("stars lost since 2012", len(all_lost))
+    m3.metric("still visible tonight", len([s for s in stars if s[1] <= limit_2023]))
+
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; letter-spacing:0.1em; font-size:0.7rem; color:#334466;'>DRAG TO TRAVEL THROUGH TIME</p>", unsafe_allow_html=True)
+
+    year = st.slider("", min_value=2012, max_value=2023, value=2012,
+                     label_visibility="collapsed")
+
+    radiance = RADIANCE_BY_YEAR[year]
+    limit = radiance_to_limiting_magnitude(radiance)
+    baseline_limit = radiance_to_limiting_magnitude(RADIANCE_BY_YEAR[2012])
+
+    visible = [(n, m) for n, m in stars if m <= limit]
+    lost_so_far = [(n, m) for n, m in stars if limit < m <= baseline_limit]
+
+    col_center = st.columns([1, 6, 1])[1]
+    with col_center:
+        np.random.seed(42)
+        fig = make_sky_chart(visible, lost_so_far, year, radiance, limit)
+        st.pyplot(fig, use_container_width=True)
+
+    if lost_so_far:
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown(f"<p style='text-align:center; letter-spacing:0.15em; font-size:0.75rem; color:#444466;'>ZIP CODE {zipcode}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year}</p>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
+        cols = st.columns(3)
+        for i, (name, mag) in enumerate(sorted(lost_so_far, key=lambda x: x[1])):
+            cols[i % 3].markdown(f"<p style='color:#AA4444; font-size:0.85rem;'>— {name}</p>", unsafe_allow_html=True)
 
-        m1, m2, m3 = st.columns(3)
-        m1.metric("light pollution increase", f"+{pct_change:.1f}%")
-        m2.metric("stars lost since 2012", len(all_lost))
-        m3.metric("still visible tonight", len([s for s in stars if s[1] <= limit_2023]))
-
-        st.markdown("<br><br>", unsafe_allow_html=True)
-
-        # Year slider
-        year = st.slider("", min_value=2012, max_value=2023, value=2012,
-                        label_visibility="collapsed")
-
-        radiance = RADIANCE_BY_YEAR[year]
-        limit = radiance_to_limiting_magnitude(radiance)
-        limit_baseline = radiance_to_limiting_magnitude(RADIANCE_BY_YEAR[2012])
-
-        visible = [(n, m) for n, m in stars if m <= limit]
-        lost_so_far = [(n, m) for n, m in stars if limit < m <= limit_baseline]
-
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        col_center = st.columns([1, 6, 1])[1]
-        with col_center:
-            np.random.seed(42)
-            fig = make_sky_chart(visible, lost_so_far, year, radiance, limit)
-            st.pyplot(fig, use_container_width=True)
-
-        if lost_so_far:
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year}</p>", unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
-            cols = st.columns(3)
-            for i, (name, mag) in enumerate(sorted(lost_so_far, key=lambda x: x[1])):
-                cols[i % 3].markdown(f"<p style='color:#AA4444; font-size:0.85rem;'>— {name}</p>", unsafe_allow_html=True)
-
-        st.markdown("<br><br>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#1a1a2e;'>NASA BLACK MARBLE VNP46A4</p>", unsafe_allow_html=True)
-    else:
-        st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#1a1a2e;'>NASA BLACK MARBLE VNP46A4</p>", unsafe_allow_html=True)
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<hr>", unsafe_allow_html=True)
