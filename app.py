@@ -80,16 +80,38 @@ def star_alpha(mag, limiting_mag, fade_range=0.8):
         return 0  # invisible
 
 def zip_to_coords(zipcode):
-    url = f"https://nominatim.openstreetmap.org/search?postalcode={zipcode}&country=US&format=json"
-    headers = {"User-Agent": "WhatHaveYouLost/1.0 contact@example.com"}
+    # Try multiple APIs in case one is blocked
+    apis = [
+        f"https://api.zippopotam.us/us/{zipcode}",
+        f"https://nominatim.openstreetmap.org/search?postalcode={zipcode}&country=US&format=json"
+    ]
+    
+    # Try zippopotam first
     try:
-        response = requests.get(url, headers=headers, timeout=15)
+        response = requests.get(f"https://api.zippopotam.us/us/{zipcode}", timeout=10)
+        if response.status_code == 200:
+            data = response.json()
+            lat = float(data["places"][0]["latitude"])
+            lon = float(data["places"][0]["longitude"])
+            city = data["places"][0]["place name"]
+            state = data["places"][0]["state"]
+            return lat, lon, f"{city}, {state}"
+    except:
+        pass
+    
+    # Fallback to nominatim
+    try:
+        headers = {"User-Agent": "WhatHaveYouLost/1.0"}
+        response = requests.get(
+            f"https://nominatim.openstreetmap.org/search?postalcode={zipcode}&country=US&format=json",
+            headers=headers, timeout=10)
         if response.status_code == 200:
             data = response.json()
             if data:
                 return float(data[0]["lat"]), float(data[0]["lon"]), data[0]["display_name"]
-    except Exception as e:
-        st.error(f"Error: {e}")
+    except:
+        pass
+    
     return None, None, None
 
 def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
