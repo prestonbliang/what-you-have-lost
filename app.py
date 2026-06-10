@@ -169,8 +169,7 @@ def make_sky_chart(visible, lost, title, year, radiance, limit):
         y = np.random.uniform(0.8, 9.5)
         size = max(5, 50 / (mag + 2))
         ax.scatter(x, y, s=size, color="#FF4444", alpha=0.15, zorder=2, marker="*")
-    ax.text(5, 9.75, title, ha="center", color="white", fontsize=11,
-            fontweight="normal", letter_spacing=2)
+    ax.text(5, 9.75, title, ha="center", color="white", fontsize=11, fontweight="normal")
     ax.text(5, 9.35, f"{radiance:.2f} nW/cm²/sr  ·  mag {limit}",
             ha="center", color="#444466", fontsize=7)
     ax.text(5, 0.25, f"{len(visible)} objects visible",
