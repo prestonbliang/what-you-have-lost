@@ -81,14 +81,15 @@ def star_alpha(mag, limiting_mag, fade_range=0.8):
 
 def zip_to_coords(zipcode):
     url = f"https://nominatim.openstreetmap.org/search?postalcode={zipcode}&country=US&format=json"
-    headers = {"User-Agent": "WhatHaveYouLost/1.0"}
+    headers = {"User-Agent": "WhatHaveYouLost/1.0 contact@example.com"}
     try:
-        response = requests.get(url, headers=headers, timeout=5)
-        data = response.json()
-        if data:
-            return float(data[0]["lat"]), float(data[0]["lon"]), data[0]["display_name"]
-    except:
-        pass
+        response = requests.get(url, headers=headers, timeout=15)
+        if response.status_code == 200:
+            data = response.json()
+            if data:
+                return float(data[0]["lat"]), float(data[0]["lon"]), data[0]["display_name"]
+    except Exception as e:
+        st.error(f"Error: {e}")
     return None, None, None
 
 def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
