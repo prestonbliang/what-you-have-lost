@@ -14,7 +14,7 @@ st.markdown("""
     section[data-testid="stSidebar"] { display: none; }
     .main .block-container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
     h1, h2, h3 { font-family: 'Space Grotesk', sans-serif !important; color: white !important; font-weight: 300 !important; letter-spacing: 0.05em !important; }
-    p, label, div { color: #8888AA !important; }
+    label { color: #8888AA !important; }
     .stTextInput input { background-color: #0d0d1a !important; border: 1px solid #222244 !important; border-radius: 4px !important; color: white !important; padding: 0.75rem 1rem !important; font-size: 16px !important; }
     .stButton button { background-color: transparent !important; border: 1px solid #4444AA !important; border-radius: 4px !important; color: #8888CC !important; padding: 0.75rem 2rem !important; font-size: 14px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; width: 100% !important; }
     .stButton button:hover { background-color: #4444AA22 !important; color: white !important; }
