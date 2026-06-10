@@ -181,24 +181,20 @@ def make_sky_chart(visible, lost, title, year, radiance, limit):
     ax.scatter([2.0], [0.6], s=12, color="#FF4444", alpha=0.4, marker="*", zorder=5)
     ax.text(2.3, 0.6, "lost since 2012", color="#AA4444", fontsize=6, va="center")
 
-    # Label bright and lost stars
-    key_stars = ["Sirius", "Polaris", "Betelgeuse", "Vega", "Orion Nebula",
-                 "Andromeda Galaxy", "Rigel", "Arcturus", "Deneb", "Altair"]
+    # Label top 10 brightest stars by magnitude
+    brightest = sorted(visible + lost, key=lambda x: x[1])[:10]
     np.random.seed(42)
     all_stars = visible + lost
     positions = []
     for _ in all_stars:
         positions.append((np.random.uniform(0.3, 9.7), np.random.uniform(0.8, 9.5)))
-    np.random.seed(42)
-    labeled = 0
     for i, (name, mag) in enumerate(all_stars):
-        if name in key_stars and labeled < 6:
+        if (name, mag) in brightest:
             x, y = positions[i]
             offset_y = 0.35 if y < 8.5 else -0.35
             color = "#AA4444" if (name, mag) in lost else "#6688AA"
             ax.text(x, y + offset_y, name, color=color, fontsize=5.5,
                     ha="center", va="center", style="italic")
-            labeled += 1
 
     return fig
 
