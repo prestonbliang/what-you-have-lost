@@ -139,6 +139,7 @@ st.markdown("""
 <p style='text-align:center; color:#555577; font-size:12px;'>Built using real NASA Black Marble VNP46A4 satellite data</p>
 </div>
 """, unsafe_allow_html=True)
-    else:
-        st.error("Zip code not found.")
+
+else:
+    st.error("Zip code not found.")
 
