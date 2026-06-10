@@ -263,7 +263,7 @@ if st.session_state.searched:
         st.markdown("<br>", unsafe_allow_html=True)
         cols = st.columns(3)
         for i, (name, color) in enumerate(lost_names):
-            cols[i % 3].markdown(f"<p style='color:{color}; font-size:0.85rem;'>● {name}</p>", unsafe_allow_html=True)
+            cols[i % 3].markdown(f"<span style='color:{color} !important; font-size:0.85rem; display:block; margin:4px 0;'>● {name}</span>", unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#1a1a2e;'>NASA BLACK MARBLE VNP46A4</p>", unsafe_allow_html=True)
