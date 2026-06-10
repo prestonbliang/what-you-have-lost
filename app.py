@@ -168,7 +168,7 @@ def make_sky_chart(visible, lost, title, year, radiance, limit):
         x = np.random.uniform(0.3, 9.7)
         y = np.random.uniform(0.8, 9.5)
         size = max(5, 50 / (mag + 2))
-        ax.scatter(x, y, s=size, color="#FF4444", alpha=0.15, zorder=2, marker="*")
+        ax.scatter(x, y, s=size*1.5, color="#FF4444", alpha=0.5, zorder=2, marker="*")
     ax.text(5, 9.75, title, ha="center", color="white", fontsize=11, fontweight="normal")
     ax.text(5, 9.35, f"{radiance:.2f} nW/cm²/sr  ·  mag {limit}",
             ha="center", color="#444466", fontsize=7)
@@ -181,18 +181,22 @@ def make_sky_chart(visible, lost, title, year, radiance, limit):
     ax.scatter([2.0], [0.6], s=12, color="#FF4444", alpha=0.4, marker="*", zorder=5)
     ax.text(2.3, 0.6, "lost since 2012", color="#442222", fontsize=6, va="center")
 
-    # Label a few recognizable stars
-    key_stars = ["Sirius", "Polaris", "Betelgeuse", "Vega", "Orion Nebula"]
-    labeled = 0
-    np.random.seed(99)
-    all_stars = visible + lost
-    positions = [(np.random.uniform(0.3, 9.7), np.random.uniform(0.8, 9.5)) for _ in all_stars]
+    # Label bright and lost stars
+    key_stars = ["Sirius", "Polaris", "Betelgeuse", "Vega", "Orion Nebula",
+                 "Andromeda Galaxy", "Rigel", "Arcturus", "Deneb", "Altair"]
     np.random.seed(42)
+    all_stars = visible + lost
+    positions = []
+    for _ in all_stars:
+        positions.append((np.random.uniform(0.3, 9.7), np.random.uniform(0.8, 9.5)))
+    np.random.seed(42)
+    labeled = 0
     for i, (name, mag) in enumerate(all_stars):
-        if name in key_stars and labeled < 3:
+        if name in key_stars and labeled < 6:
             x, y = positions[i]
-            offset_y = 0.3 if y < 8.5 else -0.3
-            ax.text(x, y + offset_y, name, color="#333355", fontsize=5.5,
+            offset_y = 0.35 if y < 8.5 else -0.35
+            color = "#553333" if (name, mag) in lost else "#334455"
+            ax.text(x, y + offset_y, name, color=color, fontsize=5.5,
                     ha="center", va="center", style="italic")
             labeled += 1
 
