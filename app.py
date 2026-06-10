@@ -132,10 +132,8 @@ def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
 
     # Unique colors for each potentially lost star
     LOST_COLORS = [
-        "#FF6B6B", "#FF9F43", "#FECA57", "#48DBFB", "#FF9FF3",
-        "#54A0FF", "#5F27CD", "#00D2D3", "#FF6348", "#2ED573",
-        "#FFA502", "#FF4757", "#747D8C", "#2F3542", "#70A1FF",
-        "#7BED9F", "#ECCC68", "#A29BFE", "#FD79A8", "#636E72"
+        "#FF6B6B", "#FF9F43", "#FECA57", "#2ED573", "#48DBFB",
+        "#FF6348", "#A29BFE", "#FD79A8", "#7BED9F", "#ECCC68"
     ]
     
     # Assign colors to all stars that could be lost
@@ -266,12 +264,9 @@ if st.session_state.searched:
             # Convert hex color to closest colored circle emoji
             color_circles = {
                 "#FF6B6B": "🔴", "#FF9F43": "🟠", "#FECA57": "🟡",
-                "#48DBFB": "🔵", "#FF9FF3": "🟣", "#54A0FF": "🔵",
-                "#5F27CD": "🟣", "#00D2D3": "🔵", "#FF6348": "🔴",
-                "#2ED573": "🟢", "#FFA502": "🟠", "#FF4757": "🔴",
-                "#747D8C": "⚪", "#2F3542": "⚫", "#70A1FF": "🔵",
-                "#7BED9F": "🟢", "#ECCC68": "🟡", "#A29BFE": "🟣",
-                "#FD79A8": "🟣", "#636E72": "⚪"
+                "#2ED573": "🟢", "#48DBFB": "🔵",
+                "#FF6348": "🟤", "#A29BFE": "🟣", "#FD79A8": "🩷",
+                "#7BED9F": "🩵", "#ECCC68": "🌕"
             }
             circle = color_circles.get(color, "●")
             cols[i % 3].markdown(f"{circle} {name}")
