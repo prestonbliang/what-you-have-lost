@@ -4,19 +4,101 @@ import numpy as np
 import matplotlib.pyplot as plt
 import requests
 
-st.set_page_config(page_title="What Have You Lost?", page_icon="🌟", layout="wide")
+st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wide")
 
 st.markdown("""
 <style>
-    .stApp { background-color: #000008; }
-    h1, h2, h3, p, label { color: white !important; }
-    .stTextInput input { background-color: #111122; color: white; }
-    .stButton button { background-color: #3333AA; color: white; width: 100%; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap');
+    
+    * { font-family: 'Inter', sans-serif; }
+    
+    .stApp { background-color: #03030a; }
+    
+    section[data-testid="stSidebar"] { display: none; }
+    
+    .main .block-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 4rem 2rem;
+    }
+    
+    h1, h2, h3 { 
+        font-family: 'Space Grotesk', sans-serif !important;
+        color: white !important;
+        font-weight: 300 !important;
+        letter-spacing: 0.05em !important;
+    }
+    
+    p, label, div { color: #8888AA !important; }
+    
+    .stTextInput input {
+        background-color: #0d0d1a !important;
+        border: 1px solid #222244 !important;
+        border-radius: 4px !important;
+        color: white !important;
+        padding: 0.75rem 1rem !important;
+        font-size: 16px !important;
+        letter-spacing: 0.05em !important;
+    }
+    
+    .stTextInput input:focus {
+        border-color: #4444AA !important;
+        box-shadow: 0 0 0 1px #4444AA !important;
+    }
+    
+    .stButton button {
+        background-color: transparent !important;
+        border: 1px solid #4444AA !important;
+        border-radius: 4px !important;
+        color: #8888CC !important;
+        padding: 0.75rem 2rem !important;
+        font-size: 14px !important;
+        letter-spacing: 0.15em !important;
+        text-transform: uppercase !important;
+        transition: all 0.3s ease !important;
+        width: 100% !important;
+    }
+    
+    .stButton button:hover {
+        background-color: #4444AA22 !important;
+        border-color: #8888CC !important;
+        color: white !important;
+    }
+    
+    .stMetric {
+        background-color: #0d0d1a !important;
+        border: 1px solid #111133 !important;
+        border-radius: 4px !important;
+        padding: 1.5rem !important;
+    }
+    
+    .stMetric label {
+        color: #555577 !important;
+        font-size: 11px !important;
+        letter-spacing: 0.15em !important;
+        text-transform: uppercase !important;
+    }
+    
+    .stMetric [data-testid="stMetricValue"] {
+        color: white !important;
+        font-size: 2rem !important;
+        font-weight: 300 !important;
+    }
+    
+    hr {
+        border-color: #111133 !important;
+        margin: 3rem 0 !important;
+    }
+    
+    .stAlert { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1 style='text-align:center; color:white;'>🌟 What Have You Lost?</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#AAAACC;'>Enter your zip code to see which stars disappeared from your sky since 2012</p>", unsafe_allow_html=True)
+# Header
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; margin-top:0.5rem;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
 
 stars = [
     ("Sirius", -1.46), ("Arcturus", -0.05), ("Vega", 0.03),
@@ -67,36 +149,41 @@ def zip_to_coords(zipcode):
 
 def make_sky_chart(visible, lost, title, year, radiance, limit):
     fig, ax = plt.subplots(figsize=(7, 7))
-    fig.patch.set_facecolor("#000008")
-    ax.set_facecolor("#000008")
+    fig.patch.set_facecolor("#03030a")
+    ax.set_facecolor("#03030a")
     ax.set_xlim(0, 10)
     ax.set_ylim(0, 10)
     ax.axis("off")
     if year == 2023 and len(lost) > 0:
-        glow = plt.Circle((5, 5), 6, color="#FF8800", alpha=0.04)
+        from matplotlib.patches import Circle
+        glow = Circle((5, 1), 5, color="#FF6600", alpha=0.03)
         ax.add_patch(glow)
     for name, mag in visible:
         x = np.random.uniform(0.3, 9.7)
         y = np.random.uniform(0.8, 9.5)
-        size = max(8, 100 / (mag + 2))
+        size = max(6, 90 / (mag + 2))
         brightness = min(1.0, max(0.3, 1.0 - (mag / 10)))
         ax.scatter(x, y, s=size, color="white", alpha=brightness, zorder=3)
     for name, mag in lost:
         x = np.random.uniform(0.3, 9.7)
         y = np.random.uniform(0.8, 9.5)
-        size = max(6, 60 / (mag + 2))
-        ax.scatter(x, y, s=size, color="#FF4444", alpha=0.2, zorder=2, marker="*")
-    ax.text(5, 9.7, title, ha="center", color="white", fontsize=13, fontweight="bold")
-    ax.text(5, 9.3, f"Radiance: {radiance:.2f} · Faintest visible: mag {limit}",
-            ha="center", color="#8888AA", fontsize=8)
-    ax.text(5, 0.3, f"{len(visible)} objects visible",
-            ha="center", color="#8888AA", fontsize=9)
+        size = max(5, 50 / (mag + 2))
+        ax.scatter(x, y, s=size, color="#FF4444", alpha=0.15, zorder=2, marker="*")
+    ax.text(5, 9.75, title, ha="center", color="white", fontsize=11,
+            fontweight="normal", letter_spacing=2)
+    ax.text(5, 9.35, f"{radiance:.2f} nW/cm²/sr  ·  mag {limit}",
+            ha="center", color="#444466", fontsize=7)
+    ax.text(5, 0.25, f"{len(visible)} objects visible",
+            ha="center", color="#333355", fontsize=8)
     return fig
 
+# Input
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
-    zipcode = st.text_input("", placeholder="Enter zip code e.g. 92111", label_visibility="collapsed")
-    search = st.button("Show My Sky →", use_container_width=True)
+    zipcode = st.text_input("", placeholder="zip code", label_visibility="collapsed")
+    search = st.button("search", use_container_width=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
 
 if search and zipcode:
     lat, lon, display_name = zip_to_coords(zipcode)
@@ -108,31 +195,47 @@ if search and zipcode:
         still_visible = [(n, m) for n, m in stars if m <= limit_2023]
         lost = [(n, m) for n, m in stars if limit_2023 < m <= limit_2012]
         pct_change = ((radiance_2023 - radiance_2012) / radiance_2012) * 100
-        st.markdown(f"<h2 style='text-align:center; color:white;'>Results for {zipcode}</h2>", unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown(f"<p style='text-align:center; letter-spacing:0.15em; font-size:0.75rem; color:#444466;'>ZIP CODE {zipcode}</p>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
+
         m1, m2, m3 = st.columns(3)
-        m1.metric("Light Pollution Increase", f"+{pct_change:.1f}%")
-        m2.metric("Stars Lost Since 2012", len(lost))
-        m3.metric("Still Visible Tonight", len(still_visible))
+        m1.metric("light pollution increase", f"+{pct_change:.1f}%")
+        m2.metric("stars lost since 2012", len(lost))
+        m3.metric("still visible tonight", len(still_visible))
+
+        st.markdown("<br><br>", unsafe_allow_html=True)
+
         col_a, col_b = st.columns(2)
         np.random.seed(42)
         with col_a:
-            fig1 = make_sky_chart(still_visible + lost, [], "Your Sky - 2012", 2012, radiance_2012, limit_2012)
-            st.pyplot(fig1)
+            fig1 = make_sky_chart(still_visible + lost, [], "2012", 2012, radiance_2012, limit_2012)
+            st.pyplot(fig1, use_container_width=True)
         np.random.seed(42)
         with col_b:
-            fig2 = make_sky_chart(still_visible, lost, "Your Sky - 2023", 2023, radiance_2023, limit_2023)
-            st.pyplot(fig2)
+            fig2 = make_sky_chart(still_visible, lost, "2023", 2023, radiance_2023, limit_2023)
+            st.pyplot(fig2, use_container_width=True)
+
         if lost:
-            st.markdown("<h3 style='color:white;'>What you can no longer see:</h3>", unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown("<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY</p>", unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
             cols = st.columns(3)
             for i, (name, mag) in enumerate(sorted(lost, key=lambda x: x[1])):
-                cols[i % 3].markdown(f"<p style='color:#FF6666;'>X {name} (mag {mag:.2f})</p>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align:center; color:#555577; font-size:12px;'>Source: NASA Black Marble VNP46A4</p>", unsafe_allow_html=True)
-    else:
-        st.error("Zip code not found.")
+                cols[i % 3].markdown(f"<p style='color:#662222; font-size:0.85rem; letter-spacing:0.05em;'>— {name}</p>", unsafe_allow_html=True)
 
-st.markdown("---")
-st.markdown("<h3 style='text-align:center; color:white;'>How is this different?</h3>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#AAAACC;'>Other tools like Light Pollution Map, NASA Worldview, and Globe at Night show raw radiance data or static snapshots. They are built for researchers.</p>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#AAAACC;'>This tool does something none of them do — it translates light pollution into human terms. Not numbers. Stars. The ones you have actually lost from your specific sky, by name.</p>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; color:#555577; font-size:12px;'>Built by a student researcher in San Diego using real NASA Black Marble VNP46A4 satellite data</p>", unsafe_allow_html=True)
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#1a1a2e;'>NASA BLACK MARBLE VNP46A4</p>", unsafe_allow_html=True)
+    else:
+        st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>", unsafe_allow_html=True)
+
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("<hr>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; letter-spacing:0.15em; font-size:0.7rem; color:#222244;'>HOW IS THIS DIFFERENT</p>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2; color:#333355;'>Tools like Light Pollution Map, NASA Worldview, and Globe at Night show raw radiance data built for researchers. This tool translates that data into something human — the actual named stars you have lost from your specific sky, since 2012.</p>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#111122;'>BUILT BY A STUDENT RESEARCHER IN SAN DIEGO</p>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
