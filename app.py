@@ -177,9 +177,9 @@ def make_sky_chart(visible, lost, title, year, radiance, limit):
 
     # Legend
     ax.scatter([0.4], [0.6], s=20, color="white", alpha=0.9, zorder=5)
-    ax.text(0.7, 0.6, "visible", color="#444466", fontsize=6, va="center")
+    ax.text(0.7, 0.6, "visible", color="#8899BB", fontsize=6, va="center")
     ax.scatter([2.0], [0.6], s=12, color="#FF4444", alpha=0.4, marker="*", zorder=5)
-    ax.text(2.3, 0.6, "lost since 2012", color="#442222", fontsize=6, va="center")
+    ax.text(2.3, 0.6, "lost since 2012", color="#AA4444", fontsize=6, va="center")
 
     # Label bright and lost stars
     key_stars = ["Sirius", "Polaris", "Betelgeuse", "Vega", "Orion Nebula",
@@ -195,7 +195,7 @@ def make_sky_chart(visible, lost, title, year, radiance, limit):
         if name in key_stars and labeled < 6:
             x, y = positions[i]
             offset_y = 0.35 if y < 8.5 else -0.35
-            color = "#553333" if (name, mag) in lost else "#334455"
+            color = "#AA4444" if (name, mag) in lost else "#6688AA"
             ax.text(x, y + offset_y, name, color=color, fontsize=5.5,
                     ha="center", va="center", style="italic")
             labeled += 1
