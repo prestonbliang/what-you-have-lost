@@ -174,6 +174,28 @@ def make_sky_chart(visible, lost, title, year, radiance, limit):
             ha="center", color="#444466", fontsize=7)
     ax.text(5, 0.25, f"{len(visible)} objects visible",
             ha="center", color="#333355", fontsize=8)
+
+    # Legend
+    ax.scatter([0.4], [0.6], s=20, color="white", alpha=0.9, zorder=5)
+    ax.text(0.7, 0.6, "visible", color="#444466", fontsize=6, va="center")
+    ax.scatter([2.0], [0.6], s=12, color="#FF4444", alpha=0.4, marker="*", zorder=5)
+    ax.text(2.3, 0.6, "lost since 2012", color="#442222", fontsize=6, va="center")
+
+    # Label a few recognizable stars
+    key_stars = ["Sirius", "Polaris", "Betelgeuse", "Vega", "Orion Nebula"]
+    labeled = 0
+    np.random.seed(99)
+    all_stars = visible + lost
+    positions = [(np.random.uniform(0.3, 9.7), np.random.uniform(0.8, 9.5)) for _ in all_stars]
+    np.random.seed(42)
+    for i, (name, mag) in enumerate(all_stars):
+        if name in key_stars and labeled < 3:
+            x, y = positions[i]
+            offset_y = 0.3 if y < 8.5 else -0.3
+            ax.text(x, y + offset_y, name, color="#333355", fontsize=5.5,
+                    ha="center", va="center", style="italic")
+            labeled += 1
+
     return fig
 
 # Input
