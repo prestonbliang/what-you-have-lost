@@ -130,6 +130,23 @@ def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
     glow2 = Circle((5, 0), 5, color="#FF8800", alpha=glow_alpha * 0.5)
     ax.add_patch(glow2)
 
+    # Unique colors for each potentially lost star
+    LOST_COLORS = [
+        "#FF6B6B", "#FF9F43", "#FECA57", "#48DBFB", "#FF9FF3",
+        "#54A0FF", "#5F27CD", "#00D2D3", "#FF6348", "#2ED573",
+        "#FFA502", "#FF4757", "#747D8C", "#2F3542", "#70A1FF",
+        "#7BED9F", "#ECCC68", "#A29BFE", "#FD79A8", "#636E72"
+    ]
+    
+    # Assign colors to all stars that could be lost
+    all_possible_lost = sorted(
+        [(n, m) for n, m in stars if m > radiance_to_limiting_magnitude(RADIANCE_BY_YEAR[2023]) 
+         and m <= radiance_to_limiting_magnitude(RADIANCE_BY_YEAR[2012])],
+        key=lambda x: x[1]
+    )
+    star_colors = {(n, m): LOST_COLORS[i % len(LOST_COLORS)] 
+                   for i, (n, m) in enumerate(all_possible_lost)}
+
     np.random.seed(42)
     positions = {(name, mag): (np.random.uniform(0.3, 9.7), np.random.uniform(0.8, 9.5))
                  for name, mag in stars}
@@ -143,11 +160,11 @@ def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
 
         if alpha > 0:
             size = max(6, 90 / (mag + 2))
-            # Stars near the fading threshold get a red tint
             fade_ratio = (limiting_mag - mag) / 0.8 if mag > limiting_mag - 0.8 else 1.0
             fade_ratio = max(0, min(1, fade_ratio))
-            if fade_ratio < 1.0:
-                # Fading star - blend white to red
+            if (name, mag) in star_colors and fade_ratio < 1.0:
+                color = star_colors[(name, mag)]
+            elif fade_ratio < 1.0:
                 color = (1.0, 1.0 - (1 - fade_ratio) * 0.7, 1.0 - (1 - fade_ratio) * 0.7)
             else:
                 color = "white"
@@ -156,9 +173,9 @@ def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
                 visible_count += 1
         else:
             if mag <= baseline_limit:
-                lost_names.append(name)
-                # Show as very faint red ghost
-                ax.scatter(x, y, s=8, color="#FF2222", alpha=0.12, zorder=2, marker="*")
+                lost_color = star_colors.get((name, mag), "#FF2222")
+                lost_names.append((name, lost_color))
+                ax.scatter(x, y, s=12, color=lost_color, alpha=0.4, zorder=2, marker="*")
 
     # Labels for brightest
     brightest = sorted(stars, key=lambda x: x[1])[:10]
@@ -182,7 +199,7 @@ def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
     ax.text(5, 0.25, f"{visible_count} objects visible",
             ha="center", color="#333355", fontsize=8)
 
-    return fig, lost_names
+    return fig, lost_names, star_colors
 
 # Session state
 if "searched" not in st.session_state:
@@ -236,7 +253,7 @@ if st.session_state.searched:
 
     col_center = st.columns([1, 6, 1])[1]
     with col_center:
-        fig, lost_names = make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit)
+        fig, lost_names, star_colors = make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit)
         st.pyplot(fig, use_container_width=True)
 
     if lost_names:
@@ -244,8 +261,8 @@ if st.session_state.searched:
         st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year}</p>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         cols = st.columns(3)
-        for i, name in enumerate(lost_names):
-            cols[i % 3].markdown(f"<p style='color:#AA4444; font-size:0.85rem;'>— {name}</p>", unsafe_allow_html=True)
+        for i, (name, color) in enumerate(lost_names):
+            cols[i % 3].markdown(f"<p style='color:{color}; font-size:0.85rem;'>● {name}</p>", unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#1a1a2e;'>NASA BLACK MARBLE VNP46A4</p>", unsafe_allow_html=True)
