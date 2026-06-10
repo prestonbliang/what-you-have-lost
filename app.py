@@ -128,7 +128,17 @@ if search and zipcode:
             cols = st.columns(3)
             for i, (name, mag) in enumerate(sorted(lost, key=lambda x: x[1])):
                 cols[i % 3].markdown(f"<p style=\'color:#FF6666;\'>✗ {name} (mag {mag:.2f})</p>", unsafe_allow_html=True)
-        st.markdown("<p style=\'text-align:center; color:#555577; font-size:12px;\'>Source: NASA Black Marble VNP46A4</p>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align:center; color:#555577; font-size:12px;'>Source: NASA Black Marble VNP46A4</p>", unsafe_allow_html=True)
+
+st.markdown("---")
+st.markdown("<h3 style='text-align:center; color:white;'>How is this different?</h3>", unsafe_allow_html=True)
+st.markdown("""
+<div style='max-width:700px; margin:0 auto; color:#AAAACC; font-size:15px; line-height:1.8;'>
+<p>Other tools like <b style='color:white;'>Light Pollution Map</b>, <b style='color:white;'>NASA Worldview</b>, and <b style='color:white;'>Globe at Night</b> show raw radiance data or static snapshots. They're built for researchers.</p>
+<p>This tool does something none of them do — it translates light pollution data into <b style='color:white;'>human terms</b>. Not numbers. Stars. The ones you've actually lost from your specific sky, by name.</p>
+<p style='text-align:center; color:#555577; font-size:12px;'>Built using real NASA Black Marble VNP46A4 satellite data</p>
+</div>
+""", unsafe_allow_html=True)
     else:
         st.error("Zip code not found.")
 
