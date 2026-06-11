@@ -259,17 +259,11 @@ if st.session_state.searched:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year}</p>", unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
-        cols = st.columns(3)
-        for i, (name, color) in enumerate(lost_names):
-            # Convert hex color to closest colored circle emoji
-            color_circles = {
-                "#FF6B6B": "🔴", "#FF9F43": "🟠", "#FECA57": "🟡",
-                "#2ED573": "🟢", "#48DBFB": "🔵",
-                "#FF6348": "🟤", "#A29BFE": "🟣", "#FD79A8": "🩷",
-                "#7BED9F": "🩵", "#ECCC68": "🌕"
-            }
-            circle = color_circles.get(color, "●")
-            cols[i % 3].markdown(f"{circle} {name}")
+        html = "<div style='display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;'>"
+        for name, color in lost_names:
+            html += f"<div style='color:{color}; font-size:0.85rem;'>★ {name}</div>"
+        html += "</div>"
+        st.markdown(html, unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#1a1a2e;'>NASA BLACK MARBLE VNP46A4</p>", unsafe_allow_html=True)
