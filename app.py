@@ -25,11 +25,22 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-RADIANCE_BY_YEAR = {
-    2012: 19.77, 2013: 21.00, 2014: 21.17, 2015: 20.64,
-    2016: 20.53, 2017: 20.36, 2018: 20.70, 2019: 20.86,
-    2020: 21.15, 2021: 21.29, 2022: 19.90, 2023: 22.68
-}
+@st.cache_data
+def load_zip_data():
+    url = "https://raw.githubusercontent.com/prestonbliang/what-you-have-lost/main/zip_radiance.json"
+    response = requests.get(url, timeout=15)
+    return response.json()
+
+ZIP_DATA = load_zip_data()
+
+def get_radiance_by_year(zipcode):
+    data = ZIP_DATA.get(str(zipcode).zfill(5), None)
+    if data:
+        return {int(k): v for k, v in data.items()}
+    # Fallback to San Diego data
+    return {2012: 19.77, 2013: 21.00, 2014: 21.17, 2015: 20.64,
+            2016: 20.53, 2017: 20.36, 2018: 20.70, 2019: 20.86,
+            2020: 21.15, 2021: 21.29, 2022: 19.90, 2023: 22.68}
 
 stars = [
     ("Sirius", -1.46), ("Arcturus", -0.05), ("Vega", 0.03),
@@ -225,7 +236,8 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 if st.session_state.searched:
     zipcode = st.session_state.zipcode
-    radiance_2012 = RADIANCE_BY_YEAR[2012]
+    RADIANCE_BY_YEAR = get_radiance_by_year(zipcode)
+        radiance_2012 = RADIANCE_BY_YEAR[2012]
     radiance_2023 = RADIANCE_BY_YEAR[2023]
     baseline_limit = radiance_to_limiting_magnitude(radiance_2012)
     limit_2023 = radiance_to_limiting_magnitude(radiance_2023)
