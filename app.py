@@ -2,7 +2,10 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import requests
+import math
+import json
 
 st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wide")
 
@@ -14,7 +17,6 @@ st.markdown("""
     section[data-testid="stSidebar"] { display: none; }
     .main .block-container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
     h1, h2, h3 { font-family: 'Space Grotesk', sans-serif !important; color: white !important; font-weight: 300 !important; letter-spacing: 0.05em !important; }
-    label { color: #8888AA !important; }
     .stTextInput input { background-color: #0d0d1a !important; border: 1px solid #222244 !important; border-radius: 4px !important; color: white !important; padding: 0.75rem 1rem !important; font-size: 16px !important; }
     .stButton button { background-color: transparent !important; border: 1px solid #4444AA !important; border-radius: 4px !important; color: #8888CC !important; padding: 0.75rem 2rem !important; font-size: 14px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; width: 100% !important; }
     .stButton button:hover { background-color: #4444AA22 !important; color: white !important; }
@@ -25,24 +27,9 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-@st.cache_data
-def load_zip_data():
-    url = "https://raw.githubusercontent.com/prestonbliang/what-you-have-lost/main/zip_radiance.json"
-    response = requests.get(url, timeout=15)
-    return response.json()
+# ── Data ──────────────────────────────────────────────────────────────────────
 
-ZIP_DATA = load_zip_data()
-
-def get_radiance_by_year(zipcode):
-    data = ZIP_DATA.get(str(zipcode).zfill(5), None)
-    if data:
-        return {int(k): v for k, v in data.items()}
-    # Fallback to San Diego data
-    return {2012: 19.77, 2013: 21.00, 2014: 21.17, 2015: 20.64,
-            2016: 20.53, 2017: 20.36, 2018: 20.70, 2019: 20.86,
-            2020: 21.15, 2021: 21.29, 2022: 19.90, 2023: 22.68}
-
-stars = [
+STARS = [
     ("Sirius", -1.46), ("Arcturus", -0.05), ("Vega", 0.03),
     ("Rigel", 0.13), ("Procyon", 0.34), ("Betelgeuse", 0.42),
     ("Altair", 0.76), ("Aldebaran", 0.87), ("Antares", 1.06),
@@ -69,37 +56,42 @@ stars = [
     ("Iota Leporis", 4.45), ("M41", 4.50), ("Gamma Pictoris", 4.51),
 ]
 
+LOST_COLORS = [
+    "#FF6B6B", "#FF9F43", "#FECA57", "#2ED573", "#48DBFB",
+    "#FF6348", "#A29BFE", "#FD79A8", "#7BED9F", "#ECCC68"
+]
+
+# San Diego fallback data
+SD_RADIANCE = {
+    2012: 19.77, 2013: 21.00, 2014: 21.17, 2015: 20.64,
+    2016: 20.53, 2017: 20.36, 2018: 20.70, 2019: 20.86,
+    2020: 21.15, 2021: 21.29, 2022: 21.50, 2023: 22.68
+}
+
+# ── Functions ─────────────────────────────────────────────────────────────────
+
+@st.cache_data
+def load_zip_data():
+    url = "https://raw.githubusercontent.com/prestonbliang/what-you-have-lost/main/zip_radiance.json"
+    try:
+        response = requests.get(url, timeout=15)
+        return response.json()
+    except:
+        return {}
+
+def get_radiance_by_year(zipcode, zip_data):
+    data = zip_data.get(str(zipcode).zfill(5), None)
+    if data:
+        return {int(k): float(v) for k, v in data.items()}
+    return SD_RADIANCE
+
 def radiance_to_limiting_magnitude(radiance):
-    # Continuous conversion - more sensitive to small changes
-    # Based on Bortle scale: limiting mag decreases as radiance increases
-    import math
     if radiance <= 0:
         return 7.6
-    # Logarithmic relationship between radiance and limiting magnitude
     lm = 7.6 - 1.2 * math.log10(max(1, radiance))
-    return round(max(2.0, min(7.6, lm)), 2)
-
-def star_alpha(mag, limiting_mag, fade_range=0.8):
-    """Calculate star brightness - stars fade gradually before disappearing"""
-    if mag <= limiting_mag - fade_range:
-        # Fully visible - brightness based on magnitude
-        return min(1.0, max(0.3, 1.0 - (mag / 10)))
-    elif mag <= limiting_mag:
-        # Fading zone - gradually dim
-        fade_progress = (limiting_mag - mag) / fade_range
-        base = min(1.0, max(0.3, 1.0 - (mag / 10)))
-        return base * fade_progress
-    else:
-        return 0  # invisible
+    return max(2.0, min(7.6, lm))
 
 def zip_to_coords(zipcode):
-    # Try multiple APIs in case one is blocked
-    apis = [
-        f"https://api.zippopotam.us/us/{zipcode}",
-        f"https://nominatim.openstreetmap.org/search?postalcode={zipcode}&country=US&format=json"
-    ]
-    
-    # Try zippopotam first
     try:
         response = requests.get(f"https://api.zippopotam.us/us/{zipcode}", timeout=10)
         if response.status_code == 200:
@@ -111,8 +103,6 @@ def zip_to_coords(zipcode):
             return lat, lon, f"{city}, {state}"
     except:
         pass
-    
-    # Fallback to nominatim
     try:
         headers = {"User-Agent": "WhatHaveYouLost/1.0"}
         response = requests.get(
@@ -124,10 +114,9 @@ def zip_to_coords(zipcode):
                 return float(data[0]["lat"]), float(data[0]["lon"]), data[0]["display_name"]
     except:
         pass
-    
     return None, None, None
 
-def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
+def make_sky_chart(stars, year, radiance_by_year, color_map):
     fig, ax = plt.subplots(figsize=(8, 8))
     fig.patch.set_facecolor("#03030a")
     ax.set_facecolor("#03030a")
@@ -135,31 +124,20 @@ def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
     ax.set_ylim(0, 10)
     ax.axis("off")
 
-    # Light pollution glow - gets stronger over time
-    from matplotlib.patches import Circle
-    glow_alpha = min(0.12, max(0, (radiance - 19) / 25))
-    glow = Circle((5, 0), 8, color="#FF6600", alpha=glow_alpha)
-    ax.add_patch(glow)
-    glow2 = Circle((5, 0), 5, color="#FF8800", alpha=glow_alpha * 0.5)
+    radiance_2012 = radiance_by_year[2012]
+    radiance_now = radiance_by_year[year]
+    lm_2012 = radiance_to_limiting_magnitude(radiance_2012)
+    lm_now = radiance_to_limiting_magnitude(radiance_now)
+
+    # Light glow
+    glow_alpha = min(0.15, max(0, (radiance_now - radiance_2012) / (radiance_2012 * 2)))
+    glow1 = mpatches.Circle((5, 0), 8, color="#FF6600", alpha=glow_alpha)
+    glow2 = mpatches.Circle((5, 0), 5, color="#FF8800", alpha=glow_alpha * 0.5)
+    ax.add_patch(glow1)
     ax.add_patch(glow2)
 
-    # Unique colors for each potentially lost star
-    LOST_COLORS = [
-        "#FF6B6B", "#FF9F43", "#FECA57", "#2ED573", "#48DBFB",
-        "#FF6348", "#A29BFE", "#FD79A8", "#7BED9F", "#ECCC68"
-    ]
-    
-    # Assign colors to all stars that could be lost
-    all_possible_lost = sorted(
-        [(n, m) for n, m in stars if m > radiance_to_limiting_magnitude(RADIANCE_BY_YEAR[2023]) 
-         and m <= radiance_to_limiting_magnitude(RADIANCE_BY_YEAR[2012])],
-        key=lambda x: x[1]
-    )
-    star_colors = {(n, m): LOST_COLORS[i % len(LOST_COLORS)] 
-                   for i, (n, m) in enumerate(all_possible_lost)}
-
     np.random.seed(42)
-    positions = {(name, mag): (np.random.uniform(0.3, 9.7), np.random.uniform(0.8, 9.5))
+    positions = {(name, mag): (np.random.uniform(0.5, 9.5), np.random.uniform(1.0, 9.2))
                  for name, mag in stars}
 
     visible_count = 0
@@ -167,61 +145,74 @@ def make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit):
 
     for name, mag in stars:
         x, y = positions[(name, mag)]
-        alpha = star_alpha(mag, limiting_mag)
 
-        if alpha > 0:
-            size = max(6, 90 / (mag + 2))
-            fade_ratio = (limiting_mag - mag) / 0.8 if mag > limiting_mag - 0.8 else 1.0
-            fade_ratio = max(0, min(1, fade_ratio))
-            if (name, mag) in star_colors and fade_ratio < 1.0:
-                color = star_colors[(name, mag)]
-            elif fade_ratio < 1.0:
-                color = (1.0, 1.0 - (1 - fade_ratio) * 0.7, 1.0 - (1 - fade_ratio) * 0.7)
-            else:
-                color = "white"
-            ax.scatter(x, y, s=size, color=color, alpha=alpha, zorder=3)
-            if mag <= limiting_mag:
-                visible_count += 1
-        else:
-            if mag <= baseline_limit:
-                lost_color = star_colors.get((name, mag), "#FF2222")
-                lost_names.append((name, lost_color))
-                ax.scatter(x, y, s=12, color=lost_color, alpha=0.4, zorder=2, marker="*")
+        # Was visible in 2012 but not now = lost
+        was_visible = mag <= lm_2012
+        is_visible = mag <= lm_now
 
-    # Labels for brightest
+        if is_visible:
+            # Fully visible — size by brightness
+            size = max(8, 100 / (mag + 2))
+            brightness = min(1.0, max(0.35, 1.0 - mag / 9))
+            # Stars near threshold fade slightly
+            if mag > lm_now - 0.3:
+                brightness *= 0.6
+            ax.scatter(x, y, s=size, color="white", alpha=brightness, zorder=3)
+            visible_count += 1
+        elif was_visible:
+            # Lost — show as colored ghost
+            color = color_map.get((name, mag), "#FF4444")
+            size = max(8, 80 / (mag + 2))
+            ax.scatter(x, y, s=size, color=color, alpha=0.5, zorder=2, marker="*")
+            lost_names.append((name, color))
+
+    # Labels for 10 brightest
     brightest = sorted(stars, key=lambda x: x[1])[:10]
     for name, mag in brightest:
         x, y = positions[(name, mag)]
         offset_y = 0.35 if y < 8.5 else -0.35
-        alpha = star_alpha(mag, limiting_mag)
-        color = "#6688AA" if alpha > 0.5 else "#663333"
-        ax.text(x, y + offset_y, name, color=color, fontsize=5.5,
+        was_visible = mag <= lm_2012
+        is_visible = mag <= lm_now
+        if is_visible:
+            label_color = "#6688AA"
+        elif was_visible:
+            label_color = color_map.get((name, mag), "#AA4444")
+        else:
+            continue
+        ax.text(x, y + offset_y, name, color=label_color, fontsize=5.5,
                 ha="center", va="center", style="italic")
 
     # Legend
     ax.scatter([0.4], [0.6], s=20, color="white", alpha=0.9, zorder=5)
     ax.text(0.7, 0.6, "visible", color="#8899BB", fontsize=6, va="center")
-    ax.scatter([2.2], [0.6], s=8, color="#FF2222", alpha=0.3, marker="*", zorder=5)
-    ax.text(2.5, 0.6, "lost", color="#AA4444", fontsize=6, va="center")
+    ax.scatter([2.2], [0.6], s=18, color="#FF6B6B", alpha=0.6, marker="*", zorder=5)
+    ax.text(2.5, 0.6, "lost since 2012", color="#AA4444", fontsize=6, va="center")
 
     ax.text(5, 9.75, str(year), ha="center", color="white", fontsize=14)
-    ax.text(5, 9.35, f"{radiance:.2f} nW/cm²/sr  ·  limiting mag {limiting_mag}",
+    ax.text(5, 9.35, f"{radiance_now:.2f} nW/cm²/sr  ·  limiting mag {lm_now:.2f}",
             ha="center", color="#444466", fontsize=7)
     ax.text(5, 0.25, f"{visible_count} objects visible",
             ha="center", color="#333355", fontsize=8)
 
-    return fig, lost_names, star_colors
+    return fig, lost_names
 
-# Session state
+# ── Session state ─────────────────────────────────────────────────────────────
+
 if "searched" not in st.session_state:
     st.session_state.searched = False
 if "zipcode" not in st.session_state:
     st.session_state.zipcode = ""
+if "radiance_by_year" not in st.session_state:
+    st.session_state.radiance_by_year = {}
+
+# ── UI ────────────────────────────────────────────────────────────────────────
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
+
+zip_data = load_zip_data()
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
@@ -231,6 +222,7 @@ with col2:
         if lat:
             st.session_state.searched = True
             st.session_state.zipcode = zipcode_input
+            st.session_state.radiance_by_year = get_radiance_by_year(zipcode_input, zip_data)
         else:
             st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>", unsafe_allow_html=True)
 
@@ -238,25 +230,36 @@ st.markdown("<br>", unsafe_allow_html=True)
 
 if st.session_state.searched:
     zipcode = st.session_state.zipcode
-    RADIANCE_BY_YEAR = get_radiance_by_year(zipcode)
-    radiance_2012 = RADIANCE_BY_YEAR[2012]
-    radiance_2023 = RADIANCE_BY_YEAR[2023]
-    baseline_limit = radiance_to_limiting_magnitude(radiance_2012)
-    limit_2023 = radiance_to_limiting_magnitude(radiance_2023)
-    all_lost = [(n, m) for n, m in stars if limit_2023 < m <= baseline_limit]
-    pct_change = ((radiance_2023 - radiance_2012) / radiance_2012) * 100
+    radiance_by_year = st.session_state.radiance_by_year
+
+    rad_2012 = radiance_by_year[2012]
+    rad_2023 = radiance_by_year[2023]
+    lm_2012 = radiance_to_limiting_magnitude(rad_2012)
+    lm_2023 = radiance_to_limiting_magnitude(rad_2023)
+    pct_change = ((rad_2023 - rad_2012) / rad_2012) * 100
+
+    # Assign colors to potentially lost stars
+    potentially_lost = sorted(
+        [(n, m) for n, m in STARS if lm_2023 < m <= lm_2012],
+        key=lambda x: x[1]
+    )
+    color_map = {(n, m): LOST_COLORS[i % len(LOST_COLORS)]
+                 for i, (n, m) in enumerate(potentially_lost)}
+
+    all_lost = potentially_lost
+    still_visible = [s for s in STARS if s[1] <= lm_2023]
 
     st.markdown(f"<p style='text-align:center; letter-spacing:0.15em; font-size:0.75rem; color:#444466;'>ZIP CODE {zipcode}</p>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
     m1, m2, m3 = st.columns(3)
     m1.metric("light pollution since 2012", f"{pct_change:+.1f}%")
-    gained = [(n, m) for n, m in stars if baseline_limit < m <= limit_2023]
-    if pct_change < 0:
-        m2.metric("stars gained since 2012", len(gained))
-    else:
+    if pct_change >= 0:
         m2.metric("stars lost since 2012", len(all_lost))
-    m3.metric("still visible tonight", len([s for s in stars if s[1] <= limit_2023]))
+    else:
+        gained = [(n, m) for n, m in STARS if lm_2012 < m <= lm_2023]
+        m2.metric("stars gained since 2012", len(gained))
+    m3.metric("still visible tonight", len(still_visible))
 
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; letter-spacing:0.1em; font-size:0.7rem; color:#334466;'>DRAG TO TRAVEL THROUGH TIME</p>", unsafe_allow_html=True)
@@ -264,13 +267,10 @@ if st.session_state.searched:
     year = st.slider("", min_value=2012, max_value=2023, value=2012,
                      label_visibility="collapsed")
 
-    radiance = RADIANCE_BY_YEAR[year]
-    limiting_mag = radiance_to_limiting_magnitude(radiance)
-
-    st.write(f"DEBUG: radiance={radiance:.2f} limiting_mag={limiting_mag} baseline={baseline_limit} visible={len([s for s in stars if s[1] <= limiting_mag])}")
     col_center = st.columns([1, 6, 1])[1]
     with col_center:
-        fig, lost_names, star_colors = make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit)
+        np.random.seed(42)
+        fig, lost_names = make_sky_chart(STARS, year, radiance_by_year, color_map)
         st.pyplot(fig, use_container_width=True)
 
     if lost_names:
