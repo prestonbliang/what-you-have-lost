@@ -248,8 +248,12 @@ if st.session_state.searched:
     st.markdown("<br>", unsafe_allow_html=True)
 
     m1, m2, m3 = st.columns(3)
-    m1.metric("light pollution increase", f"+{pct_change:.1f}%")
-    m2.metric("stars lost since 2012", len(all_lost))
+    m1.metric("light pollution since 2012", f"{pct_change:+.1f}%")
+    gained = [(n, m) for n, m in stars if baseline_limit < m <= limit_2023]
+    if pct_change < 0:
+        m2.metric("stars gained since 2012", len(gained))
+    else:
+        m2.metric("stars lost since 2012", len(all_lost))
     m3.metric("still visible tonight", len([s for s in stars if s[1] <= limit_2023]))
 
     st.markdown("<br><br>", unsafe_allow_html=True)
