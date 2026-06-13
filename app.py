@@ -265,10 +265,10 @@ if st.session_state.searched:
     radiance = RADIANCE_BY_YEAR[year]
     limiting_mag = radiance_to_limiting_magnitude(radiance)
 
+    st.write(f"DEBUG: radiance={radiance:.2f} limiting_mag={limiting_mag} baseline={baseline_limit} visible={len([s for s in stars if s[1] <= limiting_mag])}")
     col_center = st.columns([1, 6, 1])[1]
     with col_center:
         fig, lost_names, star_colors = make_sky_chart(stars, year, radiance, limiting_mag, baseline_limit)
-        st.write(f"DEBUG lost_names type: {type(lost_names)}, first item: {lost_names[0] if lost_names else 'empty'}")
         st.pyplot(fig, use_container_width=True)
 
     if lost_names:
