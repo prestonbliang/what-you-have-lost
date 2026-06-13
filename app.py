@@ -237,7 +237,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 if st.session_state.searched:
     zipcode = st.session_state.zipcode
     RADIANCE_BY_YEAR = get_radiance_by_year(zipcode)
-        radiance_2012 = RADIANCE_BY_YEAR[2012]
+    radiance_2012 = RADIANCE_BY_YEAR[2012]
     radiance_2023 = RADIANCE_BY_YEAR[2023]
     baseline_limit = radiance_to_limiting_magnitude(radiance_2012)
     limit_2023 = radiance_to_limiting_magnitude(radiance_2023)
