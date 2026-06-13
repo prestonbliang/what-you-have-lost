@@ -70,12 +70,14 @@ stars = [
 ]
 
 def radiance_to_limiting_magnitude(radiance):
-    if radiance < 18:   return 4.9
-    elif radiance < 20: return 4.6
-    elif radiance < 22: return 4.3
-    elif radiance < 24: return 4.1
-    elif radiance < 26: return 3.9
-    else:               return 3.0
+    # Continuous conversion - more sensitive to small changes
+    # Based on Bortle scale: limiting mag decreases as radiance increases
+    import math
+    if radiance <= 0:
+        return 7.6
+    # Logarithmic relationship between radiance and limiting magnitude
+    lm = 7.6 - 1.2 * math.log10(max(1, radiance))
+    return round(max(2.0, min(7.6, lm)), 2)
 
 def star_alpha(mag, limiting_mag, fade_range=0.8):
     """Calculate star brightness - stars fade gradually before disappearing"""
