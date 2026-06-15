@@ -130,6 +130,8 @@ def make_sky_chart(stars, year, radiance_by_year, color_map):
     radiance_now = radiance_by_year[year]
     lm_2012 = radiance_to_limiting_magnitude(radiance_2012)
     lm_now = radiance_to_limiting_magnitude(radiance_now)
+    # DEBUG
+    ax.text(5, 5, f"lm2012={lm_2012} lm_now={lm_now}", ha="center", color="red", fontsize=8)
 
     # Light glow
     glow_alpha = min(0.15, max(0, (radiance_now - radiance_2012) / (radiance_2012 * 2)))
