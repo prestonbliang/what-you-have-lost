@@ -70,7 +70,7 @@ SD_RADIANCE = {
 
 # ── Functions ─────────────────────────────────────────────────────────────────
 
-@st.cache_data
+@st.cache_data(ttl=0)
 def load_zip_data():
     url = "https://raw.githubusercontent.com/prestonbliang/what-you-have-lost/main/zip_radiance.json"
     try:
