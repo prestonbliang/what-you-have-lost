@@ -70,7 +70,7 @@ SD_RADIANCE = {
 
 # ── Functions ─────────────────────────────────────────────────────────────────
 
-@st.cache_data(ttl=0)
+@st.cache_data(ttl=1)
 def load_zip_data():
     url = "https://raw.githubusercontent.com/prestonbliang/what-you-have-lost/main/zip_radiance.json"
     try:
@@ -130,8 +130,6 @@ def make_sky_chart(stars, year, radiance_by_year, color_map):
     radiance_now = radiance_by_year[year]
     lm_2012 = radiance_to_limiting_magnitude(radiance_2012)
     lm_now = radiance_to_limiting_magnitude(radiance_now)
-    # DEBUG
-    ax.text(5, 5, f"lm2012={lm_2012} lm_now={lm_now}", ha="center", color="red", fontsize=8)
 
     # Light glow
     glow_alpha = min(0.15, max(0, (radiance_now - radiance_2012) / (radiance_2012 * 2)))
@@ -226,7 +224,9 @@ with col2:
         if lat:
             st.session_state.searched = True
             st.session_state.zipcode = zipcode_input
-            st.session_state.radiance_by_year = get_radiance_by_year(zipcode_input, zip_data)
+            # Force fresh load every time
+            fresh_zip_data = load_zip_data()
+            st.session_state.radiance_by_year = get_radiance_by_year(zipcode_input, fresh_zip_data)
         else:
             st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>", unsafe_allow_html=True)
 
