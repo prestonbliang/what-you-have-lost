@@ -1,11 +1,9 @@
-
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import requests
 import math
-import json
 
 st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wide")
 
@@ -27,33 +25,76 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ── Data ──────────────────────────────────────────────────────────────────────
-
 STARS = [
-    ("Sirius", -1.46), ("Arcturus", -0.05), ("Vega", 0.03),
-    ("Rigel", 0.13), ("Procyon", 0.34), ("Betelgeuse", 0.42),
-    ("Altair", 0.76), ("Aldebaran", 0.87), ("Antares", 1.06),
-    ("Spica", 1.04), ("Pollux", 1.16), ("Fomalhaut", 1.17),
-    ("Deneb", 1.25), ("Regulus", 1.36), ("Adhara", 1.50),
-    ("Castor", 1.58), ("Bellatrix", 1.64), ("Elnath", 1.65),
-    ("Alnilam", 1.70), ("Alioth", 1.76), ("Mirfak", 1.79),
-    ("Dubhe", 1.81), ("Alkaid", 1.85), ("Peacock", 1.94),
-    ("Polaris", 1.97), ("Hamal", 2.01), ("Alpheratz", 2.07),
-    ("Kochab", 2.07), ("Algol", 2.09), ("Denebola", 2.14),
-    ("Alphecca", 2.22), ("Mintaka", 2.23), ("Schedar", 2.24),
-    ("Phad", 2.40), ("Izar", 2.35), ("Mizar", 2.23),
-    ("Muphrid", 2.68), ("Porrima", 2.74), ("Sabik", 2.87),
-    ("Cor Caroli", 2.89), ("Megrez", 3.31), ("Segin", 3.38),
-    ("Tania Borealis", 3.45), ("Alula Australis", 3.67),
-    ("Fulu", 3.66), ("Albali", 3.77), ("Andromeda Galaxy", 3.44),
-    ("Beehive Cluster", 3.70), ("Omega Centauri", 3.90),
-    ("Acubens", 3.94), ("Propus", 3.97), ("Castula", 3.97),
-    ("Marfak", 3.98), ("Alzirr", 3.99), ("Alula Borealis", 3.99),
-    ("Jabbah", 4.00), ("Orion Nebula", 4.00), ("Mekbuda", 4.01),
-    ("Deneb el Okab", 4.02), ("47 Tucanae", 4.09),
-    ("Ancha", 4.17), ("Chara", 4.26), ("Asterion", 4.26),
-    ("NGC 869", 4.30), ("Paikauhale", 4.35), ("Situla", 4.42),
-    ("Iota Leporis", 4.45), ("M41", 4.50), ("Gamma Pictoris", 4.51),
+    ("Sirius",          -1.46,  6.752, -16.716),
+    ("Arcturus",        -0.05, 14.261,  19.182),
+    ("Vega",             0.03, 18.615,  38.784),
+    ("Rigel",            0.13,  5.242,  -8.202),
+    ("Procyon",          0.34,  7.655,   5.225),
+    ("Betelgeuse",       0.42,  5.919,   7.407),
+    ("Altair",           0.76, 19.846,   8.868),
+    ("Aldebaran",        0.87,  4.599,  16.509),
+    ("Antares",          1.06, 16.490, -26.432),
+    ("Spica",            1.04, 13.420, -11.161),
+    ("Pollux",           1.16,  7.755,  28.026),
+    ("Fomalhaut",        1.17, 22.961, -29.622),
+    ("Deneb",            1.25, 20.691,  45.280),
+    ("Regulus",          1.36, 10.139,  11.967),
+    ("Adhara",           1.50,  6.977, -28.972),
+    ("Castor",           1.58,  7.577,  31.888),
+    ("Bellatrix",        1.64,  5.419,   6.350),
+    ("Elnath",           1.65,  5.438,  28.608),
+    ("Alnilam",          1.70,  5.603,  -1.202),
+    ("Alioth",           1.76, 12.900,  55.960),
+    ("Mirfak",           1.79,  3.406,  49.861),
+    ("Dubhe",            1.81, 11.062,  61.751),
+    ("Alkaid",           1.85, 13.792,  49.313),
+    ("Peacock",          1.94, 20.427, -56.735),
+    ("Polaris",          1.97,  2.530,  89.264),
+    ("Hamal",            2.01,  2.120,  23.463),
+    ("Alpheratz",        2.07,  0.140,  29.091),
+    ("Kochab",           2.07, 14.845,  74.156),
+    ("Algol",            2.09,  3.136,  40.957),
+    ("Denebola",         2.14, 11.818,  14.572),
+    ("Alphecca",         2.22, 15.578,  26.715),
+    ("Mintaka",          2.23,  5.534,  -0.299),
+    ("Schedar",          2.24,  0.675,  56.537),
+    ("Phad",             2.40, 11.897,  53.695),
+    ("Izar",             2.35, 14.749,  27.074),
+    ("Mizar",            2.23, 13.399,  54.926),
+    ("Muphrid",          2.68, 13.911,  18.398),
+    ("Porrima",          2.74, 12.694,  -1.449),
+    ("Sabik",            2.87, 17.173, -15.724),
+    ("Cor Caroli",       2.89, 12.934,  38.318),
+    ("Megrez",           3.31, 12.257,  57.033),
+    ("Segin",            3.38,  0.945,  63.670),
+    ("Tania Borealis",   3.45, 10.285,  42.914),
+    ("Alula Australis",  3.67, 11.307,  31.529),
+    ("Fulu",             3.66,  0.317,  77.274),
+    ("Albali",           3.77, 20.794,  -9.496),
+    ("Andromeda Galaxy", 3.44,  0.712,  41.269),
+    ("Beehive Cluster",  3.70,  8.667,  19.621),
+    ("Omega Centauri",   3.90, 13.447, -47.479),
+    ("Acubens",          3.94,  8.975,  11.858),
+    ("Propus",           3.97,  6.269,  22.506),
+    ("Castula",          3.97,  0.945,  63.670),
+    ("Marfak",           3.98,  2.859,  55.896),
+    ("Alzirr",           3.99,  6.754,  12.896),
+    ("Alula Borealis",   3.99, 11.294,  33.094),
+    ("Jabbah",           4.00, 16.200, -19.460),
+    ("Orion Nebula",     4.00,  5.588,  -5.390),
+    ("Mekbuda",          4.01,  7.069,  20.570),
+    ("Deneb el Okab",    4.02, 19.090,  13.863),
+    ("47 Tucanae",       4.09,  0.402, -72.081),
+    ("Ancha",            4.17, 22.277,  -7.783),
+    ("Chara",            4.26, 12.934,  38.318),
+    ("Asterion",         4.26, 12.934,  38.318),
+    ("NGC 869",          4.30,  2.322,  57.133),
+    ("Paikauhale",       4.35, 17.622, -43.239),
+    ("Situla",           4.42, 22.491,  -8.982),
+    ("Iota Leporis",     4.45,  5.207, -11.869),
+    ("M41",              4.50,  6.767, -20.759),
+    ("Gamma Pictoris",   4.51,  5.830, -56.167),
 ]
 
 LOST_COLORS = [
@@ -61,22 +102,21 @@ LOST_COLORS = [
     "#FF6348", "#A29BFE", "#FD79A8", "#7BED9F", "#ECCC68"
 ]
 
-# San Diego fallback data
 SD_RADIANCE = {
     2012: 19.77, 2013: 21.00, 2014: 21.17, 2015: 20.64,
     2016: 20.53, 2017: 20.36, 2018: 20.70, 2019: 20.86,
     2020: 21.15, 2021: 21.29, 2022: 21.50, 2023: 22.68
 }
 
-# ── Functions ─────────────────────────────────────────────────────────────────
 
 def load_zip_data():
     url = "https://raw.githubusercontent.com/prestonbliang/what-you-have-lost/main/zip_radiance.json"
     try:
         response = requests.get(url, timeout=15)
         return response.json()
-    except:
+    except Exception:
         return {}
+
 
 def get_radiance_by_year(zipcode, zip_data):
     data = zip_data.get(str(zipcode).zfill(5), None)
@@ -84,13 +124,21 @@ def get_radiance_by_year(zipcode, zip_data):
         return {int(k): float(v) for k, v in data.items()}
     return SD_RADIANCE
 
+
 def radiance_to_limiting_magnitude(radiance):
-    if radiance < 18:   return 4.9
-    elif radiance < 20: return 4.6
-    elif radiance < 22: return 4.3
-    elif radiance < 24: return 4.1
-    elif radiance < 26: return 3.9
-    else:               return 3.0
+    if radiance < 18:
+        return 4.9
+    elif radiance < 20:
+        return 4.6
+    elif radiance < 22:
+        return 4.3
+    elif radiance < 24:
+        return 4.1
+    elif radiance < 26:
+        return 3.9
+    else:
+        return 3.0
+
 
 def zip_to_coords(zipcode):
     try:
@@ -102,7 +150,7 @@ def zip_to_coords(zipcode):
             city = data["places"][0]["place name"]
             state = data["places"][0]["state"]
             return lat, lon, f"{city}, {state}"
-    except:
+    except Exception:
         pass
     try:
         headers = {"User-Agent": "WhatHaveYouLost/1.0"}
@@ -113,91 +161,114 @@ def zip_to_coords(zipcode):
             data = response.json()
             if data:
                 return float(data[0]["lat"]), float(data[0]["lon"]), data[0]["display_name"]
-    except:
+    except Exception:
         pass
     return None, None, None
 
-def make_sky_chart(stars, year, radiance_by_year, color_map):
+
+def compute_lst(lon_deg, year):
+    return 9.0
+
+
+def ra_dec_to_xy(ra_hours, dec_deg, lat_deg, lst_hours):
+    ra = math.radians(ra_hours * 15)
+    dec = math.radians(dec_deg)
+    lat_r = math.radians(lat_deg)
+    ha = math.radians(lst_hours * 15) - ra
+    sin_alt = (math.sin(dec) * math.sin(lat_r) +
+               math.cos(dec) * math.cos(lat_r) * math.cos(ha))
+    sin_alt = max(-1.0, min(1.0, sin_alt))
+    alt = math.asin(sin_alt)
+    denom = (math.cos(alt) * math.cos(lat_r))
+    if abs(denom) < 1e-10:
+        denom = 1e-10
+    cos_az = ((math.sin(dec) - math.sin(alt) * math.sin(lat_r)) / denom)
+    cos_az = max(-1.0, min(1.0, cos_az))
+    az = math.acos(cos_az)
+    if math.sin(ha) > 0:
+        az = 2 * math.pi - az
+    r = (math.pi / 2 - alt) / (math.pi / 2)
+    x = r * math.sin(az)
+    y = r * math.cos(az)
+    return x, y, math.degrees(alt)
+
+
+def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon):
     fig, ax = plt.subplots(figsize=(8, 8))
     fig.patch.set_facecolor("#03030a")
     ax.set_facecolor("#03030a")
-    ax.set_xlim(0, 10)
-    ax.set_ylim(0, 10)
+    ax.set_xlim(-1.2, 1.2)
+    ax.set_ylim(-1.2, 1.2)
     ax.axis("off")
+    ax.set_aspect("equal")
 
-    radiance_2012 = radiance_by_year[2012]
-    radiance_now = radiance_by_year[year]
-    lm_2012 = radiance_to_limiting_magnitude(radiance_2012)
-    lm_now = radiance_to_limiting_magnitude(radiance_now)
+    rad_2012 = radiance_by_year[2012]
+    rad_now = radiance_by_year[year]
+    lm_2012 = radiance_to_limiting_magnitude(rad_2012)
+    lm_now = radiance_to_limiting_magnitude(rad_now)
 
-    # Light glow
-    glow_alpha = min(0.15, max(0, (radiance_now - radiance_2012) / (radiance_2012 * 2)))
-    glow1 = mpatches.Circle((5, 0), 8, color="#FF6600", alpha=glow_alpha)
-    glow2 = mpatches.Circle((5, 0), 5, color="#FF8800", alpha=glow_alpha * 0.5)
-    ax.add_patch(glow1)
-    ax.add_patch(glow2)
+    glow_alpha = min(0.12, max(0, (rad_now - rad_2012) / (rad_2012 * 1.5)))
+    glow = mpatches.Circle((0, -0.3), 1.3, color="#FF6600", alpha=glow_alpha)
+    ax.add_patch(glow)
 
-    np.random.seed(42)
-    positions = {(name, mag): (np.random.uniform(0.5, 9.5), np.random.uniform(1.0, 9.2))
-                 for name, mag in stars}
+    horizon = plt.Circle((0, 0), 1.0, color="#111133", fill=False, linewidth=0.8)
+    ax.add_patch(horizon)
+
+    for alt_deg in [30, 60]:
+        r = 1.0 - alt_deg / 90
+        ring = plt.Circle((0, 0), r, color="#0d0d1a", fill=False,
+                           linewidth=0.3, linestyle=":")
+        ax.add_patch(ring)
+
+    for label, angle in [("N", 0), ("E", -math.pi / 2), ("S", math.pi), ("W", math.pi / 2)]:
+        x = 1.1 * math.sin(angle)
+        y = 1.1 * math.cos(angle)
+        ax.text(x, y, label, color="#445566", fontsize=8,
+                ha="center", va="center", fontweight="bold")
+
+    lst = compute_lst(lon, year)
 
     visible_count = 0
-    lost_names = []
+    lost_on_chart = []
 
-    for name, mag in stars:
-        x, y = positions[(name, mag)]
+    for name, mag, ra, dec in stars:
+        x, y, alt = ra_dec_to_xy(ra, dec, lat, lst)
+        if alt < 0:
+            continue
 
-        # Was visible in 2012 but not now = lost
         was_visible = mag <= lm_2012
         is_visible = mag <= lm_now
 
         if is_visible:
-            # Fully visible — size by brightness
-            size = max(8, 100 / (mag + 2))
-            brightness = min(1.0, max(0.35, 1.0 - mag / 9))
-            # Stars near threshold fade slightly
-            if mag > lm_now - 0.3:
-                brightness *= 0.6
+            size = max(6, 90 / (mag + 2.5))
+            brightness = min(1.0, max(0.3, 1.0 - mag / 9))
             ax.scatter(x, y, s=size, color="white", alpha=brightness, zorder=3)
             visible_count += 1
+            if mag < 1.0:
+                ax.text(x, y + 0.06, name, color="#7799CC", fontsize=6,
+                        ha="center", va="center", style="italic")
         elif was_visible:
-            # Lost — show as colored ghost
             color = color_map.get((name, mag), "#FF4444")
-            size = max(8, 80 / (mag + 2))
-            ax.scatter(x, y, s=size, color=color, alpha=0.5, zorder=2, marker="*")
-            lost_names.append((name, color))
+            size = max(8, 80 / (mag + 2.5))
+            ax.scatter(x, y, s=size, color=color, alpha=0.7,
+                       zorder=2, marker="*")
+            lost_on_chart.append((name, color))
+            ax.text(x, y + 0.06, name, color=color, fontsize=5.5,
+                    ha="center", va="center", style="italic", alpha=0.85)
 
-    # Labels for 10 brightest
-    brightest = sorted(stars, key=lambda x: x[1])[:10]
-    for name, mag in brightest:
-        x, y = positions[(name, mag)]
-        offset_y = 0.35 if y < 8.5 else -0.35
-        was_visible = mag <= lm_2012
-        is_visible = mag <= lm_now
-        if is_visible:
-            label_color = "#6688AA"
-        elif was_visible:
-            label_color = color_map.get((name, mag), "#AA4444")
-        else:
-            continue
-        ax.text(x, y + offset_y, name, color=label_color, fontsize=5.5,
-                ha="center", va="center", style="italic")
+    ax.scatter([-1.05], [-1.1], s=15, color="white", alpha=0.9, zorder=5)
+    ax.text(-0.92, -1.1, "visible", color="#8899BB", fontsize=6, va="center")
+    ax.scatter([-0.5], [-1.1], s=14, color="#FF6B6B", alpha=0.7,
+               marker="*", zorder=5)
+    ax.text(-0.38, -1.1, "lost since 2012", color="#CC6666",
+            fontsize=6, va="center")
 
-    # Legend
-    ax.scatter([0.4], [0.6], s=20, color="white", alpha=0.9, zorder=5)
-    ax.text(0.7, 0.6, "visible", color="#8899BB", fontsize=6, va="center")
-    ax.scatter([2.2], [0.6], s=18, color="#FF6B6B", alpha=0.6, marker="*", zorder=5)
-    ax.text(2.5, 0.6, "lost since 2012", color="#AA4444", fontsize=6, va="center")
+    ax.text(0, 1.13, str(year), ha="center", color="white", fontsize=13)
+    ax.text(0, -1.16, f"{rad_now:.1f} nW/cm²/sr  ·  {visible_count} visible",
+            ha="center", color="#445566", fontsize=7)
 
-    ax.text(5, 9.75, str(year), ha="center", color="white", fontsize=14)
-    ax.text(5, 9.35, f"{radiance_now:.2f} nW/cm²/sr  ·  limiting mag {lm_now:.2f}",
-            ha="center", color="#444466", fontsize=7)
-    ax.text(5, 0.25, f"{visible_count} objects visible",
-            ha="center", color="#333355", fontsize=8)
+    return fig, lost_on_chart
 
-    return fig, lost_names
-
-# ── Session state ─────────────────────────────────────────────────────────────
 
 if "searched" not in st.session_state:
     st.session_state.searched = False
@@ -205,15 +276,15 @@ if "zipcode" not in st.session_state:
     st.session_state.zipcode = ""
 if "radiance_by_year" not in st.session_state:
     st.session_state.radiance_by_year = {}
-
-# ── UI ────────────────────────────────────────────────────────────────────────
+if "lat" not in st.session_state:
+    st.session_state.lat = 32.8
+if "lon" not in st.session_state:
+    st.session_state.lon = -117.2
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
-
-zip_data = load_zip_data()
 
 col1, col2, col3 = st.columns([1, 2, 1])
 with col2:
@@ -221,19 +292,23 @@ with col2:
     if st.button("search", use_container_width=True):
         lat, lon, display_name = zip_to_coords(zipcode_input)
         if lat:
+            zip_data = load_zip_data()
             st.session_state.searched = True
             st.session_state.zipcode = zipcode_input
-            # Force fresh load every time
-            fresh_zip_data = load_zip_data()
-            st.session_state.radiance_by_year = get_radiance_by_year(zipcode_input, fresh_zip_data)
+            st.session_state.radiance_by_year = get_radiance_by_year(zipcode_input, zip_data)
+            st.session_state.lat = lat
+            st.session_state.lon = lon
         else:
-            st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>",
+                        unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
 if st.session_state.searched:
     zipcode = st.session_state.zipcode
     radiance_by_year = st.session_state.radiance_by_year
+    lat = st.session_state.lat
+    lon = st.session_state.lon
 
     rad_2012 = radiance_by_year[2012]
     rad_2023 = radiance_by_year[2023]
@@ -241,18 +316,19 @@ if st.session_state.searched:
     lm_2023 = radiance_to_limiting_magnitude(rad_2023)
     pct_change = ((rad_2023 - rad_2012) / rad_2012) * 100
 
-    # Assign colors to potentially lost stars
+    star_mags = [(s[0], s[1]) for s in STARS]
     potentially_lost = sorted(
-        [(n, m) for n, m in STARS if lm_2023 < m <= lm_2012],
+        [(n, m) for n, m in star_mags if lm_2023 < m <= lm_2012],
         key=lambda x: x[1]
     )
     color_map = {(n, m): LOST_COLORS[i % len(LOST_COLORS)]
                  for i, (n, m) in enumerate(potentially_lost)}
 
     all_lost = potentially_lost
-    still_visible = [s for s in STARS if s[1] <= lm_2023]
+    still_visible = [(n, m) for n, m in star_mags if m <= lm_2023]
 
-    st.markdown(f"<p style='text-align:center; letter-spacing:0.15em; font-size:0.75rem; color:#444466;'>ZIP CODE {zipcode}</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center; letter-spacing:0.15em; font-size:0.75rem; color:#444466;'>ZIP CODE {zipcode}</p>",
+                unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
     m1, m2, m3 = st.columns(3)
@@ -260,41 +336,50 @@ if st.session_state.searched:
     if pct_change >= 0:
         m2.metric("stars lost since 2012", len(all_lost))
     else:
-        gained = [(n, m) for n, m in STARS if lm_2012 < m <= lm_2023]
+        gained = [(n, m) for n, m in star_mags if lm_2012 < m <= lm_2023]
         m2.metric("stars gained since 2012", len(gained))
     m3.metric("still visible tonight", len(still_visible))
 
     st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; letter-spacing:0.1em; font-size:0.7rem; color:#334466;'>DRAG TO TRAVEL THROUGH TIME</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; letter-spacing:0.1em; font-size:0.7rem; color:#334466;'>DRAG TO TRAVEL THROUGH TIME</p>",
+                unsafe_allow_html=True)
 
     year = st.slider("", min_value=2012, max_value=2023, value=2012,
-                     label_visibility="collapsed")
+                      label_visibility="collapsed")
 
     col_center = st.columns([1, 6, 1])[1]
     with col_center:
-        np.random.seed(42)
-        fig, lost_names = make_sky_chart(STARS, year, radiance_by_year, color_map)
+        fig, lost_on_chart = make_sky_chart(STARS, year, radiance_by_year,
+                                             color_map, lat, lon)
         st.pyplot(fig, use_container_width=True)
 
-    if lost_names:
+    st.markdown("<p style='text-align:center; font-size:0.7rem; color:#334455; margin-top:-10px;'>face south · center is straight up · stars near the edge sit low on the horizon</p>",
+                unsafe_allow_html=True)
+
+    if lost_on_chart:
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year}</p>",
+                    unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         html = "<div style='display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;'>"
-        for name, color in lost_names:
+        for name, color in lost_on_chart:
             html += f"<div style='color:{color}; font-size:0.85rem;'>★ {name}</div>"
         html += "</div>"
         st.markdown(html, unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#1a1a2e;'>NASA BLACK MARBLE VNP46A4</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#1a1a2e;'>NASA BLACK MARBLE VNP46A4</p>",
+                unsafe_allow_html=True)
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; letter-spacing:0.15em; font-size:0.7rem; color:#222244;'>HOW IS THIS DIFFERENT</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; letter-spacing:0.15em; font-size:0.7rem; color:#222244;'>HOW IS THIS DIFFERENT</p>",
+            unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2; color:#333355;'>Tools like Light Pollution Map, NASA Worldview, and Globe at Night show raw radiance data built for researchers. This tool translates that data into something human — the actual named stars you have lost from your specific sky, since 2012.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2; color:#333355;'>Tools like Light Pollution Map, NASA Worldview, and Globe at Night show raw radiance data built for researchers. This tool translates that data into something human — the actual named stars you have lost from your specific sky, since 2012.</p>",
+            unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#111122;'>BUILT BY A STUDENT RESEARCHER IN SAN DIEGO</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#111122;'>BUILT BY A STUDENT RESEARCHER IN SAN DIEGO</p>",
+            unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
