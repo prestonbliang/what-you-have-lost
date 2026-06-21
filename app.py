@@ -280,6 +280,8 @@ if "lat" not in st.session_state:
     st.session_state.lat = 32.8
 if "lon" not in st.session_state:
     st.session_state.lon = -117.2
+if "place_name" not in st.session_state:
+    st.session_state.place_name = ""
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
@@ -298,6 +300,7 @@ with col2:
             st.session_state.radiance_by_year = get_radiance_by_year(zipcode_input, zip_data)
             st.session_state.lat = lat
             st.session_state.lon = lon
+            st.session_state.place_name = display_name
         else:
             st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>",
                         unsafe_allow_html=True)
@@ -328,6 +331,8 @@ if st.session_state.searched:
     still_visible = [(n, m) for n, m in star_mags if m <= lm_2023]
 
     st.markdown(f"<p style='text-align:center; letter-spacing:0.15em; font-size:0.75rem; color:#444466;'>ZIP CODE {zipcode}</p>",
+                unsafe_allow_html=True)
+    st.markdown(f"<p style='text-align:center; font-size:0.85rem; color:#7788AA; margin-top:-8px;'>{st.session_state.place_name}</p>",
                 unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
 
