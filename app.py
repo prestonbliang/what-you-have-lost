@@ -587,6 +587,14 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; letter-spacing:0.15em; font-size:0.65rem; color:#444466;'>WHY DOES THE DATA STOP AT 2023?</p>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("""
+<p style='text-align:center; max-width:560px; margin:0 auto; font-size:0.8rem; line-height:2; color:#445566;'>
+This tool is built on NASA's Black Marble VNP46A4 dataset — annual composites of nighttime light radiance captured by the VIIRS sensor aboard the Suomi-NPP satellite. 2023 is the most recent complete annual composite currently released by NASA. As new years are published, the data here can be updated to match.
+</p>
+""", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#334455;'>NASA BLACK MARBLE VNP46A4  ·  BACKGROUND: NASA/GALEX M31</p>", unsafe_allow_html=True)
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.stop()
