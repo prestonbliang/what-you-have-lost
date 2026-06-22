@@ -13,7 +13,8 @@ st.markdown("""
     * { font-family: 'Inter', sans-serif; }
     .stApp { background-color: #03030a; }
     section[data-testid="stSidebar"] { display: none; }
-    .main .block-container { max-width: 900px; margin: 0 auto; padding: 4rem 2rem; }
+    header[data-testid="stHeader"] { display: none !important; }
+    .main .block-container { max-width: 900px; margin: 0 auto; padding: 5.5rem 2rem 4rem 2rem; }
     h1, h2, h3 { font-family: 'Space Grotesk', sans-serif !important; color: white !important; font-weight: 300 !important; letter-spacing: 0.05em !important; }
     .stTextInput input { background-color: #0d0d1a !important; border: 1px solid #222244 !important; border-radius: 4px !important; color: white !important; padding: 0.75rem 1rem !important; font-size: 16px !important; }
     .stButton button { background-color: transparent !important; border: 1px solid #4444AA !important; border-radius: 4px !important; color: #8888CC !important; padding: 0.75rem 2rem !important; font-size: 14px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; width: 100% !important; }
@@ -22,6 +23,28 @@ st.markdown("""
     .stMetric label { color: #555577 !important; font-size: 11px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; }
     .stMetric [data-testid="stMetricValue"] { color: white !important; font-size: 2rem !important; font-weight: 300 !important; }
     hr { border-color: #111133 !important; margin: 3rem 0 !important; }
+    .wyhl-topnav {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+        height: 52px;
+        background: rgba(3,3,10,0.88);
+        border-bottom: 1px solid #1a1a3a;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 2.5rem;
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    .wyhl-brand {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.7rem; letter-spacing: 0.22em;
+        color: #FF4444; text-decoration: none;
+    }
+    .wyhl-navlinks { display: flex; gap: 2.5rem; align-items: center; }
+    .wyhl-navlink {
+        font-size: 0.62rem; letter-spacing: 0.18em;
+        color: #44446a; text-decoration: none;
+        padding-bottom: 2px; transition: color 0.15s;
+    }
+    .wyhl-navlink:hover { color: #9999CC; }
+    .wyhl-navlink.active { color: #ffffff; border-bottom: 1px solid #FF4444; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -383,47 +406,14 @@ if "lon" not in st.session_state:
 if "place_name" not in st.session_state:
     st.session_state.place_name = ""
 
-# ── Nav bar ───────────────────────────────────────────────────────────────────
+# ── Nav bar (fixed, full-width) ───────────────────────────────────────────────
 _p = st.session_state.page
 st.markdown(f"""
-<style>
-.wyhl-nav {{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.1rem 0 1rem 0;
-    border-bottom: 1px solid #111133;
-    margin-bottom: 0;
-    background: rgba(3,3,10,0.5);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}}
-.wyhl-nav-brand {{
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 0.2em;
-    color: #FF4444;
-    text-decoration: none;
-}}
-.wyhl-nav-links {{ display: flex; gap: 2.5rem; align-items: center; }}
-.wyhl-nav-link {{
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: #445566;
-    text-decoration: none;
-    padding-bottom: 3px;
-}}
-.wyhl-nav-link:hover {{ color: #8899BB; }}
-.wyhl-nav-link.active {{
-    color: white;
-    border-bottom: 1px solid #FF4444;
-}}
-</style>
-<div class='wyhl-nav'>
-  <a href='?page=landing' class='wyhl-nav-brand'>✦ &nbsp;WHAT HAVE YOU LOST</a>
-  <div class='wyhl-nav-links'>
-    <a href='?page=landing' class='wyhl-nav-link {"active" if _p == "landing" else ""}'>HOME</a>
-    <a href='?page=finder'  class='wyhl-nav-link {"active" if _p == "finder"  else ""}'>EXPLORE</a>
+<div class='wyhl-topnav'>
+  <a href='?page=landing' class='wyhl-brand'>✦ &nbsp;WHAT HAVE YOU LOST</a>
+  <div class='wyhl-navlinks'>
+    <a href='?page=landing' class='wyhl-navlink {"active" if _p == "landing" else ""}'>HOME</a>
+    <a href='?page=finder'  class='wyhl-navlink {"active" if _p == "finder"  else ""}'>EXPLORE</a>
   </div>
 </div>
 """, unsafe_allow_html=True)
