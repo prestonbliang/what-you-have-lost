@@ -255,7 +255,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
 
     for alt_deg in [20, 40, 60, 80]:
         r = 1.0 - alt_deg / 90
-        ring = plt.Circle((0, 0), r, color="#16223a", fill=False,
+        ring = plt.Circle((0, 0), r, color="#2a4a7a", fill=False,
                            linewidth=0.4, linestyle=(0, (1, 3)))
         ax.add_patch(ring)
 
@@ -263,7 +263,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         angle = math.radians(deg)
         x_end = math.sin(angle)
         y_end = math.cos(angle)
-        ax.plot([0, x_end], [0, y_end], color="#16223a",
+        ax.plot([0, x_end], [0, y_end], color="#2a4a7a",
                 linewidth=0.4, linestyle=(0, (1, 3)), zorder=1)
 
     for label, angle in [("N", 0), ("E", -math.pi / 2), ("S", math.pi), ("W", math.pi / 2)]:
