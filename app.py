@@ -580,6 +580,7 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
     with col2:
         if st.button("EXPLORE YOUR SKY  →", use_container_width=True):
             st.session_state.page = "finder"
+            st.query_params["page"] = "finder"
             st.rerun()
 
     st.markdown("<br>", unsafe_allow_html=True)
