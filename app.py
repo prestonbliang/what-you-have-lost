@@ -339,6 +339,14 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
     ax.text(-0.38, -1.1, "lost since 2012", color="#CC6666",
             fontsize=6, va="center")
 
+    ax.text(0.78, -1.03, "mag", color="#334455", fontsize=5, ha="center")
+    for i, m in enumerate([1, 2, 3, 4]):
+        sx = 0.57 + i * 0.14
+        s = max(6, 90 / (m + 2.5))
+        brightness = min(1.0, max(0.3, 1.0 - m / 9))
+        ax.scatter([sx], [-1.1], s=s, color="white", alpha=brightness, zorder=5)
+        ax.text(sx, -1.18, str(m), color="#445566", fontsize=5, ha="center")
+
     ax.text(0, 1.25, str(year), ha="center", color="white", fontsize=13)
     ax.text(0, -1.27, f"{rad_now:.1f} nW/cm²/sr  ·  {visible_count} visible",
             ha="center", color="#445566", fontsize=7)
