@@ -87,8 +87,8 @@ STARS = [
     ("Deneb el Okab",    4.02, 19.090,  13.863),
     ("47 Tucanae",       4.09,  0.402, -72.081),
     ("Ancha",            4.17, 22.277,  -7.783),
-    ("Chara",            4.26, 12.934,  38.318),
-    ("Asterion",         4.26, 12.934,  38.318),
+    ("Chara",            4.26, 12.270,  41.358),
+    ("Asterion",         4.26, 13.121,  35.945),
     ("NGC 869",          4.30,  2.322,  57.133),
     ("Paikauhale",       4.35, 17.622, -43.239),
     ("Situla",           4.42, 22.491,  -8.982),
@@ -100,6 +100,45 @@ STARS = [
 LOST_COLORS = [
     "#FF6B6B", "#FF9F43", "#FECA57", "#2ED573", "#48DBFB",
     "#FF6348", "#A29BFE", "#FD79A8", "#7BED9F", "#ECCC68"
+]
+
+CONSTELLATION_LINES = [
+    ("Betelgeuse", "Bellatrix"),
+    ("Bellatrix", "Mintaka"),
+    ("Mintaka", "Alnilam"),
+    ("Betelgeuse", "Alnilam"),
+    ("Rigel", "Mintaka"),
+    ("Rigel", "Alnilam"),
+    ("Betelgeuse", "Orion Nebula"),
+    ("Mintaka", "Orion Nebula"),
+    ("Sirius", "Adhara"),
+    ("Sirius", "M41"),
+    ("Procyon", "Sirius"),
+    ("Castor", "Pollux"),
+    ("Pollux", "Alzirr"),
+    ("Castor", "Mekbuda"),
+    ("Mekbuda", "Alzirr"),
+    ("Propus", "Castor"),
+    ("Aldebaran", "Elnath"),
+    ("Dubhe", "Phad"),
+    ("Phad", "Megrez"),
+    ("Megrez", "Alioth"),
+    ("Alioth", "Mizar"),
+    ("Mizar", "Alkaid"),
+    ("Megrez", "Dubhe"),
+    ("Polaris", "Kochab"),
+    ("Arcturus", "Izar"),
+    ("Izar", "Muphrid"),
+    ("Arcturus", "Muphrid"),
+    ("Schedar", "Segin"),
+    ("Regulus", "Denebola"),
+    ("Spica", "Porrima"),
+    ("Antares", "Jabbah"),
+    ("Jabbah", "Paikauhale"),
+    ("Altair", "Deneb el Okab"),
+    ("Vega", "Deneb"),
+    ("Deneb", "Altair"),
+    ("Altair", "Vega"),
 ]
 
 SD_RADIANCE = {
@@ -193,7 +232,7 @@ def ra_dec_to_xy(ra_hours, dec_deg, lat_deg, lst_hours):
     return x, y, math.degrees(alt)
 
 
-def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon):
+def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constellation_lines):
     fig, ax = plt.subplots(figsize=(8, 8))
     fig.patch.set_facecolor("#03030a")
     ax.set_facecolor("#03030a")
@@ -207,32 +246,55 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon):
     lm_2012 = radiance_to_limiting_magnitude(rad_2012)
     lm_now = radiance_to_limiting_magnitude(rad_now)
 
-    glow_alpha = min(0.12, max(0, (rad_now - rad_2012) / (rad_2012 * 1.5)))
+    glow_alpha = min(0.05, max(0, (rad_now - rad_2012) / (rad_2012 * 3)))
     glow = mpatches.Circle((0, -0.3), 1.3, color="#FF6600", alpha=glow_alpha)
     ax.add_patch(glow)
 
-    horizon = plt.Circle((0, 0), 1.0, color="#111133", fill=False, linewidth=0.8)
+    horizon = plt.Circle((0, 0), 1.0, color="#1a2a4a", fill=False, linewidth=1.0)
     ax.add_patch(horizon)
 
-    for alt_deg in [30, 60]:
+    for alt_deg in [20, 40, 60, 80]:
         r = 1.0 - alt_deg / 90
-        ring = plt.Circle((0, 0), r, color="#0d0d1a", fill=False,
-                           linewidth=0.3, linestyle=":")
+        ring = plt.Circle((0, 0), r, color="#16223a", fill=False,
+                           linewidth=0.4, linestyle=(0, (1, 3)))
         ax.add_patch(ring)
 
+    for deg in range(0, 360, 30):
+        angle = math.radians(deg)
+        x_end = math.sin(angle)
+        y_end = math.cos(angle)
+        ax.plot([0, x_end], [0, y_end], color="#16223a",
+                linewidth=0.4, linestyle=(0, (1, 3)), zorder=1)
+
     for label, angle in [("N", 0), ("E", -math.pi / 2), ("S", math.pi), ("W", math.pi / 2)]:
-        x = 1.1 * math.sin(angle)
-        y = 1.1 * math.cos(angle)
-        ax.text(x, y, label, color="#445566", fontsize=8,
+        x = 1.12 * math.sin(angle)
+        y = 1.12 * math.cos(angle)
+        ax.text(x, y, label, color="#7799CC", fontsize=9,
                 ha="center", va="center", fontweight="bold")
 
     lst = compute_lst(lon, year)
+
+    positions = {}
+    altitudes = {}
+    for name, mag, ra, dec in stars:
+        x, y, alt = ra_dec_to_xy(ra, dec, lat, lst)
+        positions[name] = (x, y)
+        altitudes[name] = alt
+
+    for star_a, star_b in constellation_lines:
+        if star_a in positions and star_b in positions:
+            if altitudes[star_a] >= 0 and altitudes[star_b] >= 0:
+                xa, ya = positions[star_a]
+                xb, yb = positions[star_b]
+                ax.plot([xa, xb], [ya, yb], color="#3a5a8a",
+                        linewidth=0.6, alpha=0.55, zorder=1.5)
 
     visible_count = 0
     lost_on_chart = []
 
     for name, mag, ra, dec in stars:
-        x, y, alt = ra_dec_to_xy(ra, dec, lat, lst)
+        x, y = positions[name]
+        alt = altitudes[name]
         if alt < 0:
             continue
 
@@ -253,7 +315,8 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon):
             ax.scatter(x, y, s=size, color=color, alpha=0.7,
                        zorder=2, marker="*")
             lost_on_chart.append((name, color))
-            ax.text(x, y + 0.06, name, color=color, fontsize=5.5,
+            label_offset = -0.07 if name == "M41" else 0.06
+            ax.text(x, y + label_offset, name, color=color, fontsize=5.5,
                     ha="center", va="center", style="italic", alpha=0.85)
 
     ax.scatter([-1.05], [-1.1], s=15, color="white", alpha=0.9, zorder=5)
@@ -355,7 +418,7 @@ if st.session_state.searched:
     col_center = st.columns([1, 6, 1])[1]
     with col_center:
         fig, lost_on_chart = make_sky_chart(STARS, year, radiance_by_year,
-                                             color_map, lat, lon)
+                                             color_map, lat, lon, CONSTELLATION_LINES)
         st.pyplot(fig, use_container_width=True)
 
     st.markdown("<p style='text-align:center; font-size:0.7rem; color:#334455; margin-top:-10px;'>face south · center is straight up · stars near the edge sit low on the horizon</p>",
