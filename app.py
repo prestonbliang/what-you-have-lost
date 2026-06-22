@@ -594,7 +594,7 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#334455;'>NASA BLACK MARBLE VNP46A4  ·  BACKGROUND: NASA/GALEX M31  ·  BUILT BY A STUDENT RESEARCHER IN SAN DIEGO</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#334455;'>NASA BLACK MARBLE VNP46A4  ·  BACKGROUND: NASA/GALEX M31</p>", unsafe_allow_html=True)
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.stop()
 
@@ -822,6 +822,4 @@ st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2; color:#7788AA;'>Tools like Light Pollution Map, NASA Worldview, and Globe at Night show raw radiance data built for researchers. This tool translates that data into something human — the actual named stars you have lost from your specific sky, since 2012.</p>",
             unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#445566;'>BUILT BY A STUDENT RESEARCHER IN SAN DIEGO</p>",
-            unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
