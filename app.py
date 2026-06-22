@@ -364,6 +364,12 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
 
 if "page" not in st.session_state:
     st.session_state.page = "landing"
+
+# Sync page from URL query param (set by nav bar anchor links)
+_qp = st.query_params.get("page", None)
+if _qp in ("landing", "finder") and _qp != st.session_state.page:
+    st.session_state.page = _qp
+
 if "searched" not in st.session_state:
     st.session_state.searched = False
 if "zipcode" not in st.session_state:
@@ -376,6 +382,51 @@ if "lon" not in st.session_state:
     st.session_state.lon = -117.2
 if "place_name" not in st.session_state:
     st.session_state.place_name = ""
+
+# ── Nav bar ───────────────────────────────────────────────────────────────────
+_p = st.session_state.page
+st.markdown(f"""
+<style>
+.wyhl-nav {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.1rem 0 1rem 0;
+    border-bottom: 1px solid #111133;
+    margin-bottom: 0;
+    background: rgba(3,3,10,0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}}
+.wyhl-nav-brand {{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    color: #FF4444;
+    text-decoration: none;
+}}
+.wyhl-nav-links {{ display: flex; gap: 2.5rem; align-items: center; }}
+.wyhl-nav-link {{
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: #445566;
+    text-decoration: none;
+    padding-bottom: 3px;
+}}
+.wyhl-nav-link:hover {{ color: #8899BB; }}
+.wyhl-nav-link.active {{
+    color: white;
+    border-bottom: 1px solid #FF4444;
+}}
+</style>
+<div class='wyhl-nav'>
+  <a href='?page=landing' class='wyhl-nav-brand'>✦ &nbsp;WHAT HAVE YOU LOST</a>
+  <div class='wyhl-nav-links'>
+    <a href='?page=landing' class='wyhl-nav-link {"active" if _p == "landing" else ""}'>HOME</a>
+    <a href='?page=finder'  class='wyhl-nav-link {"active" if _p == "finder"  else ""}'>EXPLORE</a>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Landing page ──────────────────────────────────────────────────────────────
 if st.session_state.page == "landing":
