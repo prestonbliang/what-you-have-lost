@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import requests
 import math
+import plotly.graph_objects as go
 
 st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wide")
 
@@ -356,55 +357,12 @@ def ra_dec_to_xy(ra_hours, dec_deg, lat_deg, lst_hours):
 
 
 def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constellation_lines):
-    fig, ax = plt.subplots(figsize=(8, 8))
-    fig.patch.set_facecolor("#03030a")
-    ax.set_facecolor("#03030a")
-    ax.set_xlim(-1.2, 1.2)
-    ax.set_ylim(-1.35, 1.35)
-    ax.axis("off")
-    ax.set_aspect("equal")
-
     rad_2012 = radiance_by_year[2012]
     rad_now = radiance_by_year[year]
     lm_2012 = radiance_to_limiting_magnitude(rad_2012)
     lm_now = radiance_to_limiting_magnitude(rad_now)
 
-    glow_alpha = min(0.05, max(0, (rad_now - rad_2012) / (rad_2012 * 3)))
-    glow = mpatches.Circle((0, -0.3), 1.3, color="#FF6600", alpha=glow_alpha)
-    ax.add_patch(glow)
-
-    horizon = plt.Circle((0, 0), 1.0, color="#1a2a4a", fill=False, linewidth=1.0)
-    ax.add_patch(horizon)
-
-    for alt_deg in [20, 40, 60, 80]:
-        r = 1.0 - alt_deg / 90
-        ring = plt.Circle((0, 0), r, color="#2a4a7a", fill=False,
-                           linewidth=0.4, linestyle=(0, (1, 3)))
-        ax.add_patch(ring)
-
-    for deg in range(0, 360, 30):
-        angle = math.radians(deg)
-        x_end = math.sin(angle)
-        y_end = math.cos(angle)
-        ax.plot([0, x_end], [0, y_end], color="#2a4a7a",
-                linewidth=0.4, linestyle=(0, (1, 3)), zorder=1)
-
-    for label, angle in [("N", 0), ("E", -math.pi / 2), ("S", math.pi), ("W", math.pi / 2)]:
-        x = 1.12 * math.sin(angle)
-        y = 1.12 * math.cos(angle)
-        ax.text(x, y, label, color="#7799CC", fontsize=9,
-                ha="center", va="center", fontweight="bold")
-
-    # Altitude labels on the dotted rings — same color as the grid, placed at NW diagonal
-    for alt_deg in [20, 40, 60]:
-        r = 1.0 - alt_deg / 90
-        lx = r * 0.866 + 0.02
-        ly = r * 0.500
-        ax.text(lx, ly, f"{alt_deg}°", color="#2a4a7a", fontsize=4.5,
-                ha="left", va="center", alpha=0.85)
-
     lst = compute_lst(lon, year)
-
     positions = {}
     altitudes = {}
     for name, mag, ra, dec in stars:
@@ -412,13 +370,93 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         positions[name] = (x, y)
         altitudes[name] = alt
 
+    shapes = []
+    annotations = []
+    traces = []
+
+    # Horizon circle background
+    shapes.append(dict(
+        type="circle", xref="x", yref="y",
+        x0=-1.0, y0=-1.0, x1=1.0, y1=1.0,
+        fillcolor="#03030a",
+        line=dict(color="#1a2a4a", width=1.5),
+        layer="below"
+    ))
+
+    # Light pollution glow
+    glow_alpha = min(0.05, max(0, (rad_now - rad_2012) / (rad_2012 * 3)))
+    if glow_alpha > 0.001:
+        shapes.append(dict(
+            type="circle", xref="x", yref="y",
+            x0=-1.3, y0=-1.6, x1=1.3, y1=1.0,
+            fillcolor=f"rgba(255,102,0,{glow_alpha:.3f})",
+            line=dict(color="rgba(0,0,0,0)", width=0),
+            layer="below"
+        ))
+
+    # Altitude rings
+    for alt_deg in [20, 40, 60, 80]:
+        r = 1.0 - alt_deg / 90
+        shapes.append(dict(
+            type="circle", xref="x", yref="y",
+            x0=-r, y0=-r, x1=r, y1=r,
+            fillcolor="rgba(0,0,0,0)",
+            line=dict(color="#2a4a7a", width=0.5, dash="dot"),
+            layer="above"
+        ))
+
+    # Altitude labels
+    for alt_deg in [20, 40, 60]:
+        r = 1.0 - alt_deg / 90
+        lx = r * 0.866 + 0.02
+        ly = r * 0.500
+        annotations.append(dict(
+            x=lx, y=ly, text=f"{alt_deg}°",
+            showarrow=False, font=dict(size=9, color="#2a4a7a"),
+            xanchor="left", yanchor="middle"
+        ))
+
+    # Compass labels
+    for label, angle in [("N", 0), ("E", -math.pi / 2), ("S", math.pi), ("W", math.pi / 2)]:
+        cx = 1.12 * math.sin(angle)
+        cy = 1.12 * math.cos(angle)
+        annotations.append(dict(
+            x=cx, y=cy, text=f"<b>{label}</b>",
+            showarrow=False, font=dict(size=14, color="#7799CC")
+        ))
+
+    # Radial grid lines
+    grid_x, grid_y = [], []
+    for deg in range(0, 360, 30):
+        angle = math.radians(deg)
+        grid_x += [0, math.sin(angle), None]
+        grid_y += [0, math.cos(angle), None]
+    traces.append(go.Scatter(
+        x=grid_x, y=grid_y, mode='lines',
+        line=dict(color="#2a4a7a", width=0.4, dash="dot"),
+        showlegend=False, hoverinfo='skip', name='grid'
+    ))
+
+    # Constellation lines
+    con_x, con_y = [], []
     for star_a, star_b in constellation_lines:
         if star_a in positions and star_b in positions:
             if altitudes[star_a] >= 0 and altitudes[star_b] >= 0:
                 xa, ya = positions[star_a]
                 xb, yb = positions[star_b]
-                ax.plot([xa, xb], [ya, yb], color="#3a5a8a",
-                        linewidth=0.6, alpha=0.55, zorder=1.5)
+                con_x += [xa, xb, None]
+                con_y += [ya, yb, None]
+    if con_x:
+        traces.append(go.Scatter(
+            x=con_x, y=con_y, mode='lines',
+            line=dict(color="#3a5a8a", width=0.8),
+            opacity=0.55, showlegend=False, hoverinfo='skip', name='constellations'
+        ))
+
+    # Build star point lists
+    vis_x, vis_y, vis_sizes, vis_colors, vis_labels, vis_names = [], [], [], [], [], []
+    lost_x, lost_y, lost_sizes, lost_colors_list, lost_labels, lost_label_colors, lost_names = [], [], [], [], [], [], []
+    bh_x, bh_y, bh_sizes, bh_colors_list, bh_labels, bh_names = [], [], [], [], [], []
 
     visible_count = 0
     lost_on_chart = []
@@ -431,56 +469,155 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
 
         if alt < 0:
             if was_visible and not is_visible:
-                # Project onto the horizon ring so all lost stars appear on the map
                 r = math.sqrt(x * x + y * y)
-                if r > 1e-6:
-                    px, py = x / r * 0.97, y / r * 0.97
-                else:
-                    px, py = 0, 0.97
+                px, py = (x / r * 0.97, y / r * 0.97) if r > 1e-6 else (0, 0.97)
                 color = color_map.get((name, mag), "#FF4444")
-                ax.scatter(px, py, s=max(6, 60 / (mag + 2.5)), color=color,
-                           alpha=0.35, zorder=2, marker="*")
-                ax.text(px, py - 0.07, name, color=color, fontsize=5,
-                        ha="center", va="center", style="italic", alpha=0.35)
+                bh_x.append(px)
+                bh_y.append(py)
+                bh_sizes.append(max(5, (60 / (mag + 2.5)) ** 0.5 * 1.6))
+                bh_colors_list.append(color)
+                bh_labels.append(name)
+                bh_names.append(name)
                 lost_on_chart.append((name, color))
             continue
 
         if is_visible:
-            size = max(6, 90 / (mag + 2.5))
+            s = max(6, 90 / (mag + 2.5))
             brightness = min(1.0, max(0.3, 1.0 - mag / 9))
-            ax.scatter(x, y, s=size, color="white", alpha=brightness, zorder=3)
+            vis_x.append(x)
+            vis_y.append(y)
+            vis_sizes.append(max(3, s ** 0.5 * 1.1))
+            vis_colors.append(f"rgba(255,255,255,{brightness:.2f})")
+            vis_labels.append(name if mag < 1.0 else "")
+            vis_names.append(name)
             visible_count += 1
-            if mag < 1.0:
-                ax.text(x, y + 0.06, name, color="#7799CC", fontsize=6,
-                        ha="center", va="center", style="italic")
         elif was_visible:
             color = color_map.get((name, mag), "#FF4444")
-            size = max(8, 80 / (mag + 2.5))
-            ax.scatter(x, y, s=size, color=color, alpha=0.7,
-                       zorder=2, marker="*")
+            s = max(8, 80 / (mag + 2.5))
+            lost_x.append(x)
+            lost_y.append(y)
+            lost_sizes.append(max(5, s ** 0.5 * 1.5))
+            lost_colors_list.append(color)
+            lost_labels.append(name)
+            lost_label_colors.append(color)
+            lost_names.append(name)
             lost_on_chart.append((name, color))
-            label_offset = -0.07 if name == "M41" else 0.06
-            ax.text(x, y + label_offset, name, color=color, fontsize=5.5,
-                    ha="center", va="center", style="italic", alpha=0.85)
 
-    ax.scatter([-1.05], [-1.1], s=15, color="white", alpha=0.9, zorder=5)
-    ax.text(-0.92, -1.1, "visible", color="#8899BB", fontsize=6, va="center")
-    ax.scatter([-0.5], [-1.1], s=14, color="#FF6B6B", alpha=0.7,
-               marker="*", zorder=5)
-    ax.text(-0.38, -1.1, "lost since 2012", color="#CC6666",
-            fontsize=6, va="center")
+    # Visible stars
+    if vis_x:
+        traces.append(go.Scatter(
+            x=vis_x, y=vis_y,
+            mode='markers+text',
+            marker=dict(symbol='circle', size=vis_sizes, color=vis_colors, line=dict(width=0)),
+            text=vis_labels,
+            textposition='top center',
+            textfont=dict(size=8, color="#7799CC"),
+            customdata=vis_names,
+            hovertemplate='<b>%{customdata}</b><extra></extra>',
+            showlegend=False, name='visible'
+        ))
 
-    ax.text(0.78, -1.03, "mag", color="#334455", fontsize=5, ha="center")
+    # Lost stars (above horizon)
+    if lost_x:
+        traces.append(go.Scatter(
+            x=lost_x, y=lost_y,
+            mode='markers+text',
+            marker=dict(symbol='star', size=lost_sizes, color=lost_colors_list,
+                        opacity=0.7, line=dict(width=0)),
+            text=lost_labels,
+            textposition='top center',
+            textfont=dict(size=7, color=lost_label_colors),
+            customdata=lost_names,
+            hovertemplate='<b>%{customdata}</b><br><i>lost since 2012</i><extra></extra>',
+            showlegend=False, name='lost'
+        ))
+
+    # Below-horizon lost stars (projected to edge)
+    if bh_x:
+        traces.append(go.Scatter(
+            x=bh_x, y=bh_y,
+            mode='markers+text',
+            marker=dict(symbol='star', size=bh_sizes, color=bh_colors_list, line=dict(width=0)),
+            text=bh_labels,
+            textposition='bottom center',
+            textfont=dict(size=7, color=bh_colors_list),
+            customdata=bh_names,
+            hovertemplate='<b>%{customdata}</b><br><i>below horizon</i><extra></extra>',
+            opacity=0.35,
+            showlegend=False, name='below horizon'
+        ))
+
+    # Year label
+    annotations.append(dict(
+        x=0, y=1.25, text=str(year),
+        showarrow=False, font=dict(size=18, color="white"), xanchor="center"
+    ))
+
+    # Radiance / count footer
+    annotations.append(dict(
+        x=0, y=-1.27,
+        text=f"{rad_now:.1f} nW/cm²/sr  ·  {visible_count} visible",
+        showarrow=False, font=dict(size=10, color="#445566"), xanchor="center"
+    ))
+
+    # Legend
+    annotations.append(dict(
+        x=-1.05, y=-1.1, text="● visible",
+        showarrow=False, font=dict(size=9, color="#8899BB"), xanchor="left"
+    ))
+    annotations.append(dict(
+        x=-0.4, y=-1.1, text="★ lost since 2012",
+        showarrow=False, font=dict(size=9, color="#CC6666"), xanchor="left"
+    ))
+
+    # Magnitude scale
+    annotations.append(dict(
+        x=0.78, y=-1.03, text="mag",
+        showarrow=False, font=dict(size=8, color="#334455"), xanchor="center"
+    ))
+    sc_x, sc_y, sc_sizes, sc_colors = [], [], [], []
     for i, m in enumerate([1, 2, 3, 4]):
         sx = 0.57 + i * 0.14
         s = max(6, 90 / (m + 2.5))
         brightness = min(1.0, max(0.3, 1.0 - m / 9))
-        ax.scatter([sx], [-1.1], s=s, color="white", alpha=brightness, zorder=5)
-        ax.text(sx, -1.18, str(m), color="#445566", fontsize=5, ha="center")
+        sc_x.append(sx)
+        sc_y.append(-1.1)
+        sc_sizes.append(max(3, s ** 0.5 * 1.1))
+        sc_colors.append(f"rgba(255,255,255,{brightness:.2f})")
+        annotations.append(dict(
+            x=sx, y=-1.18, text=str(m),
+            showarrow=False, font=dict(size=8, color="#445566"), xanchor="center"
+        ))
+    traces.append(go.Scatter(
+        x=sc_x, y=sc_y, mode='markers',
+        marker=dict(symbol='circle', size=sc_sizes, color=sc_colors, line=dict(width=0)),
+        showlegend=False, hoverinfo='skip', name='scale'
+    ))
 
-    ax.text(0, 1.25, str(year), ha="center", color="white", fontsize=13)
-    ax.text(0, -1.27, f"{rad_now:.1f} nW/cm²/sr  ·  {visible_count} visible",
-            ha="center", color="#445566", fontsize=7)
+    # Click hint annotation
+    annotations.append(dict(
+        x=0, y=-1.38,
+        text="tap a star to explore it",
+        showarrow=False, font=dict(size=9, color="#2a3a5a"), xanchor="center"
+    ))
+
+    fig = go.Figure(data=traces)
+    fig.update_layout(
+        paper_bgcolor="#03030a",
+        plot_bgcolor="#03030a",
+        shapes=shapes,
+        annotations=annotations,
+        xaxis=dict(range=[-1.2, 1.2], visible=False, fixedrange=True,
+                   scaleanchor="y", scaleratio=1),
+        yaxis=dict(range=[-1.45, 1.35], visible=False, fixedrange=True),
+        margin=dict(l=0, r=0, t=10, b=0),
+        showlegend=False,
+        dragmode='select',
+        clickmode='event+select',
+        height=560,
+        modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
+                        "resetScale", "select2d", "lasso2d"],
+    )
 
     return fig, lost_on_chart
 
@@ -674,7 +811,24 @@ if st.session_state.searched:
     with col_center:
         fig, lost_on_chart = make_sky_chart(STARS, year, radiance_by_year,
                                              color_map, lat, lon, CONSTELLATION_LINES)
-        st.pyplot(fig, use_container_width=True)
+        chart_event = st.plotly_chart(
+            fig, use_container_width=True,
+            on_select="rerun", key="star_chart",
+            config={"displayModeBar": False, "responsive": True},
+            theme=None
+        )
+
+    # Navigate to star info page when a star is tapped
+    if chart_event and chart_event.selection and chart_event.selection.points:
+        pt = chart_event.selection.points[0]
+        raw = getattr(pt, "customdata", None)
+        if raw is not None:
+            star_name = raw[0] if isinstance(raw, (list, tuple)) else raw
+            if star_name and any(s[0] == star_name for s in STARS):
+                st.session_state["star_search_input"] = star_name
+                st.session_state.page = "stars"
+                st.query_params["page"] = "stars"
+                st.rerun()
 
     st.markdown("<p style='text-align:center; font-size:0.7rem; color:#334455; margin-top:-10px;'>face south · center is straight up · stars near the edge sit low on the horizon</p>",
                 unsafe_allow_html=True)
