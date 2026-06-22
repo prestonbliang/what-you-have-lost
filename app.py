@@ -23,35 +23,20 @@ st.markdown("""
     .stMetric label { color: #555577 !important; font-size: 11px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; }
     .stMetric [data-testid="stMetricValue"] { color: white !important; font-size: 2rem !important; font-weight: 300 !important; }
     hr { border-color: #111133 !important; margin: 3rem 0 !important; }
-    /* Fixed nav bar — targets the first columns row on every page */
-    div[data-testid="stHorizontalBlock"]:first-of-type {
-        position: fixed !important;
-        top: 0 !important; left: 0 !important; right: 0 !important;
-        z-index: 9999 !important;
-        width: 100vw !important; max-width: 100vw !important;
-        background: rgba(3,3,10,0.92) !important;
-        border-bottom: 1px solid #1a1a3a !important;
-        backdrop-filter: blur(14px) !important; -webkit-backdrop-filter: blur(14px) !important;
-        padding: 0 2.5rem !important;
-        height: 52px !important;
-        align-items: center !important;
-        box-sizing: border-box !important;
+    .wyhl-topnav {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+        height: 52px;
+        background: rgba(3,3,10,0.92);
+        border-bottom: 1px solid #1a1a3a;
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 0 2.5rem;
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     }
-    div[data-testid="stHorizontalBlock"]:first-of-type button {
-        border: none !important; background: transparent !important;
-        color: #44446a !important; font-size: 0.62rem !important;
-        letter-spacing: 0.18em !important; padding: 0.25rem 0.5rem !important;
-        text-transform: uppercase !important; min-height: 0 !important;
-        box-shadow: none !important; border-radius: 0 !important; width: auto !important;
-    }
-    div[data-testid="stHorizontalBlock"]:first-of-type button:hover {
-        color: #9999CC !important; background: transparent !important;
-        border: none !important; box-shadow: none !important;
-    }
-    div[data-testid="stHorizontalBlock"]:first-of-type button[kind="primary"],
-    div[data-testid="stHorizontalBlock"]:first-of-type [data-testid="stBaseButton-primary"] {
-        color: white !important; border-bottom: 1px solid #FF4444 !important;
-    }
+    .wyhl-brand { font-family: 'Space Grotesk',sans-serif; font-size: 0.7rem; letter-spacing: 0.22em; color: #FF4444; text-decoration: none; }
+    .wyhl-navlinks { display: flex; gap: 2.5rem; align-items: center; }
+    .wyhl-navlink { font-size: 0.62rem; letter-spacing: 0.18em; color: #44446a; text-decoration: none; padding-bottom: 2px; }
+    .wyhl-navlink:hover { color: #9999CC; }
+    .wyhl-navlink.active { color: white; border-bottom: 1px solid #FF4444; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -519,23 +504,23 @@ if "place_name" not in st.session_state:
 if "star_result" not in st.session_state:
     st.session_state.star_result = None
 
+# Sync page from URL query param
+_qp = st.query_params.get("page", None)
+if _qp in ("landing", "finder", "stars") and _qp != st.session_state.page:
+    st.session_state.page = _qp
+
 # ── Nav bar (fixed, full-width) ───────────────────────────────────────────────
 _p = st.session_state.page
-_nav_brand, _, _nav_home, _nav_explore, _nav_stars = st.columns([5, 1, 1, 1, 1])
-with _nav_brand:
-    st.markdown("<span style='font-family:\"Space Grotesk\",sans-serif; font-size:0.7rem; letter-spacing:0.22em; color:#FF4444;'>✦ &nbsp;WHAT HAVE YOU LOST</span>", unsafe_allow_html=True)
-with _nav_home:
-    if st.button("HOME", key="nav_home", type="primary" if _p == "landing" else "secondary"):
-        st.session_state.page = "landing"
-        st.rerun()
-with _nav_explore:
-    if st.button("EXPLORE", key="nav_explore", type="primary" if _p == "finder" else "secondary"):
-        st.session_state.page = "finder"
-        st.rerun()
-with _nav_stars:
-    if st.button("STARS", key="nav_stars", type="primary" if _p == "stars" else "secondary"):
-        st.session_state.page = "stars"
-        st.rerun()
+st.markdown(f"""
+<div class='wyhl-topnav'>
+  <a href='?page=landing' target='_self' class='wyhl-brand'>✦ &nbsp;WHAT HAVE YOU LOST</a>
+  <div class='wyhl-navlinks'>
+    <a href='?page=landing' target='_self' class='wyhl-navlink {"active" if _p == "landing" else ""}'>HOME</a>
+    <a href='?page=finder'  target='_self' class='wyhl-navlink {"active" if _p == "finder"  else ""}'>EXPLORE</a>
+    <a href='?page=stars'   target='_self' class='wyhl-navlink {"active" if _p == "stars"   else ""}'>STARS</a>
+  </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ── Landing page ──────────────────────────────────────────────────────────────
 if st.session_state.page == "landing":
