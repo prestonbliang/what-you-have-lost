@@ -347,7 +347,7 @@ if "place_name" not in st.session_state:
     st.session_state.place_name = ""
 
 st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
 
@@ -436,18 +436,18 @@ if st.session_state.searched:
         st.markdown(html, unsafe_allow_html=True)
 
     st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#1a1a2e;'>NASA BLACK MARBLE VNP46A4</p>",
+    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#445566;'>NASA BLACK MARBLE VNP46A4</p>",
                 unsafe_allow_html=True)
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<hr>", unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; letter-spacing:0.15em; font-size:0.7rem; color:#222244;'>HOW IS THIS DIFFERENT</p>",
+st.markdown("<p style='text-align:center; letter-spacing:0.15em; font-size:0.7rem; color:#6666AA;'>HOW IS THIS DIFFERENT</p>",
             unsafe_allow_html=True)
 st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2; color:#333355;'>Tools like Light Pollution Map, NASA Worldview, and Globe at Night show raw radiance data built for researchers. This tool translates that data into something human — the actual named stars you have lost from your specific sky, since 2012.</p>",
+st.markdown("<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2; color:#7788AA;'>Tools like Light Pollution Map, NASA Worldview, and Globe at Night show raw radiance data built for researchers. This tool translates that data into something human — the actual named stars you have lost from your specific sky, since 2012.</p>",
             unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#111122;'>BUILT BY A STUDENT RESEARCHER IN SAN DIEGO</p>",
+st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#445566;'>BUILT BY A STUDENT RESEARCHER IN SAN DIEGO</p>",
             unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
