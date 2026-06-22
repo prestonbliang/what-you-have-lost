@@ -382,7 +382,15 @@ if st.session_state.page == "landing":
     st.markdown("<br><br><br>", unsafe_allow_html=True)
     st.markdown("<h1 style='text-align:center; font-size:3.5rem; letter-spacing:0.25em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; font-size:0.8rem; letter-spacing:0.3em; color:#444466;'>A LIGHT POLLUTION OBSERVATORY</p>", unsafe_allow_html=True)
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.markdown("""
+<div style='width:100%; margin:0 0 2.5rem 0; overflow:hidden; border-radius:4px;'>
+  <img src='https://science.nasa.gov/wp-content/uploads/2023/09/m31-layered-uv-and-optical.jpg'
+       style='width:100%; height:260px; object-fit:cover; object-position:center 40%; opacity:0.55; display:block;'/>
+  <p style='text-align:right; font-size:0.55rem; letter-spacing:0.08em; color:#222244; margin:4px 0 0 0;'>
+    NASA / GALEX · Andromeda Galaxy (M31)
+  </p>
+</div>
+""", unsafe_allow_html=True)
 
     st.markdown("""
 <p style='text-align:center; max-width:560px; margin:0 auto; font-size:1.05rem; line-height:2.2; color:#8899BB; letter-spacing:0.02em;'>
