@@ -484,14 +484,25 @@ if st.session_state.searched:
     st.markdown("<p style='text-align:center; font-size:0.7rem; color:#334455; margin-top:-10px;'>face south · center is straight up · stars near the edge sit low on the horizon</p>",
                 unsafe_allow_html=True)
 
-    if lost_on_chart:
+    lm_year = radiance_to_limiting_magnitude(radiance_by_year[year])
+    all_lost_for_year = sorted(
+        [(n, m) for n, m in star_mags if lm_year < m <= lm_2012],
+        key=lambda x: x[1]
+    )
+    on_chart_names = {name for name, _ in lost_on_chart}
+
+    if all_lost_for_year:
         st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year}</p>",
                     unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         html = "<div style='display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;'>"
-        for name, color in lost_on_chart:
-            html += f"<div style='color:{color}; font-size:0.85rem;'>★ {name}</div>"
+        for name, mag in all_lost_for_year:
+            color = color_map.get((name, mag), "#FF4444")
+            if name in on_chart_names:
+                html += f"<div style='color:{color}; font-size:0.85rem;'>★ {name}</div>"
+            else:
+                html += f"<div style='color:{color}; font-size:0.85rem; opacity:0.4;'>★ {name} <span style='font-size:0.65rem; letter-spacing:0.05em;'>below horizon</span></div>"
         html += "</div>"
         st.markdown(html, unsafe_allow_html=True)
 
