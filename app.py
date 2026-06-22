@@ -237,7 +237,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
     fig.patch.set_facecolor("#03030a")
     ax.set_facecolor("#03030a")
     ax.set_xlim(-1.2, 1.2)
-    ax.set_ylim(-1.2, 1.2)
+    ax.set_ylim(-1.35, 1.35)
     ax.axis("off")
     ax.set_aspect("equal")
 
@@ -326,8 +326,8 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
     ax.text(-0.38, -1.1, "lost since 2012", color="#CC6666",
             fontsize=6, va="center")
 
-    ax.text(0, 1.13, str(year), ha="center", color="white", fontsize=13)
-    ax.text(0, -1.16, f"{rad_now:.1f} nW/cm²/sr  ·  {visible_count} visible",
+    ax.text(0, 1.25, str(year), ha="center", color="white", fontsize=13)
+    ax.text(0, -1.27, f"{rad_now:.1f} nW/cm²/sr  ·  {visible_count} visible",
             ha="center", color="#445566", fontsize=7)
 
     return fig, lost_on_chart
