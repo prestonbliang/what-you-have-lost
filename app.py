@@ -333,6 +333,8 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
     return fig, lost_on_chart
 
 
+if "page" not in st.session_state:
+    st.session_state.page = "landing"
 if "searched" not in st.session_state:
     st.session_state.searched = False
 if "zipcode" not in st.session_state:
@@ -346,6 +348,64 @@ if "lon" not in st.session_state:
 if "place_name" not in st.session_state:
     st.session_state.place_name = ""
 
+# ── Landing page ──────────────────────────────────────────────────────────────
+if st.session_state.page == "landing":
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center; font-size:3.5rem; letter-spacing:0.25em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size:0.8rem; letter-spacing:0.3em; color:#444466;'>A LIGHT POLLUTION OBSERVATORY</p>", unsafe_allow_html=True)
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+
+    st.markdown("""
+<p style='text-align:center; max-width:560px; margin:0 auto; font-size:1.05rem; line-height:2.2; color:#8899BB; letter-spacing:0.02em;'>
+Every year, artificial light drowns out more of the night sky. Stars that your grandparents could name from memory have silently vanished — not from the universe, but from your view.
+</p>
+""", unsafe_allow_html=True)
+
+    st.markdown("<br><br>", unsafe_allow_html=True)
+
+    st.markdown("""
+<div style='display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; max-width:680px; margin:0 auto;'>
+  <div style='background:#0a0a18; border:1px solid #111133; padding:2rem 1rem; text-align:center;'>
+    <div style='font-size:2.2rem; font-weight:300; color:white; font-family:"Space Grotesk",sans-serif;'>10+</div>
+    <div style='font-size:0.65rem; letter-spacing:0.15em; color:#444466; margin-top:0.5rem;'>YEARS OF DATA</div>
+  </div>
+  <div style='background:#0a0a18; border:1px solid #111133; padding:2rem 1rem; text-align:center;'>
+    <div style='font-size:2.2rem; font-weight:300; color:white; font-family:"Space Grotesk",sans-serif;'>~30K</div>
+    <div style='font-size:0.65rem; letter-spacing:0.15em; color:#444466; margin-top:0.5rem;'>US ZIP CODES</div>
+  </div>
+  <div style='background:#0a0a18; border:1px solid #111133; padding:2rem 1rem; text-align:center;'>
+    <div style='font-size:2.2rem; font-weight:300; color:#FF4444; font-family:"Space Grotesk",sans-serif;'>↑ 15%</div>
+    <div style='font-size:0.65rem; letter-spacing:0.15em; color:#444466; margin-top:0.5rem;'>AVG SKY GLOW SINCE 2012</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+
+    st.markdown("""
+<p style='text-align:center; max-width:500px; margin:0 auto; font-size:0.85rem; line-height:2; color:#556688;'>
+This tool uses NASA Black Marble satellite data to translate raw light radiance into something human — the actual named stars you can no longer see from your backyard, mapped year by year since 2012.
+</p>
+""", unsafe_allow_html=True)
+
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("EXPLORE YOUR SKY  →", use_container_width=True):
+            st.session_state.page = "finder"
+            st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#333355;'>ENTER YOUR ZIP CODE TO BEGIN</p>", unsafe_allow_html=True)
+    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#334455;'>NASA BLACK MARBLE VNP46A4  ·  BUILT BY A STUDENT RESEARCHER IN SAN DIEGO</p>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.stop()
+
+# ── Zip code finder ───────────────────────────────────────────────────────────
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
 st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
