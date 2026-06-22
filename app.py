@@ -164,6 +164,49 @@ CONSTELLATION_LINES = [
     ("Altair", "Vega"),
 ]
 
+STAR_INFO = {
+    "Sirius":          {"constellation": "Canis Major",       "distance_ly": 8.6,      "type": "White main-sequence"},
+    "Arcturus":        {"constellation": "Boötes",            "distance_ly": 36.7,     "type": "Red giant"},
+    "Vega":            {"constellation": "Lyra",              "distance_ly": 25.0,     "type": "White main-sequence"},
+    "Rigel":           {"constellation": "Orion",             "distance_ly": 860,      "type": "Blue supergiant"},
+    "Procyon":         {"constellation": "Canis Minor",       "distance_ly": 11.5,     "type": "Yellow-white subgiant"},
+    "Betelgeuse":      {"constellation": "Orion",             "distance_ly": 700,      "type": "Red supergiant"},
+    "Altair":          {"constellation": "Aquila",            "distance_ly": 16.7,     "type": "White main-sequence"},
+    "Aldebaran":       {"constellation": "Taurus",            "distance_ly": 65,       "type": "Red giant"},
+    "Antares":         {"constellation": "Scorpius",          "distance_ly": 550,      "type": "Red supergiant"},
+    "Spica":           {"constellation": "Virgo",             "distance_ly": 250,      "type": "Blue giant"},
+    "Pollux":          {"constellation": "Gemini",            "distance_ly": 33.8,     "type": "Orange giant"},
+    "Fomalhaut":       {"constellation": "Piscis Austrinus",  "distance_ly": 25,       "type": "White main-sequence"},
+    "Deneb":           {"constellation": "Cygnus",            "distance_ly": 2615,     "type": "White supergiant"},
+    "Regulus":         {"constellation": "Leo",               "distance_ly": 79,       "type": "Blue-white main-sequence"},
+    "Adhara":          {"constellation": "Canis Major",       "distance_ly": 430,      "type": "Blue supergiant"},
+    "Castor":          {"constellation": "Gemini",            "distance_ly": 52,       "type": "Sextuple star system"},
+    "Bellatrix":       {"constellation": "Orion",             "distance_ly": 250,      "type": "Blue-white giant"},
+    "Elnath":          {"constellation": "Taurus",            "distance_ly": 134,      "type": "Blue-white giant"},
+    "Alnilam":         {"constellation": "Orion",             "distance_ly": 2000,     "type": "Blue supergiant"},
+    "Alioth":          {"constellation": "Ursa Major",        "distance_ly": 81,       "type": "White main-sequence"},
+    "Mirfak":          {"constellation": "Perseus",           "distance_ly": 590,      "type": "Yellow supergiant"},
+    "Dubhe":           {"constellation": "Ursa Major",        "distance_ly": 124,      "type": "Orange giant"},
+    "Alkaid":          {"constellation": "Ursa Major",        "distance_ly": 104,      "type": "Blue-white main-sequence"},
+    "Polaris":         {"constellation": "Ursa Minor",        "distance_ly": 433,      "type": "Yellow supergiant (Cepheid variable)"},
+    "Hamal":           {"constellation": "Aries",             "distance_ly": 66,       "type": "Orange giant"},
+    "Alpheratz":       {"constellation": "Andromeda",         "distance_ly": 97,       "type": "Blue-white subgiant"},
+    "Kochab":          {"constellation": "Ursa Minor",        "distance_ly": 131,      "type": "Orange giant"},
+    "Algol":           {"constellation": "Perseus",           "distance_ly": 93,       "type": "Eclipsing binary"},
+    "Denebola":        {"constellation": "Leo",               "distance_ly": 36,       "type": "White main-sequence"},
+    "Alphecca":        {"constellation": "Corona Borealis",   "distance_ly": 75,       "type": "White main-sequence (binary)"},
+    "Mintaka":         {"constellation": "Orion",             "distance_ly": 900,      "type": "Blue supergiant (multiple)"},
+    "Schedar":         {"constellation": "Cassiopeia",        "distance_ly": 228,      "type": "Orange giant"},
+    "Mizar":           {"constellation": "Ursa Major",        "distance_ly": 78,       "type": "White main-sequence (famous double)"},
+    "Izar":            {"constellation": "Boötes",            "distance_ly": 203,      "type": "Orange giant (binary)"},
+    "Peacock":         {"constellation": "Pavo",              "distance_ly": 183,      "type": "Blue-white subgiant"},
+    "Cor Caroli":      {"constellation": "Canes Venatici",    "distance_ly": 110,      "type": "White main-sequence (binary)"},
+    "Andromeda Galaxy":{"constellation": "Andromeda",         "distance_ly": 2_537_000,"type": "Spiral galaxy (M31)"},
+    "Beehive Cluster": {"constellation": "Cancer",            "distance_ly": 577,      "type": "Open star cluster (M44)"},
+    "Omega Centauri":  {"constellation": "Centaurus",         "distance_ly": 17_000,   "type": "Globular cluster"},
+    "Orion Nebula":    {"constellation": "Orion",             "distance_ly": 1344,     "type": "Emission nebula (M42)"},
+}
+
 SD_RADIANCE = {
     2012: 19.77, 2013: 21.00, 2014: 21.17, 2015: 20.64,
     2016: 20.53, 2017: 20.36, 2018: 20.70, 2019: 20.86,
@@ -390,7 +433,7 @@ if "page" not in st.session_state:
 
 # Sync page from URL query param (set by nav bar anchor links)
 _qp = st.query_params.get("page", None)
-if _qp in ("landing", "finder") and _qp != st.session_state.page:
+if _qp in ("landing", "finder", "stars") and _qp != st.session_state.page:
     st.session_state.page = _qp
 
 if "searched" not in st.session_state:
@@ -405,6 +448,8 @@ if "lon" not in st.session_state:
     st.session_state.lon = -117.2
 if "place_name" not in st.session_state:
     st.session_state.place_name = ""
+if "star_result" not in st.session_state:
+    st.session_state.star_result = None
 
 # ── Nav bar (fixed, full-width) ───────────────────────────────────────────────
 _p = st.session_state.page
@@ -414,6 +459,7 @@ st.markdown(f"""
   <div class='wyhl-navlinks'>
     <a href='?page=landing' class='wyhl-navlink {"active" if _p == "landing" else ""}'>HOME</a>
     <a href='?page=finder'  class='wyhl-navlink {"active" if _p == "finder"  else ""}'>EXPLORE</a>
+    <a href='?page=stars'   class='wyhl-navlink {"active" if _p == "stars"   else ""}'>STARS</a>
   </div>
 </div>
 """, unsafe_allow_html=True)
@@ -591,6 +637,102 @@ if st.session_state.searched:
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#445566;'>NASA BLACK MARBLE VNP46A4</p>",
                 unsafe_allow_html=True)
+
+# ── Stars page ────────────────────────────────────────────────────────────────
+if st.session_state.page == "stars":
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center; font-size:2.5rem; letter-spacing:0.18em;'>STAR ATLAS</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size:0.72rem; letter-spacing:0.2em; color:#444466;'>SEARCH THE CATALOG — 68 OBJECTS</p>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        query = st.text_input("", placeholder="try  Sirius · Vega · Betelgeuse · Orion Nebula",
+                              label_visibility="collapsed", key="star_search_input")
+        searched = st.button("SEARCH", use_container_width=True, key="star_search_btn")
+
+    star_names_lower = {s[0].lower(): s for s in STARS}
+
+    if query:
+        matches = [s for s in STARS if query.lower() in s[0].lower()]
+
+        if not matches:
+            st.markdown("<p style='text-align:center; color:#442222; margin-top:2rem;'>no match found — try a different name</p>",
+                        unsafe_allow_html=True)
+        else:
+            if len(matches) > 1:
+                exact = [s for s in matches if s[0].lower() == query.lower()]
+                star = exact[0] if exact else matches[0]
+                others = [s[0] for s in matches if s[0] != star[0]][:5]
+            else:
+                star = matches[0]
+                others = []
+
+            name, mag, ra, dec = star
+            info = STAR_INFO.get(name, {})
+
+            try:
+                wiki_resp = requests.get(
+                    f"https://en.wikipedia.org/api/rest_v1/page/summary/{requests.utils.quote(name)}",
+                    headers={"User-Agent": "WhatHaveYouLost/1.0"},
+                    timeout=8
+                )
+                wiki = wiki_resp.json() if wiki_resp.ok else {}
+            except Exception:
+                wiki = {}
+
+            description = wiki.get("extract", "")
+
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='text-align:center; font-size:2.8rem; letter-spacing:0.12em; color:white;'>{name}</h2>",
+                        unsafe_allow_html=True)
+            if info.get("constellation"):
+                st.markdown(f"<p style='text-align:center; font-size:0.65rem; letter-spacing:0.2em; color:#445566; margin-top:-0.5rem;'>{info['constellation'].upper()}</p>",
+                            unsafe_allow_html=True)
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            ncols = 4 if info.get("distance_ly") else 3
+            scols = st.columns(ncols)
+            scols[0].metric("Apparent Magnitude", f"{mag:.2f}")
+            scols[1].metric("Right Ascension", f"{ra:.3f} h")
+            scols[2].metric("Declination", f"{dec:+.2f}°")
+            if info.get("distance_ly"):
+                d = info["distance_ly"]
+                scols[3].metric("Distance", f"{d:,.0f} ly" if d >= 1000 else f"{d} ly")
+
+            if info.get("type"):
+                st.markdown("<br>", unsafe_allow_html=True)
+                tcols = st.columns(3)
+                tcols[0].metric("Classification", info["type"])
+                if st.session_state.searched:
+                    rb = st.session_state.radiance_by_year
+                    lm12 = radiance_to_limiting_magnitude(rb.get(2012, SD_RADIANCE[2012]))
+                    lm23 = radiance_to_limiting_magnitude(rb.get(2023, SD_RADIANCE[2023]))
+                    if mag <= lm23:
+                        vis_label, vis_color = "Visible from your sky", "#2ED573"
+                    elif mag <= lm12:
+                        vis_label, vis_color = "Lost since 2012", "#FF6B6B"
+                    else:
+                        vis_label, vis_color = "Too faint for naked eye", "#445566"
+                    tcols[1].metric("Visibility", vis_label)
+                    st.markdown(f"<p style='font-size:0.65rem; letter-spacing:0.1em; color:{vis_color}; margin-top:-1rem;'>{st.session_state.place_name.upper() if st.session_state.place_name else ''}</p>",
+                                unsafe_allow_html=True)
+
+            if others:
+                st.markdown(f"<p style='font-size:0.7rem; color:#334455; margin-top:1.5rem;'>other matches: "
+                            + "  ·  ".join(f"<span style='color:#556688;'>{o}</span>" for o in others)
+                            + "</p>", unsafe_allow_html=True)
+
+            if description:
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown("<hr>", unsafe_allow_html=True)
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown(f"<p style='max-width:680px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#7788AA;'>{description}</p>",
+                            unsafe_allow_html=True)
+                st.markdown(f"<p style='max-width:680px; margin:0.5rem auto 0; font-size:0.6rem; letter-spacing:0.08em; color:#334455;'>SOURCE: WIKIPEDIA</p>",
+                            unsafe_allow_html=True)
+
+    st.stop()
 
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<hr>", unsafe_allow_html=True)
