@@ -295,11 +295,24 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
     for name, mag, ra, dec in stars:
         x, y = positions[name]
         alt = altitudes[name]
-        if alt < 0:
-            continue
-
         was_visible = mag <= lm_2012
         is_visible = mag <= lm_now
+
+        if alt < 0:
+            if was_visible and not is_visible:
+                # Project onto the horizon ring so all lost stars appear on the map
+                r = math.sqrt(x * x + y * y)
+                if r > 1e-6:
+                    px, py = x / r * 0.97, y / r * 0.97
+                else:
+                    px, py = 0, 0.97
+                color = color_map.get((name, mag), "#FF4444")
+                ax.scatter(px, py, s=max(6, 60 / (mag + 2.5)), color=color,
+                           alpha=0.35, zorder=2, marker="*")
+                ax.text(px, py - 0.07, name, color=color, fontsize=5,
+                        ha="center", va="center", style="italic", alpha=0.35)
+                lost_on_chart.append((name, color))
+            continue
 
         if is_visible:
             size = max(6, 90 / (mag + 2.5))
