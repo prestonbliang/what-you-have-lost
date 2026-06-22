@@ -272,6 +272,14 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         ax.text(x, y, label, color="#7799CC", fontsize=9,
                 ha="center", va="center", fontweight="bold")
 
+    # Angular scale bar — 30° of sky, lower-right inside the horizon circle
+    sb_x0, sb_x1, sb_y = 0.42, 0.42 + 30 / 90, -0.60
+    ax.plot([sb_x0, sb_x1], [sb_y, sb_y], color="#334466", linewidth=1.0, zorder=4)
+    ax.plot([sb_x0, sb_x0], [sb_y - 0.025, sb_y + 0.025], color="#334466", linewidth=1.0, zorder=4)
+    ax.plot([sb_x1, sb_x1], [sb_y - 0.025, sb_y + 0.025], color="#334466", linewidth=1.0, zorder=4)
+    ax.text((sb_x0 + sb_x1) / 2, sb_y + 0.04, "30°", color="#445577",
+            fontsize=5.5, ha="center", va="bottom")
+
     lst = compute_lst(lon, year)
 
     positions = {}
