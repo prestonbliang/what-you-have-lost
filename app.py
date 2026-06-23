@@ -24,6 +24,13 @@ st.markdown("""
     .stMetric label { color: #555577 !important; font-size: 11px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; }
     .stMetric [data-testid="stMetricValue"] { color: white !important; font-size: 2rem !important; font-weight: 300 !important; }
     hr { border-color: #111133 !important; margin: 3rem 0 !important; }
+    div[data-testid="stPlotlyChart"] {
+        width: 100vw !important;
+        max-width: none !important;
+        position: relative;
+        left: 50%;
+        transform: translateX(-50%);
+    }
     .wyhl-topnav {
         position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
         height: 52px;
@@ -635,7 +642,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         showlegend=False,
         dragmode='select',
         clickmode='event+select',
-        height=840,
+        height=1000,
         modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
                         "resetScale", "select2d", "lasso2d"],
     )
