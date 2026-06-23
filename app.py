@@ -15,7 +15,7 @@ st.markdown("""
     .stApp { background-color: #03030a; }
     section[data-testid="stSidebar"] { display: none; }
     header[data-testid="stHeader"] { display: none !important; }
-    .main .block-container { max-width: 900px; margin: 0 auto; padding: 5.5rem 2rem 4rem 2rem; }
+    .main .block-container { max-width: 960px; margin: 0 auto; padding: 5.5rem 1rem 4rem 1rem; }
     h1, h2, h3 { font-family: 'Space Grotesk', sans-serif !important; color: white !important; font-weight: 300 !important; letter-spacing: 0.05em !important; }
     .stTextInput input { background-color: #0d0d1a !important; border: 1px solid #222244 !important; border-radius: 4px !important; color: white !important; padding: 0.75rem 1rem !important; font-size: 16px !important; }
     .stButton button { background-color: transparent !important; border: 1px solid #4444AA !important; border-radius: 4px !important; color: #8888CC !important; padding: 0.75rem 2rem !important; font-size: 14px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; width: 100% !important; }
@@ -490,16 +490,6 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
             layer="above"
         ))
 
-    # Altitude labels
-    for alt_deg in [20, 40, 60]:
-        r = 1.0 - alt_deg / 90
-        lx = r * 0.866 + 0.02
-        ly = r * 0.500
-        annotations.append(dict(
-            x=lx, y=ly, text=f"{alt_deg}°",
-            showarrow=False, font=dict(size=9, color="#2a4a7a"),
-            xanchor="left", yanchor="middle"
-        ))
 
     # Compass labels
     for label, angle in [("N", 0), ("E", -math.pi / 2), ("S", math.pi), ("W", math.pi / 2)]:
@@ -561,7 +551,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
                 bh_y.append(py)
                 bh_sizes.append(max(5, (60 / (mag + 2.5)) ** 0.5 * 1.6))
                 bh_colors_list.append(color)
-                bh_labels.append(name)
+                bh_labels.append("")
                 bh_names.append(name)
                 lost_on_chart.append((name, color))
             continue
@@ -583,7 +573,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
             lost_y.append(y)
             lost_sizes.append(max(5, s ** 0.5 * 1.5))
             lost_colors_list.append(color)
-            lost_labels.append(name)
+            lost_labels.append("")
             lost_label_colors.append(color)
             lost_names.append(name)
             lost_on_chart.append((name, color))
@@ -645,7 +635,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         showlegend=False,
         dragmode='select',
         clickmode='event+select',
-        height=700,
+        height=840,
         modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
                         "resetScale", "select2d", "lasso2d"],
     )
