@@ -5,6 +5,7 @@ import matplotlib.patches as mpatches
 import requests
 import math
 import plotly.graph_objects as go
+import streamlit.components.v1 as components
 
 st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wide")
 
@@ -869,13 +870,30 @@ if st.session_state.searched and st.session_state.page != "stars":
                 f"font-weight:300; color:white; letter-spacing:0.15em; margin:0 0 0.2rem 0;'>{year}</p>",
                 unsafe_allow_html=True)
 
-    chart_event = st.plotly_chart(
-        fig, use_container_width=True,
-        on_select="rerun", key="star_chart",
-        selection_mode="points",
-        config={"displayModeBar": False, "responsive": True, "doubleClick": False},
-        theme=None
+    _fig_json = fig.to_json()
+    _chart_html = (
+        '<!DOCTYPE html><html><head>'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        '<script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>'
+        '<style>body{margin:0;padding:0;background:#03030a;overflow:hidden;}</style>'
+        '</head><body>'
+        '<div id="sc" style="width:100%;height:1200px;"></div>'
+        '<script>'
+        f'var f={_fig_json};'
+        'Plotly.newPlot("sc",f.data,f.layout,'
+        '{displayModeBar:false,responsive:true,doubleClick:false,scrollZoom:false});'
+        'document.getElementById("sc").on("plotly_click",function(d){'
+        'if(!d||!d.points||!d.points.length)return;'
+        'var pt=d.points[0];'
+        'var cd=pt.customdata;'
+        'if(cd===undefined||cd===null)return;'
+        'var name=Array.isArray(cd)?cd[0]:cd;'
+        'if(!name||typeof name!=="string")return;'
+        'window.top.location.href="?page=stars&star="+encodeURIComponent(name);'
+        '});'
+        '</script></body></html>'
     )
+    components.html(_chart_html, height=1210, scrolling=False)
 
     st.markdown(
         f"<p style='text-align:center; font-size:0.68rem; color:#334455; margin:0.3rem 0 0;'>"
@@ -885,20 +903,6 @@ if st.session_state.searched and st.session_state.page != "stars":
         f"</p>",
         unsafe_allow_html=True
     )
-
-    # Navigate to star info page when a star is tapped
-    if chart_event and chart_event.selection and chart_event.selection.points:
-        pt = chart_event.selection.points[0]
-        raw = getattr(pt, "customdata", None)
-        if raw is not None:
-            while isinstance(raw, (list, tuple)) and len(raw) == 1:
-                raw = raw[0]
-            star_name = str(raw) if not isinstance(raw, str) else raw
-            if star_name and any(s[0] == star_name for s in STARS):
-                st.session_state["star_search_input"] = star_name
-                st.session_state.page = "stars"
-                st.query_params["page"] = "stars"
-                st.rerun()
 
     st.markdown("<p style='text-align:center; font-size:0.7rem; color:#334455; margin-top:0.5rem;'>face south · center is straight up · stars near the edge sit low on the horizon</p>",
                 unsafe_allow_html=True)
