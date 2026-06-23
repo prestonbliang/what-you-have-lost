@@ -633,7 +633,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         yaxis=dict(range=[-1.15, 1.15], visible=False, fixedrange=True),
         margin=dict(l=0, r=0, t=0, b=0),
         showlegend=False,
-        dragmode=False,
+        dragmode='zoom',
         clickmode='event+select',
         height=1200,
         modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
@@ -766,31 +766,32 @@ This tool is built on NASA's Black Marble VNP46A4 dataset — annual composites 
     st.stop()
 
 # ── Zip code finder ───────────────────────────────────────────────────────────
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
-st.markdown("<br><br>", unsafe_allow_html=True)
+if st.session_state.page != "stars":
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
-col1, col2, col3 = st.columns([1, 2, 1])
-with col2:
-    zipcode_input = st.text_input("", placeholder="zip code", label_visibility="collapsed")
-    if st.button("search", use_container_width=True):
-        lat, lon, display_name = zip_to_coords(zipcode_input)
-        if lat:
-            zip_data = load_zip_data()
-            st.session_state.searched = True
-            st.session_state.zipcode = zipcode_input
-            st.session_state.radiance_by_year = get_radiance_by_year(zipcode_input, zip_data)
-            st.session_state.lat = lat
-            st.session_state.lon = lon
-            st.session_state.place_name = display_name
-        else:
-            st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>",
-                        unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        zipcode_input = st.text_input("", placeholder="zip code", label_visibility="collapsed")
+        if st.button("search", use_container_width=True):
+            lat, lon, display_name = zip_to_coords(zipcode_input)
+            if lat:
+                zip_data = load_zip_data()
+                st.session_state.searched = True
+                st.session_state.zipcode = zipcode_input
+                st.session_state.radiance_by_year = get_radiance_by_year(zipcode_input, zip_data)
+                st.session_state.lat = lat
+                st.session_state.lon = lon
+                st.session_state.place_name = display_name
+            else:
+                st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>",
+                            unsafe_allow_html=True)
 
-st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
-if st.session_state.searched:
+if st.session_state.searched and st.session_state.page != "stars":
     zipcode = st.session_state.zipcode
     radiance_by_year = st.session_state.radiance_by_year
     lat = st.session_state.lat
@@ -871,7 +872,8 @@ if st.session_state.searched:
     chart_event = st.plotly_chart(
         fig, use_container_width=True,
         on_select="rerun", key="star_chart",
-        config={"displayModeBar": False, "responsive": True},
+        selection_mode="points",
+        config={"displayModeBar": False, "responsive": True, "doubleClick": False},
         theme=None
     )
 
@@ -898,7 +900,7 @@ if st.session_state.searched:
                 st.query_params["page"] = "stars"
                 st.rerun()
 
-    st.markdown("<p style='text-align:center; font-size:0.7rem; color:#334455; margin-top:-10px;'>face south · center is straight up · stars near the edge sit low on the horizon</p>",
+    st.markdown("<p style='text-align:center; font-size:0.7rem; color:#334455; margin-top:0.5rem;'>face south · center is straight up · stars near the edge sit low on the horizon</p>",
                 unsafe_allow_html=True)
 
     lm_year = radiance_to_limiting_magnitude(radiance_by_year[year])
@@ -907,12 +909,10 @@ if st.session_state.searched:
     st.markdown(f"""
 <div style='text-align:center; margin:1.2rem auto 0.2rem; padding:1rem 1.5rem;
      background:#080818; border:1px solid #0e0e2a; max-width:600px; border-radius:2px;'>
-  <span style='font-size:0.58rem; letter-spacing:0.18em; color:#334455;'>IN {year} YOUR SKY WAS</span>
-  &nbsp;
-  <span style='font-size:0.9rem; color:{sky_color_yr}; font-family:"Space Grotesk",sans-serif; font-weight:300;'>{sky_label_yr}</span>
-  &nbsp;
-  <span style='font-size:0.62rem; color:#334466;'>{sky_bortle_yr} · ~{sky_stars_yr} stars visible</span>
-  <p style='font-size:0.78rem; line-height:1.85; color:#556677; margin:0.6rem 0 0; text-align:left;'>{sky_exp_yr}</p>
+  <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.3rem 0;'>IN {year} YOUR SKY WAS</p>
+  <p style='font-size:0.9rem; color:{sky_color_yr}; font-family:"Space Grotesk",sans-serif; font-weight:300; margin:0 0 0.2rem 0;'>{sky_label_yr}</p>
+  <p style='font-size:0.62rem; color:#334466; margin:0 0 0.6rem 0;'>{sky_bortle_yr} · ~{sky_stars_yr} stars visible</p>
+  <p style='font-size:0.78rem; line-height:1.85; color:#556677; margin:0; text-align:left;'>{sky_exp_yr}</p>
 </div>
 """, unsafe_allow_html=True)
     all_lost_for_year = sorted(
