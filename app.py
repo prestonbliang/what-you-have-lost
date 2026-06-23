@@ -699,7 +699,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         showlegend=False,
         dragmode='select',
         clickmode='event+select',
-        height=560,
+        height=680,
         modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
                         "resetScale", "select2d", "lasso2d"],
     )
@@ -730,6 +730,13 @@ if "star_result" not in st.session_state:
 _qp = st.query_params.get("page", None)
 if _qp in ("landing", "finder", "stars") and _qp != st.session_state.page:
     st.session_state.page = _qp
+
+# Navigate to star info when an HTML link passes ?star=Name
+_star_qp = st.query_params.get("star", None)
+if _star_qp and any(s[0] == _star_qp for s in STARS):
+    st.session_state["star_search_input"] = _star_qp
+    st.session_state.page = "stars"
+    del st.query_params["star"]
 
 # ── Nav bar (fixed, full-width) ───────────────────────────────────────────────
 _p = st.session_state.page
@@ -918,16 +925,14 @@ if st.session_state.searched:
     year = st.slider("", min_value=2012, max_value=2023, value=2012,
                       label_visibility="collapsed")
 
-    col_center = st.columns([1, 6, 1])[1]
-    with col_center:
-        fig, lost_on_chart = make_sky_chart(STARS, year, radiance_by_year,
-                                             color_map, lat, lon, CONSTELLATION_LINES)
-        chart_event = st.plotly_chart(
-            fig, use_container_width=True,
-            on_select="rerun", key="star_chart",
-            config={"displayModeBar": False, "responsive": True},
-            theme=None
-        )
+    fig, lost_on_chart = make_sky_chart(STARS, year, radiance_by_year,
+                                         color_map, lat, lon, CONSTELLATION_LINES)
+    chart_event = st.plotly_chart(
+        fig, use_container_width=True,
+        on_select="rerun", key="star_chart",
+        config={"displayModeBar": False, "responsive": True},
+        theme=None
+    )
 
     # Navigate to star info page when a star is tapped
     if chart_event and chart_event.selection and chart_event.selection.points:
@@ -966,16 +971,20 @@ if st.session_state.searched:
 
     if all_lost_for_year:
         st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year}</p>",
+        st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year} — tap a name to learn more</p>",
                     unsafe_allow_html=True)
         st.markdown("<br>", unsafe_allow_html=True)
         html = "<div style='display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;'>"
         for name, mag in all_lost_for_year:
             color = color_map.get((name, mag), "#FF4444")
+            encoded = name.replace(" ", "%20")
             if name in on_chart_names:
-                html += f"<div style='color:{color}; font-size:0.85rem;'>★ {name}</div>"
+                html += (f"<div><a href='?page=stars&star={encoded}' target='_self' "
+                         f"style='color:{color}; font-size:0.85rem; text-decoration:none;'>★ {name}</a></div>")
             else:
-                html += f"<div style='color:{color}; font-size:0.85rem; opacity:0.4;'>★ {name} <span style='font-size:0.65rem; letter-spacing:0.05em;'>below horizon</span></div>"
+                html += (f"<div style='opacity:0.45;'><a href='?page=stars&star={encoded}' target='_self' "
+                         f"style='color:{color}; font-size:0.85rem; text-decoration:none;'>★ {name} "
+                         f"<span style='font-size:0.65rem; letter-spacing:0.05em;'>below horizon</span></a></div>")
         html += "</div>"
         st.markdown(html, unsafe_allow_html=True)
 
