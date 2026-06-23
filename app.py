@@ -633,7 +633,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         yaxis=dict(range=[-1.15, 1.15], visible=False, fixedrange=True),
         margin=dict(l=0, r=0, t=0, b=0),
         showlegend=False,
-        dragmode='select',
+        dragmode=False,
         clickmode='event+select',
         height=1200,
         modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
@@ -889,7 +889,9 @@ if st.session_state.searched:
         pt = chart_event.selection.points[0]
         raw = getattr(pt, "customdata", None)
         if raw is not None:
-            star_name = raw[0] if isinstance(raw, (list, tuple)) else raw
+            while isinstance(raw, (list, tuple)) and len(raw) == 1:
+                raw = raw[0]
+            star_name = str(raw) if not isinstance(raw, str) else raw
             if star_name and any(s[0] == star_name for s in STARS):
                 st.session_state["star_search_input"] = star_name
                 st.session_state.page = "stars"
