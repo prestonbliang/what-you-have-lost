@@ -632,60 +632,6 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
             showlegend=False, name='below horizon'
         ))
 
-    # Year label
-    annotations.append(dict(
-        x=0, y=1.25, text=str(year),
-        showarrow=False, font=dict(size=18, color="white"), xanchor="center"
-    ))
-
-    # Radiance / count footer
-    annotations.append(dict(
-        x=0, y=-1.27,
-        text=f"{rad_now:.1f} nW/cm²/sr  ·  {visible_count} visible",
-        showarrow=False, font=dict(size=10, color="#445566"), xanchor="center"
-    ))
-
-    # Legend
-    annotations.append(dict(
-        x=-1.05, y=-1.1, text="● visible",
-        showarrow=False, font=dict(size=9, color="#8899BB"), xanchor="left"
-    ))
-    annotations.append(dict(
-        x=-0.4, y=-1.1, text="★ lost since 2012",
-        showarrow=False, font=dict(size=9, color="#CC6666"), xanchor="left"
-    ))
-
-    # Magnitude scale
-    annotations.append(dict(
-        x=0.78, y=-1.03, text="mag",
-        showarrow=False, font=dict(size=8, color="#334455"), xanchor="center"
-    ))
-    sc_x, sc_y, sc_sizes, sc_colors = [], [], [], []
-    for i, m in enumerate([1, 2, 3, 4]):
-        sx = 0.57 + i * 0.14
-        s = max(6, 90 / (m + 2.5))
-        brightness = min(1.0, max(0.3, 1.0 - m / 9))
-        sc_x.append(sx)
-        sc_y.append(-1.1)
-        sc_sizes.append(max(3, s ** 0.5 * 1.1))
-        sc_colors.append(f"rgba(255,255,255,{brightness:.2f})")
-        annotations.append(dict(
-            x=sx, y=-1.18, text=str(m),
-            showarrow=False, font=dict(size=8, color="#445566"), xanchor="center"
-        ))
-    traces.append(go.Scatter(
-        x=sc_x, y=sc_y, mode='markers',
-        marker=dict(symbol='circle', size=sc_sizes, color=sc_colors, line=dict(width=0)),
-        showlegend=False, hoverinfo='skip', name='scale'
-    ))
-
-    # Click hint annotation
-    annotations.append(dict(
-        x=0, y=-1.38,
-        text="tap a star to explore it",
-        showarrow=False, font=dict(size=9, color="#2a3a5a"), xanchor="center"
-    ))
-
     fig = go.Figure(data=traces)
     fig.update_layout(
         paper_bgcolor="#03030a",
@@ -694,17 +640,17 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         annotations=annotations,
         xaxis=dict(range=[-1.2, 1.2], visible=False, fixedrange=True,
                    scaleanchor="y", scaleratio=1),
-        yaxis=dict(range=[-1.45, 1.35], visible=False, fixedrange=True),
-        margin=dict(l=0, r=0, t=10, b=0),
+        yaxis=dict(range=[-1.15, 1.15], visible=False, fixedrange=True),
+        margin=dict(l=0, r=0, t=0, b=0),
         showlegend=False,
         dragmode='select',
         clickmode='event+select',
-        height=680,
+        height=700,
         modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
                         "resetScale", "select2d", "lasso2d"],
     )
 
-    return fig, lost_on_chart
+    return fig, lost_on_chart, visible_count, rad_now
 
 
 if "page" not in st.session_state:
@@ -925,13 +871,27 @@ if st.session_state.searched:
     year = st.slider("", min_value=2012, max_value=2023, value=2012,
                       label_visibility="collapsed")
 
-    fig, lost_on_chart = make_sky_chart(STARS, year, radiance_by_year,
-                                         color_map, lat, lon, CONSTELLATION_LINES)
+    fig, lost_on_chart, visible_count, rad_now_chart = make_sky_chart(
+        STARS, year, radiance_by_year, color_map, lat, lon, CONSTELLATION_LINES)
+
+    st.markdown(f"<p style='text-align:center; font-size:2rem; font-family:\"Space Grotesk\",sans-serif; "
+                f"font-weight:300; color:white; letter-spacing:0.15em; margin:0 0 0.2rem 0;'>{year}</p>",
+                unsafe_allow_html=True)
+
     chart_event = st.plotly_chart(
         fig, use_container_width=True,
         on_select="rerun", key="star_chart",
         config={"displayModeBar": False, "responsive": True},
         theme=None
+    )
+
+    st.markdown(
+        f"<p style='text-align:center; font-size:0.68rem; color:#334455; margin:0.3rem 0 0;'>"
+        f"● <span style='color:#8899BB;'>visible</span> &nbsp;&nbsp; "
+        f"★ <span style='color:#CC6666;'>lost since 2012</span> &nbsp;&nbsp;&nbsp; "
+        f"<span style='color:#334455;'>{rad_now_chart:.1f} nW/cm²/sr · {visible_count} visible</span>"
+        f"</p>",
+        unsafe_allow_html=True
     )
 
     # Navigate to star info page when a star is tapped
