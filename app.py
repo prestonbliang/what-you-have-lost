@@ -272,6 +272,91 @@ SD_RADIANCE = {
 }
 
 
+def get_sky_description(lm):
+    """Returns (quality_label, bortle_class, approx_stars_visible, experience_text)"""
+    if lm >= 4.8:
+        return (
+            "Bright Suburban", "Bortle 6", "200–300",
+            "A grey-white glow hugs the horizon in all directions. On clear, moonless nights "
+            "you can trace a faint suggestion of the Milky Way as a slightly brighter band — "
+            "washed out and colorless, but there. Major constellations are crisp and most "
+            "of their stars are visible. Fainter patterns survive."
+        )
+    elif lm >= 4.5:
+        return (
+            "Suburban", "Bortle 7", "100–200",
+            "A persistent orange or grey dome sits over your neighborhood all night. The "
+            "Milky Way is invisible. Familiar patterns — the Big Dipper, Orion, Leo — are "
+            "clear, but the sky between their stars is flat and empty. Faint constellations "
+            "are mostly gone."
+        )
+    elif lm >= 4.2:
+        return (
+            "Urban Fringe", "Bortle 8", "50–100",
+            "The sky glows a visible orange from street lights. Major constellation shapes "
+            "survive — you can still trace Orion's Belt and the Big Dipper's handle — but "
+            "many of their dimmer stars have vanished. The spaces between constellations are "
+            "near-empty. No Milky Way is visible under any conditions."
+        )
+    elif lm >= 3.8:
+        return (
+            "City Sky", "Bortle 9", "20–50",
+            "The sky has color all night — an orange, yellow, or amber glow stretches from "
+            "horizon to horizon. Only the 20–50 brightest stars cut through. On humid or "
+            "hazy nights even Orion's Belt can be hard to spot. Airplane lights compete "
+            "with the stars."
+        )
+    else:
+        return (
+            "Inner City", "Bortle 9+", "< 15",
+            "The sky never truly darkens. A uniform orange-white glow fills the night from "
+            "horizon to horizon — a permanent artificial dawn. Fewer than 15 stars are "
+            "reliably visible: mostly the very brightest giants like Sirius, Arcturus, and "
+            "Vega, plus the planets. Most constellation patterns are invisible."
+        )
+
+
+def get_change_reason(pct_change):
+    """Returns (headline, explanation)"""
+    if pct_change > 20:
+        return (
+            "Sky significantly brightened",
+            "Urban expansion, new commercial development, and widespread LED adoption have "
+            "all compounded over this period. LED retrofits can increase total lumens even "
+            "while saving energy per fixture — and more buildings, roads, and parking lots "
+            "means more light escaping upward into the atmosphere each year."
+        )
+    elif pct_change > 5:
+        return (
+            "Sky gradually brightened",
+            "Steady regional development and population growth are the most likely drivers. "
+            "Each new building, parking lot, and roadway adds incrementally to the aggregate "
+            "sky glow measured by satellite. Small annual changes compound quietly over a decade."
+        )
+    elif pct_change >= -5:
+        return (
+            "Sky largely stable",
+            "Your area's light environment has changed little since 2012. Year-to-year "
+            "fluctuations in the satellite data can reflect seasonal cloud cover differences "
+            "in the NASA composites as much as real changes on the ground."
+        )
+    elif pct_change >= -20:
+        return (
+            "Sky slightly improved",
+            "Light levels edged downward — possibly from LED efficiency programs that reduced "
+            "total lumens, local lighting ordinances, or shifts in commercial activity. "
+            "The 2020 COVID lockdowns also left a visible dip in radiance data for many "
+            "urban areas worldwide."
+        )
+    else:
+        return (
+            "Sky meaningfully improved",
+            "A notable reduction in light pollution since 2012. Your area may have adopted "
+            "dark sky policies, completed efficiency-focused LED upgrades, or seen significant "
+            "changes in commercial or industrial land use over this period."
+        )
+
+
 def load_zip_data():
     url = "https://raw.githubusercontent.com/prestonbliang/what-you-have-lost/main/zip_radiance.json"
     try:
@@ -800,6 +885,32 @@ if st.session_state.searched:
         m2.metric("stars gained since 2012", len(gained))
     m3.metric("still visible tonight", len(still_visible))
 
+    # Sky quality + change explanation cards
+    sky_label_now, sky_bortle_now, sky_stars_now, sky_exp_now = get_sky_description(lm_2023)
+    change_headline, change_text = get_change_reason(pct_change)
+    sky_color_map = {
+        "Inner City": "#FF4444", "City Sky": "#FF9943",
+        "Urban Fringe": "#FECA57", "Suburban": "#48DBFB", "Bright Suburban": "#2ED573",
+    }
+    sky_color_now = sky_color_map.get(sky_label_now, "#8899BB")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"""
+<div style='display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:860px; margin:0 auto;'>
+  <div style='background:#080818; border:1px solid #111133; border-left:2px solid {sky_color_now}; padding:1.4rem 1.5rem;'>
+    <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.45rem 0;'>WHAT YOUR SKY LOOKS LIKE</p>
+    <p style='font-size:1.05rem; color:{sky_color_now}; font-family:"Space Grotesk",sans-serif; font-weight:300; margin:0 0 0.2rem 0;'>{sky_label_now}</p>
+    <p style='font-size:0.62rem; letter-spacing:0.08em; color:#334466; margin:0 0 0.9rem 0;'>{sky_bortle_now} &nbsp;·&nbsp; ~{sky_stars_now} stars visible to the naked eye</p>
+    <p style='font-size:0.8rem; line-height:1.9; color:#7788AA; margin:0;'>{sky_exp_now}</p>
+  </div>
+  <div style='background:#080818; border:1px solid #111133; border-left:2px solid #2a3a6a; padding:1.4rem 1.5rem;'>
+    <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.45rem 0;'>WHY YOUR VISIBILITY CHANGED</p>
+    <p style='font-size:1.05rem; color:#8899BB; font-family:"Space Grotesk",sans-serif; font-weight:300; margin:0 0 0.9rem 0;'>{change_headline}</p>
+    <p style='font-size:0.8rem; line-height:1.9; color:#7788AA; margin:0;'>{change_text}</p>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
     st.markdown("<br><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align:center; letter-spacing:0.1em; font-size:0.7rem; color:#334466;'>DRAG TO TRAVEL THROUGH TIME</p>",
                 unsafe_allow_html=True)
@@ -834,6 +945,19 @@ if st.session_state.searched:
                 unsafe_allow_html=True)
 
     lm_year = radiance_to_limiting_magnitude(radiance_by_year[year])
+    sky_label_yr, sky_bortle_yr, sky_stars_yr, sky_exp_yr = get_sky_description(lm_year)
+    sky_color_yr = sky_color_map.get(sky_label_yr, "#8899BB")
+    st.markdown(f"""
+<div style='text-align:center; margin:1.2rem auto 0.2rem; padding:1rem 1.5rem;
+     background:#080818; border:1px solid #0e0e2a; max-width:600px; border-radius:2px;'>
+  <span style='font-size:0.58rem; letter-spacing:0.18em; color:#334455;'>IN {year} YOUR SKY WAS</span>
+  &nbsp;
+  <span style='font-size:0.9rem; color:{sky_color_yr}; font-family:"Space Grotesk",sans-serif; font-weight:300;'>{sky_label_yr}</span>
+  &nbsp;
+  <span style='font-size:0.62rem; color:#334466;'>{sky_bortle_yr} · ~{sky_stars_yr} stars visible</span>
+  <p style='font-size:0.78rem; line-height:1.85; color:#556677; margin:0.6rem 0 0; text-align:left;'>{sky_exp_yr}</p>
+</div>
+""", unsafe_allow_html=True)
     all_lost_for_year = sorted(
         [(n, m) for n, m in star_mags if lm_year < m <= lm_2012],
         key=lambda x: x[1]
