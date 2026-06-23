@@ -15,7 +15,7 @@ st.markdown("""
     .stApp { background-color: #03030a; }
     section[data-testid="stSidebar"] { display: none; }
     header[data-testid="stHeader"] { display: none !important; }
-    .main .block-container { max-width: 960px; margin: 0 auto; padding: 5.5rem 1rem 4rem 1rem; }
+    .main .block-container { max-width: 100%; margin: 0 auto; padding: 5.5rem 2rem 4rem 2rem; }
     h1, h2, h3 { font-family: 'Space Grotesk', sans-serif !important; color: white !important; font-weight: 300 !important; letter-spacing: 0.05em !important; }
     .stTextInput input { background-color: #0d0d1a !important; border: 1px solid #222244 !important; border-radius: 4px !important; color: white !important; padding: 0.75rem 1rem !important; font-size: 16px !important; }
     .stButton button { background-color: transparent !important; border: 1px solid #4444AA !important; border-radius: 4px !important; color: #8888CC !important; padding: 0.75rem 2rem !important; font-size: 14px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; width: 100% !important; }
@@ -24,13 +24,6 @@ st.markdown("""
     .stMetric label { color: #555577 !important; font-size: 11px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; }
     .stMetric [data-testid="stMetricValue"] { color: white !important; font-size: 2rem !important; font-weight: 300 !important; }
     hr { border-color: #111133 !important; margin: 3rem 0 !important; }
-    div[data-testid="stPlotlyChart"] {
-        width: 100vw !important;
-        max-width: none !important;
-        position: relative;
-        left: 50%;
-        transform: translateX(-50%);
-    }
     .wyhl-topnav {
         position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
         height: 52px;
@@ -642,7 +635,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         showlegend=False,
         dragmode='select',
         clickmode='event+select',
-        height=1000,
+        height=1200,
         modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
                         "resetScale", "select2d", "lasso2d"],
     )
