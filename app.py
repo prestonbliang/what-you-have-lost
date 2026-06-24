@@ -284,6 +284,545 @@ STAR_FACTS = {
     "Orion Nebula":    "a stellar nursery just 1,344 light-years away where new solar systems are forming right now — the faint smudge below Orion's Belt is visible to the naked eye",
 }
 
+STAR_HISTORY = {
+    "Sirius": (
+        "The ancient Egyptians called it Sopdet and built temples aligned to its heliacal rising — "
+        "the moment it reappeared before dawn after seventy days of invisibility. That rising announced "
+        "the flooding of the Nile and the new year. Sopdet was worshipped as a goddess of fertility for "
+        "three thousand years. Greeks and Romans called it the Dog Star, believing its summer appearance "
+        "brought the oppressive heat of the 'dog days.' Homer called it an evil omen of autumn. "
+        "Polynesian navigators used it to cross the Pacific. No star has been named in more languages "
+        "or shaped more calendars than Sirius."
+    ),
+    "Arcturus": (
+        "In 1933, astronomers directed light from Arcturus through a telescope onto a photoelectric cell "
+        "to switch on the floodlights at the Chicago World's Fair. The choice was deliberate: the light "
+        "arriving that night had left the star in 1883, the same year the previous World's Fair had "
+        "ended. To ancient Greeks, Arcturus — 'Bear Watcher' — rose in spring and meant plowing season "
+        "had begun. Odysseus navigated by it. It was one of the first stars confirmed to have measurable "
+        "proper motion, in 1718, proving that the 'fixed stars' were not fixed at all."
+    ),
+    "Vega": (
+        "From about 12,000 BC to 10,000 BC, Vega was Earth's North Star — long before any human "
+        "civilization had writing. Due to the slow wobble of Earth's axis, it will return to that role "
+        "around AD 13,727. In 1850, astronomers designated it the original zero-point of the stellar "
+        "magnitude scale: when you say a star is magnitude 0.0, you are comparing it to Vega. Its "
+        "spectrum was among the first ever photographed, in 1872, opening the era of stellar "
+        "spectroscopy."
+    ),
+    "Rigel": (
+        "Arabic astronomers called it Rijl Jauzah — 'the foot of the central one' — and their name, "
+        "compressed by medieval Latin scribes, became Rigel. It marked the left foot of Orion, and for "
+        "sailors and navigators across every seafaring civilization, finding Orion meant finding Rigel. "
+        "It is one of the 58 navigational stars still listed in the Nautical Almanac today. If Rigel "
+        "were as close as Sirius, it would shine brighter than a quarter moon and cast sharp shadows "
+        "across the landscape."
+    ),
+    "Procyon": (
+        "Its name means 'before the dog' in Greek — Procyon rises about an hour before Sirius, the "
+        "Dog Star, and heralds its arrival. Egyptian priests used this sequence as an agricultural "
+        "clock: Procyon's appearance meant the Nile flood was imminent. At 11.5 light-years away, "
+        "it is one of our closest stellar neighbors. The light you see from Procyon tonight left "
+        "during the early 2010s."
+    ),
+    "Betelgeuse": (
+        "Arabic scholars called it Yad al-Jauzā — 'the hand of the central one' — but a medieval "
+        "scribe misread the 'y' as a 'b', giving us Betelgeuse. In late 2019, it suddenly dimmed to "
+        "its faintest level ever recorded — the 'Great Dimming' — triggering widespread speculation "
+        "that it might be about to explode. It was not. But it will. Sometime in the next 100,000 "
+        "years, Betelgeuse will ignite as a supernova visible in broad daylight, outshining the full "
+        "moon for weeks."
+    ),
+    "Altair": (
+        "In Chinese and Japanese mythology, Altair is the Cowherd Star (Niulang / Hikoboshi), "
+        "separated from the Weaver Girl (Vega) by the River of Heaven — the Milky Way. Once a year, "
+        "on the seventh night of the seventh lunar month, magpies form a bridge across the stars so "
+        "the lovers can meet. This story is still celebrated as Qixi in China and Tanabata in Japan. "
+        "Astronomers have directly imaged Altair's surface and confirmed it bulges noticeably at its "
+        "equator, flattened by its 9-hour rotation."
+    ),
+    "Aldebaran": (
+        "Its name is Arabic for 'the follower' — Aldebaran rises after, and seems to chase, the "
+        "Pleiades across the sky. Ancient Persian astronomers placed it among the four Royal Stars, "
+        "cosmic guardians of the seasons, calling it Tascheter, Watcher of the East. It marks the "
+        "bloodshot eye of Taurus the Bull. The Pioneer 10 spacecraft, launched in 1972, is currently "
+        "drifting in its general direction. In about two million years, it will make a distant flyby."
+    ),
+    "Antares": (
+        "The Greeks named it Antares — 'rival of Ares' — because its ruddy glow so closely mimics "
+        "the color of Mars, the war planet. Ancient Persians called it Satevis, Royal Star of the "
+        "West, one of four celestial guardians. In Greek sky lore, Orion and Scorpius were ancient "
+        "enemies: they were placed on opposite sides of the sky so they could never meet, and Antares "
+        "— the Scorpion's heart — rises only as Orion sets. They have been running from each other "
+        "since the first myths were told."
+    ),
+    "Spica": (
+        "Around 130 BC, the Greek astronomer Hipparchus compared Spica's position against older "
+        "Egyptian records and found it had shifted by about 2 degrees over 150 years. This single "
+        "observation led him to discover the precession of Earth's axis — the slow, 26,000-year wobble "
+        "that makes the pole stars change over millennia. It was one of the most important astronomical "
+        "discoveries of antiquity, and it was made by carefully watching this one star night after "
+        "night."
+    ),
+    "Pollux": (
+        "In Greek mythology, Castor and Pollux were twins with different fathers: Pollux was the "
+        "immortal son of Zeus, Castor the mortal son of a Spartan king. When Castor died, Pollux was "
+        "so grief-stricken he asked Zeus to let them share immortality — so Zeus placed them both in "
+        "the sky as Gemini, eternally side by side. In 2006, astronomers discovered that Pollux has "
+        "a planet: a giant world 2.3 times Jupiter's mass, making it one of the first confirmed "
+        "planets orbiting a giant star."
+    ),
+    "Fomalhaut": (
+        "The 'mouth of the southern fish,' Fomalhaut is the loneliest bright star in the Northern "
+        "autumn sky — no comparably bright star lies anywhere near it, earning it the nickname 'the "
+        "Autumn Star.' Ancient Persians called it Hastorang, one of the four Royal Stars, guardian "
+        "of the South. In 2008, the Hubble Space Telescope photographed what appeared to be a planet "
+        "in its dust disk — one of the first direct images of an exoplanet ever taken, still debated "
+        "today."
+    ),
+    "Deneb": (
+        "Deneb means 'tail of the hen' in Arabic, marking the tail of Cygnus the Swan. Its exact "
+        "distance is uncertain — somewhere between 1,400 and 2,600 light-years — which makes it hard "
+        "to pin down its true luminosity, but estimates put it among the most intrinsically bright "
+        "stars in the entire galaxy. If Deneb were as close to Earth as Sirius, it would be brighter "
+        "than a half-moon and cast crisp shadows. We see it as just another first-magnitude star only "
+        "because of the vast distance."
+    ),
+    "Regulus": (
+        "Its name means 'little king' in Latin, a diminutive of Rex. It sits almost exactly on the "
+        "ecliptic — the Sun's annual path across the sky — meaning the Moon and planets regularly "
+        "pass in front of it, and the Sun comes within half a degree of it every August. Ancient "
+        "Babylonian astronomers listed it among their most sacred stars as one of four 'fixed' "
+        "anchors of the cosmos. Regulus spins so fast that if it were only 16 percent faster, "
+        "centrifugal force would tear it apart."
+    ),
+    "Adhara": (
+        "Adhara is the brightest ultraviolet star in the sky after the Sun — if human eyes could see "
+        "UV light, it would outshine every other star. Its name comes from Arabic for 'virgins,' "
+        "referring to a group of stars in Canis Major. For observers in the ancient Near East at "
+        "certain historical epochs, Adhara briefly served as the south polar star — the southern "
+        "counterpart of Polaris — as Earth's axial precession slowly swept the celestial poles "
+        "around the sky."
+    ),
+    "Castor": (
+        "Castor appears as one star to the naked eye but is actually six. Through a small telescope "
+        "it splits into a pair. Each of those is a spectroscopic binary. A third distant pair of red "
+        "dwarfs also orbits the system. Six stars, three pairs, all gravitationally bound. In Greek "
+        "mythology, Castor was the mortal twin — the son of a Spartan king — while Pollux was "
+        "immortal. When Castor died, Pollux refused to remain in heaven alone, and Zeus honored his "
+        "grief by placing them both forever in the sky."
+    ),
+    "Bellatrix": (
+        "Bellatrix means 'the female warrior' in Latin. In medieval European astrology it was a star "
+        "of military glory and bold action. It marks the left shoulder of Orion the Hunter, facing "
+        "Betelgeuse across the giant's chest. Its name was borrowed in the 20th century by J.K. "
+        "Rowling for a character in the Harry Potter series — arguably the most culturally resonant "
+        "star name of recent decades. At 22,000 K, Bellatrix is one of the hottest stars visible "
+        "to the naked eye."
+    ),
+    "Elnath": (
+        "Elnath means 'the butting one' in Arabic, referring to the tip of one of Taurus the Bull's "
+        "horns that it marks. It was formerly shared between two constellations: officially in Taurus "
+        "but also counted as Gamma Aurigae in Auriga the Charioteer, until the International "
+        "Astronomical Union standardized constellation boundaries in 1930. For centuries, it "
+        "simultaneously belonged to two different star stories."
+    ),
+    "Alnilam": (
+        "Alnilam is the middle star of Orion's Belt, and its name comes from Arabic for 'string of "
+        "pearls.' These three belt stars are among the most recognized star patterns in all of human "
+        "history, appearing in the cosmologies of cultures from the Amazon to Polynesia. Ancient "
+        "Egyptians aligned the three great pyramids at Giza to mirror them, and built entrance shafts "
+        "angled toward specific stars — a monumental act of sky worship that has lasted 4,500 years."
+    ),
+    "Alioth": (
+        "The brightest star in the Big Dipper, Alioth has an unusual spectrum caused by a strong "
+        "magnetic field that creates patches of different chemical abundances on its surface. In Chinese "
+        "astronomy it was the fifth star of the Northern Dipper and represented one of the Seven Sages "
+        "of the Bamboo Grove. Most of the Big Dipper stars were born together and drift through space "
+        "as a family — but Dubhe and Alkaid at either end of the formation are strangers, passing "
+        "through by chance."
+    ),
+    "Mirfak": (
+        "Mirfak sits at the heart of the Alpha Persei Moving Group — a loose family of a few hundred "
+        "young blue stars that were born together from the same gas cloud about 50 million years ago "
+        "and are still traveling in formation through the galaxy. Its name comes from Arabic for 'the "
+        "elbow.' In the Perseus myth, the hero holds the severed head of Medusa in one hand — marked "
+        "by the blinking demon star Algol — while Mirfak marks his shoulder or elbow, depending on "
+        "which ancient map you follow."
+    ),
+    "Dubhe": (
+        "Dubhe and Merak are the two 'pointer stars' of the Big Dipper: a line drawn through them "
+        "and extended five times leads directly to Polaris. This navigational trick was known across "
+        "the ancient world — Arctic peoples, sailors, and desert travelers all used it independently "
+        "before they had words for one another. Dubhe means 'back of the greater bear' in Arabic. "
+        "Unlike most Big Dipper stars, Dubhe is not part of the Ursa Major Moving Group and is "
+        "slowly drifting away, meaning the Big Dipper's shape is changing over the millennia."
+    ),
+    "Alkaid": (
+        "Alkaid marks the end of the Big Dipper's handle and the tip of Ursa Major's tail. In Arabic "
+        "it was called the 'leader of the daughters of the bier' — the three handle stars were the "
+        "daughters, leading a funeral procession of the bier (the bowl) around the pole. The Chinese "
+        "called the seven Dipper stars Bei Dou and used the direction the handle pointed at dusk as "
+        "a seasonal clock — a practice continuous for over two thousand years."
+    ),
+    "Peacock": (
+        "Peacock is one of the few bright stars whose common name comes from a modern constellation "
+        "rather than ancient tradition. Pavo the Peacock was invented by the Dutch navigators Pieter "
+        "Dirkszoon Keyser and Frederick de Houtman in the 1590s, during the Age of Exploration, to "
+        "fill the southern sky that Greek astronomers had never mapped. In the 1930s, the British "
+        "Air Ministry needed simple names for southern stars to teach RAF navigators and simply called "
+        "it 'Peacock' — so the star's name comes from both the Age of Exploration and the Royal "
+        "Air Force."
+    ),
+    "Polaris": (
+        "Polaris was not always the North Star. In ancient Egypt, the pole was marked by Thuban in "
+        "Draco. During the classical Greek era, no bright star sat close to the pole at all. Earth's "
+        "axis precesses in a slow 26,000-year circle, sweeping the pole among different stars. Polaris "
+        "will be closest to true north around the year 2100, then drift away. Centuries from now, the "
+        "sky will need a new fixed point — and in about 12,000 years, Vega will hold the title again, "
+        "as it did when the first humans crossed into the Americas."
+    ),
+    "Hamal": (
+        "Around 2000 BC, the Sun was in Aries at the spring equinox — meaning the first day of spring "
+        "was heralded by the Hamal rising with the Sun. Aries was therefore the first constellation, "
+        "and 'The First Point of Aries' still designates the vernal equinox in celestial coordinates, "
+        "even though precession has since moved it into Pisces. Ancient Babylonian astronomers treated "
+        "Hamal — 'the head of the ram' — as one of the key markers of the year, a role it held for "
+        "centuries."
+    ),
+    "Alpheratz": (
+        "Alpheratz marks the head of Andromeda and was historically shared between two constellations: "
+        "it was simultaneously the head of Andromeda and the navel of Pegasus (as Delta Pegasi), "
+        "until the IAU fixed constellation boundaries in 1930. It anchors both the chain of Andromeda "
+        "and the Great Square of Pegasus. Its name comes from Arabic for 'the navel of the horse.' "
+        "When you find this star, you are standing at the junction of two ancient star stories."
+    ),
+    "Kochab": (
+        "Kochab was Earth's North Star from roughly 1500 BC to AD 500 — the era spanning the height "
+        "of pharaonic Egypt, classical Greece, the Roman Republic and Empire, and the birth of the "
+        "world's major religions. Every navigator, soldier, astronomer, and traveler who looked north "
+        "during that span of fifteen centuries was looking at Kochab. The Greek astronomer Hipparchus "
+        "noticed the pole had shifted since older records and used this to deduce the precession of "
+        "Earth's axis in 130 BC — among the most profound observations in the history of science."
+    ),
+    "Algol": (
+        "Ra's al-Ghul — 'the head of the ogre' in Arabic — became Algol through medieval Latin "
+        "translation. Ancient observers noticed its periodic, ominous dimming every 2.87 days and "
+        "feared it. In 1783, John Goodricke, an 18-year-old deaf English astronomer, watched it "
+        "patiently night after night and deduced the truth: a dimmer companion star was regularly "
+        "passing in front of a brighter one. He had discovered the eclipsing binary, and with it "
+        "revolutionized stellar astronomy. Two years later, aged 21, Goodricke died — before he "
+        "learned the Royal Society had awarded him its highest honor."
+    ),
+    "Denebola": (
+        "Denebola marks the tail of Leo the Lion, its name meaning 'tail of the lion' in Arabic. "
+        "In medieval European and Arabic astrology it was one of fifteen Behenian fixed stars — a "
+        "select group considered particularly powerful for magical and medicinal purposes. Ancient "
+        "astrologers considered it unfortunate, associated with disgrace and illness. Modern "
+        "astronomers have found it surrounded by a debris disk suggesting a young planetary system "
+        "is still forming — a star with a future, not a cursed past."
+    ),
+    "Alphecca": (
+        "Alphecca means 'the bright one of the dish' in Arabic — the dish being the horseshoe shape "
+        "of Corona Borealis, the Northern Crown. It was also called Gemma, 'the gem,' for being the "
+        "crown's brightest jewel. In Greek mythology, the crown was given to Ariadne by Dionysus "
+        "after she was abandoned by Theseus on the island of Naxos, and was placed in the sky as a "
+        "memorial to her. Medieval astronomers associated Alphecca with artistic talent and honors "
+        "bestowed."
+    ),
+    "Mintaka": (
+        "Mintaka is the westernmost of Orion's Belt stars, and it lies almost exactly on the celestial "
+        "equator — meaning it rises almost due east and sets almost due west from virtually any "
+        "location on Earth. Ancient architects used this property to orient buildings: the equatorial "
+        "rising and setting of Mintaka allowed precise east-west alignment without any instruments "
+        "beyond patient observation. The three Belt stars were called the Three Kings, the Three "
+        "Sisters, and the String of Pearls by different traditions around the globe."
+    ),
+    "Alioth": (
+        "The brightest of the Big Dipper's seven stars, Alioth has an unusual spectrum produced by "
+        "a strong magnetic field that concentrates patches of rare elements on its surface, causing "
+        "subtle brightness variations. It has been a reliable northern sky landmark for millennia: "
+        "the Big Dipper rotates around the pole all night without setting at latitudes above 41°N, "
+        "making it an eternal, hour-hand clock for northern navigators."
+    ),
+    "Mizar": (
+        "Mizar was the first double star to be resolved through a telescope, by Giovanni Battista "
+        "Riccioli in 1617. Just four decades after Galileo pointed a telescope at the sky, "
+        "astronomers were discovering that many 'stars' were actually pairs. In 1889, Mizar became "
+        "the first spectroscopic binary ever found — its companion detected not visually but by the "
+        "splitting of spectral lines, revealing an unseen companion through the Doppler effect. "
+        "Its naked-eye companion Alcor was called 'the horse and rider' and used as an eyesight test "
+        "across Arab, Persian, and Indigenous American astronomical traditions."
+    ),
+    "Muphrid": (
+        "Muphrid lies just 3.2 degrees from Arcturus on the sky — close enough that they almost "
+        "appear to touch. Despite this, they are not physically related: Arcturus is 37 light-years "
+        "from Earth, while Muphrid is about 37.2 — a near-coincidence in distance that places them "
+        "in the same neighborhood but on different paths. Its name comes from Arabic for 'the solitary "
+        "one of the lance-bearer,' from the figure of Boötes the herdsman in whose constellation both "
+        "stars reside."
+    ),
+    "Porrima": (
+        "Porrima was a Roman goddess of prophecy and childbirth, one of the Carmentes, and ancient "
+        "Romans named this star for her. In a small telescope, Porrima splits into two nearly "
+        "identical yellow-white stars — one of the finest visual binaries in the sky — orbiting each "
+        "other once every 169 years. They were closest together as seen from Earth around 2005 and "
+        "are now slowly separating again. Through the 18th and 19th centuries, observing their orbit "
+        "helped confirm that Newton's law of gravity applied to stars light-years away."
+    ),
+    "Sabik": (
+        "Sabik is in Ophiuchus, the Serpent-Bearer — a constellation that straddles the ecliptic, "
+        "meaning the Sun passes through it each year for about eighteen days in late November. "
+        "Ophiuchus has sometimes been proposed as a '13th zodiac sign,' though this was never "
+        "formally adopted. Its name comes from Arabic for 'the preceding one.' The constellation's "
+        "figure, a man wrestling a giant serpent, is ancient: Babylonian star catalogs listed "
+        "Ophiuchus's stars over three thousand years ago."
+    ),
+    "Cor Caroli": (
+        "Cor Caroli — 'Heart of Charles' — was named in 1725 by the astronomer Edmond Halley to "
+        "honor King Charles II of England, who had restored the monarchy after the English Civil War "
+        "and founded the Royal Observatory at Greenwich. It is the prototype of a class of magnetic "
+        "stars — Alpha-2 Canum Venaticorum variables — whose strong, organized magnetic fields "
+        "concentrate rare elements into patches on their surfaces, causing them to pulse slightly in "
+        "brightness as they rotate. Halley is better known for the comet, but his star-naming "
+        "legacy endures in Cor Caroli."
+    ),
+    "Megrez": (
+        "Megrez is the faintest of the seven Big Dipper stars, marking the point where the handle "
+        "meets the bowl. Its name means 'root of the tail' in Arabic. Despite its relative "
+        "faintness, Megrez plays a structural role: it is one of the four bowl stars whose "
+        "arrangement defines the Big Dipper's distinctive shape. All four bowl stars — Dubhe, "
+        "Merak, Phad, and Megrez — are members of the Ursa Major Moving Group, born from the "
+        "same ancient star cluster."
+    ),
+    "Segin": (
+        "Segin is the westernmost of the five main stars forming Cassiopeia's famous W-shape in the "
+        "sky. It belongs to the Perseus OB1 stellar association — a sprawling family of young, hot "
+        "stars including the Perseus Double Cluster, all born from the same enormous gas cloud a "
+        "few million years ago. Cassiopeia herself, in Greek myth, was a vain Ethiopian queen "
+        "chained to her throne in the sky as punishment for boasting that her daughter Andromeda "
+        "was more beautiful than the sea nymphs."
+    ),
+    "Tania Borealis": (
+        "Tania Borealis means 'northern paw' — it represents one of the front paws of Ursa Major "
+        "the Great Bear. In traditional sky maps, the bear's hindquarters and tail form the Big "
+        "Dipper, while her paws and feet extend further south in fainter stars. The Arabic names "
+        "Tania Borealis ('northern second spring') and Tania Australis ('southern second spring') "
+        "come from a centuries-old tradition of describing the bear's anatomy with precise compass "
+        "references."
+    ),
+    "Alula Australis": (
+        "Alula Australis was the first binary star to have its orbit computed from observations. "
+        "In 1828, French mathematician Félix Savary analyzed decades of measurements and calculated "
+        "the orbital elements of Xi Ursae Majoris — demonstrating for the first time that Newton's "
+        "law of universal gravitation held between stars trillions of kilometers apart. It was a "
+        "landmark moment: the laws that governed falling apples and orbiting planets were confirmed "
+        "to govern the stars themselves."
+    ),
+    "Fulu": (
+        "Fulu is an unusual star in Cassiopeia whose common name comes from Chinese astronomy — "
+        "where it represented one of the stars in the asterism Teng She, the Flying Serpent. Most "
+        "star names reaching the modern era are filtered through Arabic and Latin translations of "
+        "Greek sources. Fulu is a rare example of a Chinese astronomical name surviving in common "
+        "use, a reminder that the sky was mapped and named by many civilizations independently."
+    ),
+    "Albali": (
+        "Albali is part of Aquarius the Water Bearer, one of the oldest constellations in human "
+        "history. Babylonian astronomers identified it over 3,000 years ago and associated it with "
+        "the god Ea, who poured water from a vase to cause the great flood. The name Albali comes "
+        "from Arabic for 'the good fortune of the swallower,' one of a series of stars in Aquarius "
+        "that ancient Arab astronomers labeled with auspicious fortune-telling names tied to the "
+        "rainy season."
+    ),
+    "Andromeda Galaxy": (
+        "The Andromeda Galaxy — M31 — is the most distant object visible to the naked eye without "
+        "optical aid. At 2.537 million light-years, the light reaching your eyes tonight left before "
+        "our species existed. Persian astronomers documented it as early as AD 964, describing it "
+        "as 'a little cloud.' It contains roughly a trillion stars — more than the Milky Way — and "
+        "is currently approaching us. In about 4.5 billion years, the two galaxies will begin to "
+        "merge in a slow, billion-year collision."
+    ),
+    "Beehive Cluster": (
+        "Known as Praesepe — 'the manger' — since antiquity, the Beehive Cluster was used by "
+        "ancient Greek and Roman writers as a weather oracle: if the cluster was invisible when the "
+        "sky appeared clear, hidden clouds were scattering its combined light, and rain was coming. "
+        "Galileo observed it in 1609 and counted at least 40 stars where the naked eye sees only a "
+        "soft glow. Modern surveys have found over a thousand stars in the cluster — including at "
+        "least two confirmed hot Jupiters, among the first planets found in an open cluster."
+    ),
+    "Omega Centauri": (
+        "Omega Centauri is the largest and most massive globular cluster in the Milky Way — a ball "
+        "of roughly ten million stars packed into a sphere 150 light-years across. Edmond Halley "
+        "catalogued it as a nebula in 1677 from Saint Helena. Many astronomers suspect it is the "
+        "stripped core of a dwarf galaxy absorbed by the Milky Way billions of years ago. At its "
+        "center, stars are so densely packed that any planets there would have skies perpetually "
+        "bright with stars as brilliant as our full moon."
+    ),
+    "Acubens": (
+        "Acubens marks one of the claws of Cancer the Crab. Its name comes from Arabic for 'the "
+        "claws.' Cancer is the faintest of the zodiac constellations — its brightest star barely "
+        "reaches magnitude 3.5 — making it one of the first constellations to vanish entirely from "
+        "city skies as light pollution grew. Despite its faintness, Cancer held great importance "
+        "in ancient astrology: the Sun entered Cancer at the summer solstice from roughly 2000 BC "
+        "to 100 BC, giving the Tropic of Cancer its enduring name."
+    ),
+    "Propus": (
+        "Propus means 'forward foot' in Greek — it marks the foot of Castor in Gemini. On March 13, "
+        "1781, the astronomer William Herschel was sweeping this area of sky when he noticed a "
+        "small disk-shaped object that he first took for a comet. Over following nights he realized "
+        "it wasn't moving like a comet and had no tail: he had discovered Uranus, the first new "
+        "planet found in recorded history. Propus was simply the signpost that pointed him to the "
+        "right patch of sky."
+    ),
+    "Castula": (
+        "Castula is a faint star in Cassiopeia whose name is a modern Latin coinage, approved by "
+        "the International Astronomical Union's Working Group on Star Names as part of a 21st-century "
+        "effort to give official proper names to the brightest stars without them. The project "
+        "drew on historical star catalogs, cultural traditions, and proposals from astronomers "
+        "worldwide — acknowledging that the sky belongs to all of humanity."
+    ),
+    "Marfak": (
+        "Marfak is one of several stars sharing this name or close variants — from Arabic al-marfiq, "
+        "'the elbow.' This one sits in Perseus near Mirfak (also 'elbow') and belongs to the Alpha "
+        "Persei Moving Group, the extended family of young stars born together from the same gas "
+        "cloud some 50 million years ago. In the myth of Perseus, this region of the sky represents "
+        "the hero's arm or elbow as he holds aloft Medusa's severed head."
+    ),
+    "Alzirr": (
+        "Alzirr sits near the foot of Pollux in Gemini. Its name comes from Arabic for 'the button' "
+        "or possibly 'the seed,' from an older star-group designation in that region. In Chinese "
+        "astronomy, the area around Alzirr was part of the Well lunar mansion — one of the 28 "
+        "segments into which Chinese astronomers divided the sky along the Moon's monthly path. "
+        "The Chinese Well asterism was associated with water, wells, and irrigation."
+    ),
+    "Alula Borealis": (
+        "Alula Borealis is the 'northern first spring' — the companion to Alula Australis in "
+        "Ursa Major's hind paw. Though they appear close in the sky and share a name, the two "
+        "Alula stars are not physically related: Alula Australis is 28 light-years away, while "
+        "Alula Borealis lies some 150 light-years distant. Their apparent proximity is a projection "
+        "effect — a visual coincidence written across depth of space."
+    ),
+    "Jabbah": (
+        "Jabbah is a multiple star system in Scorpius, its name coming from Arabic for 'the "
+        "forehead' of the Scorpion. It contains at least five stars in a complex gravitational "
+        "arrangement. The forehead of Scorpius arcs across some of the richest star fields in the "
+        "Milky Way — this entire region of sky was deeply important to Mesopotamian astronomers, "
+        "who mapped the Scorpion's stars over four thousand years ago in clay tablets still "
+        "surviving today."
+    ),
+    "Orion Nebula": (
+        "The Orion Nebula — M42 — is a stellar nursery 1,344 light-years away where new suns and "
+        "planetary systems are forming at this moment. It has been observed since antiquity but its "
+        "nature was unknown: Christiaan Huygens first described it as a nebula in 1659, and "
+        "subsequent observers found it grew steadily more complex with better telescopes. The Hubble "
+        "Space Telescope photographed hundreds of protoplanetary disks within it — the raw material "
+        "of future worlds — making the Orion Nebula the closest and best-studied cradle of "
+        "star birth."
+    ),
+    "Mekbuda": (
+        "Mekbuda is a Cepheid variable star — it pulsates in brightness every 10.15 days as the "
+        "star physically expands and contracts. The name comes from Arabic for 'folded paw.' "
+        "Cepheid variables are among the most important tools in astronomy: the period of their "
+        "pulsation is directly proportional to their true luminosity. Discovered by Henrietta Swan "
+        "Leavitt in 1908, this relationship — the period-luminosity law — allowed Edwin Hubble to "
+        "measure the distance to galaxies and prove the universe was far larger than anyone had "
+        "imagined."
+    ),
+    "Deneb el Okab": (
+        "Deneb el Okab means 'tail of the eagle' in Arabic, and it marks the tail of Aquila the "
+        "Eagle. In Greek mythology, Aquila was Zeus's eagle, the bearer of his thunderbolts and "
+        "the abductor of the beautiful youth Ganymede, who was brought to Olympus to serve as "
+        "cup-bearer to the gods. The entire region of Aquila sits in one of the richest parts of "
+        "the Milky Way visible from Earth's northern hemisphere."
+    ),
+    "47 Tucanae": (
+        "47 Tucanae is one of the most massive globular clusters known — millions of stars packed "
+        "into a sphere 120 light-years across, roughly 16,000 light-years from Earth. It appears "
+        "in the southern sky adjacent to the Small Magellanic Cloud, a visual coincidence that masks "
+        "an enormous difference in distance. Its stars are among the oldest known, roughly 13 "
+        "billion years old, meaning they formed when the universe itself was barely 700 million years "
+        "old. Early SETI researchers searched 47 Tucanae for radio signals from intelligent life."
+    ),
+    "Ancha": (
+        "Ancha is part of Aquarius the Water Bearer. Its name means 'the haunch' in Arabic. "
+        "Aquarius is one of the oldest documented constellations, traced to Babylonian star lists "
+        "from before 1200 BC where it was associated with the god Ea, bringer of floods. The "
+        "ancient association between this region of sky and water is not arbitrary: the Sun passes "
+        "through Aquarius during the Southern Hemisphere's rainy season, and various ancient "
+        "cultures connected the celestial water-pourer to the rains that sustained agriculture."
+    ),
+    "Chara": (
+        "Chara means 'joy' in Greek. Together with Cor Caroli and its nearby companion Asterion, "
+        "it represents one of the two hunting dogs held on a leash by Boötes the herdsman in the "
+        "constellation Canes Venatici. Johannes Hevelius invented this constellation in 1687, and "
+        "the Greek names he chose have a certain poetry: one dog is 'joy,' the other 'the starry "
+        "one,' and their leash is held by an eternal guardian of the sky."
+    ),
+    "Asterion": (
+        "Asterion means 'little star' or 'starry one' in Greek — the other of the two hunting "
+        "dogs in Canes Venatici. The pair of dogs were described in early sky atlases as Asterion "
+        "and Chara, straining forward on their leash as Boötes drives the Great Bear around the "
+        "pole. The constellation was invented in the 17th century by the Polish astronomer Johannes "
+        "Hevelius, one of the last figures to create new constellations that are still recognized "
+        "today."
+    ),
+    "NGC 869": (
+        "NGC 869 is the brighter component of the Perseus Double Cluster — two young, rich open "
+        "clusters side by side, both visible to the naked eye as a hazy double glow. The Greek "
+        "astronomer Hipparchus catalogued them around 130 BC. The two clusters are physically "
+        "close — separated by only about 100 light-years — and were born from the same vast cloud "
+        "of gas roughly 12 million years ago. On dark nights they are among the finest naked-eye "
+        "objects in the northern sky. From light-polluted cities, they are completely invisible."
+    ),
+    "Paikauhale": (
+        "Paikauhale is a star in Scorpius whose name comes from Hawaiian astronomical tradition "
+        "— one of a growing number of stars given names from non-European sky cultures by the "
+        "International Astronomical Union's Working Group on Star Names, which since 2016 has "
+        "approved names from Chinese, Arabic, Polynesian, Indigenous Australian, Māori, and "
+        "other traditions. This effort recognizes that every civilization that could see the sky "
+        "developed a relationship with it — and that those relationships deserve to be remembered."
+    ),
+    "Situla": (
+        "Situla means 'water bucket' or 'urn' in Latin. It marks one of the water vessels in "
+        "Aquarius the Water Bearer. In ancient Babylonian star lore, the region of Aquarius was "
+        "called 'The Great One,' and its stars were associated with the god Ea's gift of water "
+        "to humankind. The constellation's water-pouring figure has persisted in sky mythology "
+        "for over four thousand years, across Babylonian, Egyptian, Greek, and Arabic traditions."
+    ),
+    "Iota Leporis": (
+        "Iota Leporis is a star in Lepus the Hare — the small constellation crouching under "
+        "Orion's feet, perpetually fleeing the Hunter and his dogs. Lepus is one of the 48 original "
+        "constellations listed by the Greek astronomer Claudius Ptolemy in his 2nd-century "
+        "Almagest, and it has remained unchanged in the modern sky map. The hare's ancient role "
+        "as cosmic prey — forever beneath the Hunter and just ahead of the Dogs — makes it one "
+        "of astronomy's most enduring mythological scenes."
+    ),
+    "M41": (
+        "M41 is an open star cluster in Canis Major, about four degrees south of Sirius. Aristotle "
+        "mentioned a cloudy spot in this location around 325 BC — making M41 one of the oldest "
+        "recorded deep-sky objects in history. Charles Messier catalogued it in 1765. It contains "
+        "roughly 100 stars, some of them red giants, spread across a region of sky about twice the "
+        "apparent width of the full Moon. From a dark sky it is visible to the naked eye as a "
+        "faint smudge near the brightest star in the sky."
+    ),
+    "Gamma Pictoris": (
+        "Gamma Pictoris is in the constellation Pictor, the Painter's Easel — one of 14 southern "
+        "constellations invented by French astronomer Nicolas Louis de Lacaille during his landmark "
+        "survey of the southern sky from the Cape of Good Hope in 1751-52. Lacaille named his new "
+        "constellations after Enlightenment-era scientific instruments and tools: the Telescope, "
+        "the Microscope, the Air Pump, the Chemical Furnace, the Sculptor's Workshop, and the "
+        "Painter's Easel among them — a sky full of the tools of reason."
+    ),
+    "Phad": (
+        "Phad marks one of the four bowl stars of the Big Dipper, from Arabic for 'the thigh' of "
+        "the Great Bear. Like Alioth, Merak, and Megrez, Phad is a genuine member of the Ursa "
+        "Major Moving Group — a dispersed cluster of stars born from the same nebula about 300 "
+        "million years ago and still drifting through space together. The Great Bear asterism they "
+        "form has been the most important navigational star group in the Northern Hemisphere for "
+        "the entirety of recorded human history."
+    ),
+}
+
 
 def temp_to_star_color(temp_k):
     if temp_k >= 30_000: return "#9bb0ff"
@@ -838,6 +1377,66 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
     st.markdown("<br><br>", unsafe_allow_html=True)
 
     st.markdown("""
+<p style='text-align:center; font-size:0.58rem; letter-spacing:0.22em; color:#334455; margin:0 0 1.5rem 0;'>A BRIEF HISTORY OF ARTIFICIAL NIGHT</p>
+<div style='max-width:680px; margin:0 auto; position:relative;'>
+  <div style='position:absolute; left:80px; top:0; bottom:0; width:1px; background:#111133;'></div>
+  <div style='display:flex; flex-direction:column; gap:0;'>
+
+    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+      <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>1879</div>
+      <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
+      <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>Thomas Edison demonstrates the first practical incandescent bulb. Electric street lighting begins spreading from city centres outward.</div>
+    </div>
+
+    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+      <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>1930s</div>
+      <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
+      <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>The Milky Way disappears from the skies above every major American and European city. Observatories begin relocating away from urban centres.</div>
+    </div>
+
+    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+      <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>1950s–70s</div>
+      <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
+      <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>Post-war suburban expansion and the interstate highway system blanket the continental US in roadway lighting. The dark sky retreats hundreds of miles from major cities.</div>
+    </div>
+
+    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+      <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>1994</div>
+      <div style='width:7px; height:7px; border-radius:50%; background:#333355; border:1px solid #445577; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
+      <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>After the Northridge earthquake cuts power to Los Angeles, thousands of residents call 911 to report a strange silvery cloud overhead. They had seen the Milky Way for the first time in their lives.</div>
+    </div>
+
+    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+      <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>2001</div>
+      <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
+      <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>Scientists estimate one-third of humanity can no longer see the Milky Way at all. The figure is already higher in the United States and Europe.</div>
+    </div>
+
+    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+      <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>2016</div>
+      <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
+      <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>The <em>World Atlas of Artificial Night Sky Brightness</em> reveals 99% of Americans and Europeans live under light-polluted skies. 83% of the global population — and one-third of humanity — has never seen a truly dark night sky.</div>
+    </div>
+
+    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+      <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>2012–23</div>
+      <div style='width:7px; height:7px; border-radius:50%; background:#333355; border:1px solid #445577; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
+      <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>LED adoption accelerates globally. Although individual LEDs are more efficient, the rebound effect means far more lights are installed. Total light pollution rises more than 10% per year across the US.</div>
+    </div>
+
+    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+      <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#FF444455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>2023</div>
+      <div style='width:7px; height:7px; border-radius:50%; background:#442233; border:1px solid #FF4444; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
+      <div style='font-size:0.8rem; line-height:1.8; color:#667788;'>A study in <em>Science</em> finds that the number of stars visible to the naked eye is decreasing by 9.6% per year — fast enough to halve the visible sky within a human generation.</div>
+    </div>
+
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+    st.markdown("<br><br>", unsafe_allow_html=True)
+
+    st.markdown("""
 <div style='display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:680px; margin:0 auto;'>
   <div style='background:rgba(8,8,20,0.7); border:1px solid #0e0e2a; border-left:2px solid #2a3a6a; padding:1.2rem 1.5rem; backdrop-filter:blur(4px);'>
     <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.4rem 0;'>THE SCIENCE</p>
@@ -1221,6 +1820,19 @@ if st.session_state.page == "stars":
   <p style='font-size:0.65rem; letter-spacing:0.18em; color:#FF4444; margin:0 0 0.4rem 0;'>FUN FACT</p>
   <p style='font-size:0.88rem; line-height:1.9; color:#8899BB; margin:0;'>{fun}</p>
 </div>""", unsafe_allow_html=True)
+
+            history = STAR_HISTORY.get(name, "")
+            if history:
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown(
+                    "<div style='max-width:680px; margin:0 auto; background:#0a0a18;"
+                    " border-left:2px solid #2a4a8a; padding:1rem 1.5rem; border-radius:0 4px 4px 0;'>"
+                    "<p style='font-size:0.65rem; letter-spacing:0.18em; color:#4466AA; margin:0 0 0.4rem 0;'>HISTORY &amp; MYTHOLOGY</p>"
+                    "<p style='font-size:0.88rem; line-height:1.9; color:#7799BB; margin:0;'>"
+                    + history +
+                    "</p></div>",
+                    unsafe_allow_html=True
+                )
 
             siblings = sorted([
                 s for s in STARS
