@@ -158,46 +158,75 @@ CONSTELLATION_LINES = [
 ]
 
 STAR_INFO = {
-    "Sirius":          {"constellation": "Canis Major",       "distance_ly": 8.6,      "type": "White main-sequence"},
-    "Arcturus":        {"constellation": "Boötes",            "distance_ly": 36.7,     "type": "Red giant"},
-    "Vega":            {"constellation": "Lyra",              "distance_ly": 25.0,     "type": "White main-sequence"},
-    "Rigel":           {"constellation": "Orion",             "distance_ly": 860,      "type": "Blue supergiant"},
-    "Procyon":         {"constellation": "Canis Minor",       "distance_ly": 11.5,     "type": "Yellow-white subgiant"},
-    "Betelgeuse":      {"constellation": "Orion",             "distance_ly": 700,      "type": "Red supergiant"},
-    "Altair":          {"constellation": "Aquila",            "distance_ly": 16.7,     "type": "White main-sequence"},
-    "Aldebaran":       {"constellation": "Taurus",            "distance_ly": 65,       "type": "Red giant"},
-    "Antares":         {"constellation": "Scorpius",          "distance_ly": 550,      "type": "Red supergiant"},
-    "Spica":           {"constellation": "Virgo",             "distance_ly": 250,      "type": "Blue giant"},
-    "Pollux":          {"constellation": "Gemini",            "distance_ly": 33.8,     "type": "Orange giant"},
-    "Fomalhaut":       {"constellation": "Piscis Austrinus",  "distance_ly": 25,       "type": "White main-sequence"},
-    "Deneb":           {"constellation": "Cygnus",            "distance_ly": 2615,     "type": "White supergiant"},
-    "Regulus":         {"constellation": "Leo",               "distance_ly": 79,       "type": "Blue-white main-sequence"},
-    "Adhara":          {"constellation": "Canis Major",       "distance_ly": 430,      "type": "Blue supergiant"},
-    "Castor":          {"constellation": "Gemini",            "distance_ly": 52,       "type": "Sextuple star system"},
-    "Bellatrix":       {"constellation": "Orion",             "distance_ly": 250,      "type": "Blue-white giant"},
-    "Elnath":          {"constellation": "Taurus",            "distance_ly": 134,      "type": "Blue-white giant"},
-    "Alnilam":         {"constellation": "Orion",             "distance_ly": 2000,     "type": "Blue supergiant"},
-    "Alioth":          {"constellation": "Ursa Major",        "distance_ly": 81,       "type": "White main-sequence"},
-    "Mirfak":          {"constellation": "Perseus",           "distance_ly": 590,      "type": "Yellow supergiant"},
-    "Dubhe":           {"constellation": "Ursa Major",        "distance_ly": 124,      "type": "Orange giant"},
-    "Alkaid":          {"constellation": "Ursa Major",        "distance_ly": 104,      "type": "Blue-white main-sequence"},
-    "Polaris":         {"constellation": "Ursa Minor",        "distance_ly": 433,      "type": "Yellow supergiant (Cepheid variable)"},
-    "Hamal":           {"constellation": "Aries",             "distance_ly": 66,       "type": "Orange giant"},
-    "Alpheratz":       {"constellation": "Andromeda",         "distance_ly": 97,       "type": "Blue-white subgiant"},
-    "Kochab":          {"constellation": "Ursa Minor",        "distance_ly": 131,      "type": "Orange giant"},
-    "Algol":           {"constellation": "Perseus",           "distance_ly": 93,       "type": "Eclipsing binary"},
-    "Denebola":        {"constellation": "Leo",               "distance_ly": 36,       "type": "White main-sequence"},
-    "Alphecca":        {"constellation": "Corona Borealis",   "distance_ly": 75,       "type": "White main-sequence (binary)"},
-    "Mintaka":         {"constellation": "Orion",             "distance_ly": 900,      "type": "Blue supergiant (multiple)"},
-    "Schedar":         {"constellation": "Cassiopeia",        "distance_ly": 228,      "type": "Orange giant"},
-    "Mizar":           {"constellation": "Ursa Major",        "distance_ly": 78,       "type": "White main-sequence (famous double)"},
-    "Izar":            {"constellation": "Boötes",            "distance_ly": 203,      "type": "Orange giant (binary)"},
-    "Peacock":         {"constellation": "Pavo",              "distance_ly": 183,      "type": "Blue-white subgiant"},
-    "Cor Caroli":      {"constellation": "Canes Venatici",    "distance_ly": 110,      "type": "White main-sequence (binary)"},
-    "Andromeda Galaxy":{"constellation": "Andromeda",         "distance_ly": 2_537_000,"type": "Spiral galaxy (M31)"},
-    "Beehive Cluster": {"constellation": "Cancer",            "distance_ly": 577,      "type": "Open star cluster (M44)"},
-    "Omega Centauri":  {"constellation": "Centaurus",         "distance_ly": 17_000,   "type": "Globular cluster"},
-    "Orion Nebula":    {"constellation": "Orion",             "distance_ly": 1344,     "type": "Emission nebula (M42)"},
+    "Sirius":          {"constellation": "Canis Major",       "distance_ly": 8.6,        "type": "White main-sequence",                  "spectral": "A1V",       "temp_k": 9_940,   "luminosity_sun": 25.4,    "radius_sun": 1.71},
+    "Arcturus":        {"constellation": "Boötes",            "distance_ly": 36.7,       "type": "Red giant",                            "spectral": "K1.5III",   "temp_k": 4_286,   "luminosity_sun": 170,     "radius_sun": 25.4},
+    "Vega":            {"constellation": "Lyra",              "distance_ly": 25.0,       "type": "White main-sequence",                  "spectral": "A0Va",      "temp_k": 9_602,   "luminosity_sun": 40.12,   "radius_sun": 2.36},
+    "Rigel":           {"constellation": "Orion",             "distance_ly": 860,        "type": "Blue supergiant",                      "spectral": "B8Ia",      "temp_k": 12_100,  "luminosity_sun": 120_000, "radius_sun": 78.9},
+    "Procyon":         {"constellation": "Canis Minor",       "distance_ly": 11.5,       "type": "Yellow-white subgiant",                "spectral": "F5IV-V",    "temp_k": 6_530,   "luminosity_sun": 6.93,    "radius_sun": 2.05},
+    "Betelgeuse":      {"constellation": "Orion",             "distance_ly": 700,        "type": "Red supergiant",                       "spectral": "M1-M2Ia",   "temp_k": 3_500,   "luminosity_sun": 100_000, "radius_sun": 887},
+    "Altair":          {"constellation": "Aquila",            "distance_ly": 16.7,       "type": "White main-sequence",                  "spectral": "A7V",       "temp_k": 7_550,   "luminosity_sun": 10.6,    "radius_sun": 1.63},
+    "Aldebaran":       {"constellation": "Taurus",            "distance_ly": 65,         "type": "Red giant",                            "spectral": "K5III",     "temp_k": 3_910,   "luminosity_sun": 518,     "radius_sun": 44.2},
+    "Antares":         {"constellation": "Scorpius",          "distance_ly": 550,        "type": "Red supergiant",                       "spectral": "M1.5Iab",   "temp_k": 3_400,   "luminosity_sun": 75_900,  "radius_sun": 700},
+    "Spica":           {"constellation": "Virgo",             "distance_ly": 250,        "type": "Blue giant",                           "spectral": "B1III-IV",  "temp_k": 25_300,  "luminosity_sun": 20_000,  "radius_sun": 7.4},
+    "Pollux":          {"constellation": "Gemini",            "distance_ly": 33.8,       "type": "Orange giant",                         "spectral": "K0IIIb",    "temp_k": 4_586,   "luminosity_sun": 32.7,    "radius_sun": 9.06},
+    "Fomalhaut":       {"constellation": "Piscis Austrinus",  "distance_ly": 25,         "type": "White main-sequence",                  "spectral": "A3Va",      "temp_k": 8_590,   "luminosity_sun": 16.63,   "radius_sun": 1.84},
+    "Deneb":           {"constellation": "Cygnus",            "distance_ly": 2615,       "type": "White supergiant",                     "spectral": "A2Ia",      "temp_k": 8_525,   "luminosity_sun": 196_000, "radius_sun": 203},
+    "Regulus":         {"constellation": "Leo",               "distance_ly": 79,         "type": "Blue-white main-sequence",             "spectral": "B8IVn",     "temp_k": 11_060,  "luminosity_sun": 363,     "radius_sun": 3.09},
+    "Adhara":          {"constellation": "Canis Major",       "distance_ly": 430,        "type": "Blue supergiant",                      "spectral": "B2Ia",      "temp_k": 22_200,  "luminosity_sun": 38_700,  "radius_sun": 13.9},
+    "Castor":          {"constellation": "Gemini",            "distance_ly": 52,         "type": "Sextuple star system",                 "spectral": "A2V",       "temp_k": 10_286,  "luminosity_sun": 52,      "radius_sun": 2.09},
+    "Bellatrix":       {"constellation": "Orion",             "distance_ly": 250,        "type": "Blue-white giant",                     "spectral": "B2III",     "temp_k": 22_000,  "luminosity_sun": 6_400,   "radius_sun": 5.75},
+    "Elnath":          {"constellation": "Taurus",            "distance_ly": 134,        "type": "Blue-white giant",                     "spectral": "B7III",     "temp_k": 13_600,  "luminosity_sun": 700,     "radius_sun": 4.5},
+    "Alnilam":         {"constellation": "Orion",             "distance_ly": 2000,       "type": "Blue supergiant",                      "spectral": "B0Ia",      "temp_k": 27_000,  "luminosity_sun": 400_000, "radius_sun": 42},
+    "Alioth":          {"constellation": "Ursa Major",        "distance_ly": 81,         "type": "White main-sequence",                  "spectral": "A0p",       "temp_k": 9_020,   "luminosity_sun": 108,     "radius_sun": 4.15},
+    "Mirfak":          {"constellation": "Perseus",           "distance_ly": 590,        "type": "Yellow supergiant",                    "spectral": "F5Ib",      "temp_k": 6_350,   "luminosity_sun": 5_000,   "radius_sun": 60},
+    "Dubhe":           {"constellation": "Ursa Major",        "distance_ly": 124,        "type": "Orange giant",                         "spectral": "K0III",     "temp_k": 4_960,   "luminosity_sun": 316,     "radius_sun": 17.0},
+    "Alkaid":          {"constellation": "Ursa Major",        "distance_ly": 104,        "type": "Blue-white main-sequence",             "spectral": "B3V",       "temp_k": 20_600,  "luminosity_sun": 594,     "radius_sun": 3.4},
+    "Peacock":         {"constellation": "Pavo",              "distance_ly": 183,        "type": "Blue-white subgiant",                  "spectral": "B2IV",      "temp_k": 17_711,  "luminosity_sun": 2_200,   "radius_sun": 4.83},
+    "Polaris":         {"constellation": "Ursa Minor",        "distance_ly": 433,        "type": "Yellow supergiant (Cepheid variable)", "spectral": "F7Ib",      "temp_k": 6_015,   "luminosity_sun": 2_500,   "radius_sun": 46},
+    "Hamal":           {"constellation": "Aries",             "distance_ly": 66,         "type": "Orange giant",                         "spectral": "K2III",     "temp_k": 4_480,   "luminosity_sun": 91,      "radius_sun": 14.9},
+    "Alpheratz":       {"constellation": "Andromeda",         "distance_ly": 97,         "type": "Blue-white subgiant",                  "spectral": "B8IVpMnHg", "temp_k": 13_800,  "luminosity_sun": 200,     "radius_sun": 2.7},
+    "Kochab":          {"constellation": "Ursa Minor",        "distance_ly": 131,        "type": "Orange giant",                         "spectral": "K4III",     "temp_k": 4_030,   "luminosity_sun": 450,     "radius_sun": 42},
+    "Algol":           {"constellation": "Perseus",           "distance_ly": 93,         "type": "Eclipsing binary",                     "spectral": "B8V",       "temp_k": 12_000,  "luminosity_sun": 98,      "radius_sun": 2.73},
+    "Denebola":        {"constellation": "Leo",               "distance_ly": 36,         "type": "White main-sequence",                  "spectral": "A3V",       "temp_k": 8_500,   "luminosity_sun": 15.6,    "radius_sun": 1.73},
+    "Alphecca":        {"constellation": "Corona Borealis",   "distance_ly": 75,         "type": "White main-sequence (binary)",         "spectral": "A0V",       "temp_k": 9_700,   "luminosity_sun": 74,      "radius_sun": 3.04},
+    "Mintaka":         {"constellation": "Orion",             "distance_ly": 900,        "type": "Blue supergiant (multiple)",           "spectral": "O9.5II",    "temp_k": 29_500,  "luminosity_sun": 90_000,  "radius_sun": 16.5},
+    "Schedar":         {"constellation": "Cassiopeia",        "distance_ly": 228,        "type": "Orange giant",                         "spectral": "K0IIIa",    "temp_k": 4_530,   "luminosity_sun": 676,     "radius_sun": 45.1},
+    "Phad":            {"constellation": "Ursa Major",        "distance_ly": 84,         "type": "White main-sequence",                  "spectral": "A0Ve",      "temp_k": 9_355,   "luminosity_sun": 63,      "radius_sun": 3.04},
+    "Izar":            {"constellation": "Boötes",            "distance_ly": 203,        "type": "Orange giant (binary)",                "spectral": "K0II",      "temp_k": 4_287,   "luminosity_sun": 500,     "radius_sun": 33},
+    "Mizar":           {"constellation": "Ursa Major",        "distance_ly": 78,         "type": "White main-sequence (famous double)",  "spectral": "A2V",       "temp_k": 9_000,   "luminosity_sun": 71,      "radius_sun": 2.4},
+    "Muphrid":         {"constellation": "Boötes",            "distance_ly": 37,         "type": "Yellow subgiant",                      "spectral": "G0IV",      "temp_k": 6_100,   "luminosity_sun": 9.4,     "radius_sun": 2.67},
+    "Porrima":         {"constellation": "Virgo",             "distance_ly": 38,         "type": "Binary (two F-type stars)",            "spectral": "F0V",       "temp_k": 7_124,   "luminosity_sun": 6.9,     "radius_sun": 1.56},
+    "Sabik":           {"constellation": "Ophiuchus",         "distance_ly": 88,         "type": "Binary star system",                   "spectral": "A2V",       "temp_k": 8_900,   "luminosity_sun": 43,      "radius_sun": 2.1},
+    "Cor Caroli":      {"constellation": "Canes Venatici",    "distance_ly": 110,        "type": "White main-sequence (binary)",         "spectral": "A0Vp",      "temp_k": 11_600,  "luminosity_sun": 48,      "radius_sun": 2.49},
+    "Megrez":          {"constellation": "Ursa Major",        "distance_ly": 81,         "type": "White main-sequence",                  "spectral": "A3V",       "temp_k": 9_480,   "luminosity_sun": 14,      "radius_sun": 1.4},
+    "Segin":           {"constellation": "Cassiopeia",        "distance_ly": 440,        "type": "Blue-white giant",                     "spectral": "B2IV",      "temp_k": 15_174,  "luminosity_sun": 2_500,   "radius_sun": 6.0},
+    "Tania Borealis":  {"constellation": "Ursa Major",        "distance_ly": 133,        "type": "White main-sequence",                  "spectral": "A2V",       "temp_k": 9_050,   "luminosity_sun": 44,      "radius_sun": 2.2},
+    "Alula Australis": {"constellation": "Ursa Major",        "distance_ly": 27,         "type": "Yellow dwarf (binary)",                "spectral": "G0V",       "temp_k": 5_900,   "luminosity_sun": 1.4,     "radius_sun": 1.06},
+    "Fulu":            {"constellation": "Cassiopeia",        "distance_ly": 630,        "type": "Blue-white giant",                     "spectral": "B2III",     "temp_k": 20_700,  "luminosity_sun": 4_600,   "radius_sun": 7.0},
+    "Albali":          {"constellation": "Aquarius",          "distance_ly": 208,        "type": "White main-sequence",                  "spectral": "A7V",       "temp_k": 7_950,   "luminosity_sun": 27,      "radius_sun": 2.5},
+    "Andromeda Galaxy":{"constellation": "Andromeda",         "distance_ly": 2_537_000,  "type": "Spiral galaxy (M31)"},
+    "Beehive Cluster": {"constellation": "Cancer",            "distance_ly": 577,        "type": "Open star cluster (M44)"},
+    "Omega Centauri":  {"constellation": "Centaurus",         "distance_ly": 17_000,     "type": "Globular cluster"},
+    "Acubens":         {"constellation": "Cancer",            "distance_ly": 174,        "type": "White main-sequence (binary)",         "spectral": "A5m",       "temp_k": 7_950,   "luminosity_sun": 23,      "radius_sun": 2.27},
+    "Propus":          {"constellation": "Gemini",            "distance_ly": 352,        "type": "Red giant",                            "spectral": "M3III",     "temp_k": 3_450,   "luminosity_sun": 2_800,   "radius_sun": 173},
+    "Castula":         {"constellation": "Cassiopeia",        "distance_ly": 440,        "type": "Blue-white giant",                     "spectral": "B2IV",      "temp_k": 15_174,  "luminosity_sun": 2_500,   "radius_sun": 6.0},
+    "Marfak":          {"constellation": "Perseus",           "distance_ly": 780,        "type": "Blue-white supergiant",                "spectral": "B9Ib",      "temp_k": 10_500,  "luminosity_sun": 6_200,   "radius_sun": 40},
+    "Alzirr":          {"constellation": "Gemini",            "distance_ly": 57,         "type": "Yellow-white main-sequence",           "spectral": "F5IV",      "temp_k": 6_630,   "luminosity_sun": 10,      "radius_sun": 1.78},
+    "Alula Borealis":  {"constellation": "Ursa Major",        "distance_ly": 400,        "type": "Yellow giant",                         "spectral": "K3III",     "temp_k": 4_100,   "luminosity_sun": 316,     "radius_sun": 34},
+    "Jabbah":          {"constellation": "Scorpius",          "distance_ly": 470,        "type": "Multiple star system",                 "spectral": "B2.5III",   "temp_k": 20_000,  "luminosity_sun": 1_900,   "radius_sun": 6.5},
+    "Orion Nebula":    {"constellation": "Orion",             "distance_ly": 1344,       "type": "Emission nebula (M42)"},
+    "Mekbuda":         {"constellation": "Gemini",            "distance_ly": 1_100,      "type": "Yellow supergiant (Cepheid)",          "spectral": "G0Ib",      "temp_k": 5_800,   "luminosity_sun": 2_600,   "radius_sun": 60},
+    "Deneb el Okab":   {"constellation": "Aquila",            "distance_ly": 83,         "type": "White main-sequence",                  "spectral": "A0V",       "temp_k": 9_979,   "luminosity_sun": 29,      "radius_sun": 1.9},
+    "47 Tucanae":      {"constellation": "Tucana",            "distance_ly": 14_764,     "type": "Globular cluster"},
+    "Ancha":           {"constellation": "Aquarius",          "distance_ly": 181,        "type": "Yellow giant",                         "spectral": "G8III",     "temp_k": 4_870,   "luminosity_sun": 99,      "radius_sun": 12.0},
+    "Chara":           {"constellation": "Canes Venatici",    "distance_ly": 27,         "type": "Yellow dwarf (Sun-like)",              "spectral": "G0V",       "temp_k": 5_930,   "luminosity_sun": 1.16,    "radius_sun": 1.09},
+    "Asterion":        {"constellation": "Canes Venatici",    "distance_ly": 27,         "type": "Yellow dwarf",                         "spectral": "G0V",       "temp_k": 5_860,   "luminosity_sun": 1.1,     "radius_sun": 1.06},
+    "NGC 869":         {"constellation": "Perseus",           "distance_ly": 7_500,      "type": "Open cluster (h Persei)"},
+    "Paikauhale":      {"constellation": "Scorpius",          "distance_ly": 430,        "type": "Red supergiant",                       "spectral": "M1Iab",     "temp_k": 3_640,   "luminosity_sun": 45_000,  "radius_sun": 390},
+    "Situla":          {"constellation": "Aquarius",          "distance_ly": 199,        "type": "Yellow giant",                         "spectral": "K1III",     "temp_k": 4_760,   "luminosity_sun": 65,      "radius_sun": 10.5},
+    "Iota Leporis":    {"constellation": "Lepus",             "distance_ly": 230,        "type": "Blue-white main-sequence",             "spectral": "B3V",       "temp_k": 18_900,  "luminosity_sun": 1_000,   "radius_sun": 3.7},
+    "M41":             {"constellation": "Canis Major",       "distance_ly": 2_336,      "type": "Open star cluster"},
+    "Gamma Pictoris":  {"constellation": "Pictor",            "distance_ly": 174,        "type": "Yellow-white giant",                   "spectral": "F0III",     "temp_k": 7_000,   "luminosity_sun": 61,      "radius_sun": 5.0},
 }
 
 STAR_FACTS = {
@@ -239,6 +268,17 @@ STAR_FACTS = {
     "Orion Nebula":    "a stellar nursery just 1,344 light-years away where new solar systems are forming right now — the faint smudge below Orion's Belt is visible to the naked eye",
     "Spica":           "so close to the ecliptic that the Moon frequently passes in front of it — Hipparchus used one such occultation in 127 BC to discover the precession of the equinoxes",
 }
+
+
+def temp_to_star_color(temp_k):
+    if temp_k >= 30_000: return "#9bb0ff"
+    if temp_k >= 20_000: return "#aabfff"
+    if temp_k >= 10_000: return "#cad7ff"
+    if temp_k >= 7_500:  return "#f8f7ff"
+    if temp_k >= 6_000:  return "#fff4ea"
+    if temp_k >= 5_000:  return "#ffd2a1"
+    if temp_k >= 3_500:  return "#ffb347"
+    return "#ff6b35"
 
 
 def star_fun_fact(name, mag, info, lm_2012, lm_2023, place_name, radiance_by_year):
@@ -983,11 +1023,19 @@ if st.session_state.page == "stars":
 
             description = wiki.get("extract", "")
 
+            star_color = temp_to_star_color(info["temp_k"]) if info.get("temp_k") else "#ffffff"
             st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown(f"<h2 style='text-align:center; font-size:2.8rem; letter-spacing:0.12em; color:white;'>{name}</h2>",
-                        unsafe_allow_html=True)
+            st.markdown(
+                f"<div style='text-align:center;'>"
+                f"<span style='display:inline-block; width:20px; height:20px; border-radius:50%; "
+                f"background:{star_color}; box-shadow:0 0 18px 6px {star_color}55; "
+                f"vertical-align:middle; margin-right:14px; margin-bottom:4px;'></span>"
+                f"<span style='font-family:\"Space Grotesk\",sans-serif; font-size:2.8rem; "
+                f"letter-spacing:0.12em; color:white; font-weight:300;'>{name}</span>"
+                f"</div>",
+                unsafe_allow_html=True)
             if info.get("constellation"):
-                st.markdown(f"<p style='text-align:center; font-size:0.65rem; letter-spacing:0.2em; color:#445566; margin-top:-0.5rem;'>{info['constellation'].upper()}</p>",
+                st.markdown(f"<p style='text-align:center; font-size:0.65rem; letter-spacing:0.2em; color:#445566; margin-top:0.3rem;'>{info['constellation'].upper()}</p>",
                             unsafe_allow_html=True)
             st.markdown("<br>", unsafe_allow_html=True)
 
@@ -1018,6 +1066,25 @@ if st.session_state.page == "stars":
                     st.markdown(f"<p style='font-size:0.65rem; letter-spacing:0.1em; color:{vis_color}; margin-top:-1rem;'>{st.session_state.place_name.upper() if st.session_state.place_name else ''}</p>",
                                 unsafe_allow_html=True)
 
+            if info.get("spectral"):
+                st.markdown("<br>", unsafe_allow_html=True)
+                pcols = st.columns(4)
+                pcols[0].metric("Spectral Class", info["spectral"])
+                pcols[1].metric("Surface Temperature", f"{info['temp_k']:,} K")
+                lum = info.get("luminosity_sun")
+                if lum is not None:
+                    if lum >= 1000:
+                        lum_str = f"{lum:,.0f}× ☉"
+                    elif lum >= 1:
+                        lum_str = f"{lum:.2f}× ☉"
+                    else:
+                        lum_str = f"{lum:.3f}× ☉"
+                    pcols[2].metric("Luminosity", lum_str)
+                rad = info.get("radius_sun")
+                if rad is not None:
+                    rad_str = f"{rad:.0f}× ☉" if rad >= 10 else f"{rad:.2f}× ☉"
+                    pcols[3].metric("Radius", rad_str)
+
             if others:
                 st.markdown(f"<p style='font-size:0.7rem; color:#334455; margin-top:1.5rem;'>other matches: "
                             + "  ·  ".join(f"<span style='color:#556688;'>{o}</span>" for o in others)
@@ -1036,6 +1103,24 @@ if st.session_state.page == "stars":
   <p style='font-size:0.65rem; letter-spacing:0.18em; color:#FF4444; margin:0 0 0.4rem 0;'>FUN FACT</p>
   <p style='font-size:0.88rem; line-height:1.9; color:#8899BB; margin:0;'>{fun}</p>
 </div>""", unsafe_allow_html=True)
+
+            siblings = sorted([
+                s for s in STARS
+                if s[0] != name
+                and STAR_INFO.get(s[0], {}).get("constellation") == info.get("constellation")
+            ], key=lambda s: s[1])
+            if siblings:
+                st.markdown("<br>", unsafe_allow_html=True)
+                sib_links = "  ·  ".join(
+                    f"<a href='?page=stars&star={s[0].replace(\" \", \"%20\")}' target='_self' "
+                    f"style='color:#445577; text-decoration:none; font-size:0.8rem;'>{s[0]}</a>"
+                    for s in siblings
+                )
+                st.markdown(
+                    f"<p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.4rem 0;'>"
+                    f"ALSO IN {info.get('constellation','').upper()}</p>"
+                    f"<p style='margin:0;'>{sib_links}</p>",
+                    unsafe_allow_html=True)
 
             if description:
                 st.markdown("<br>", unsafe_allow_html=True)
