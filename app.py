@@ -38,6 +38,15 @@ st.markdown("""
     .wyhl-navlink { font-size: 0.62rem; letter-spacing: 0.18em; color: #44446a; text-decoration: none; padding-bottom: 2px; }
     .wyhl-navlink:hover { color: #9999CC; }
     .wyhl-navlink.active { color: white; border-bottom: 1px solid #FF4444; }
+    /* Force help tooltip to open to the right instead of left */
+    [data-testid="stTooltipContent"] {
+        left: 0 !important;
+        right: auto !important;
+    }
+    [data-radix-popper-content-wrapper] {
+        left: 0 !important;
+        right: auto !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
