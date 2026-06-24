@@ -634,7 +634,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         yaxis=dict(range=[-1.15, 1.15], visible=False, fixedrange=True),
         margin=dict(l=0, r=0, t=0, b=0),
         showlegend=False,
-        dragmode='zoom',
+        dragmode=False,
         clickmode='event+select',
         height=1200,
         modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
