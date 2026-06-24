@@ -882,13 +882,17 @@ if st.session_state.searched and st.session_state.page != "stars":
     st.markdown("<br>", unsafe_allow_html=True)
 
     m1, m2, m3 = st.columns(3)
-    m1.metric("light pollution since 2012", f"{pct_change:+.1f}%")
+    m1.metric("light pollution since 2012", f"{pct_change:+.1f}%",
+              help="Percentage change in upward light radiance measured by NASA Black Marble satellite between 2012 and 2023. Positive = more light pollution; negative = improvement.")
     if pct_change >= 0:
-        m2.metric("stars lost since 2012", len(all_lost))
+        m2.metric("stars lost since 2012", len(all_lost),
+                  help="Named stars from our 69-object catalog that were visible to the naked eye in 2012 but can no longer be seen due to increased light pollution.")
     else:
         gained = [(n, m) for n, m in star_mags if lm_2012 < m <= lm_2023]
-        m2.metric("stars gained since 2012", len(gained))
-    m3.metric("visible in our atlas", len(still_visible))
+        m2.metric("stars gained since 2012", len(gained),
+                  help="Named stars from our 69-object catalog that were not visible in 2012 but have become visible due to reduced light pollution.")
+    m3.metric("visible in our atlas", len(still_visible),
+              help="Named stars and deep-sky objects from our 69-object catalog bright enough to be seen with the naked eye from your location under 2023 sky conditions.")
 
     # Sky quality + change explanation cards
     sky_label_now, sky_bortle_now, sky_stars_now, sky_exp_now = get_sky_description(lm_2023)
@@ -1062,17 +1066,22 @@ if st.session_state.page == "stars":
 
             ncols = 4 if info.get("distance_ly") else 3
             scols = st.columns(ncols)
-            scols[0].metric("Apparent Magnitude", f"{mag:.2f}")
-            scols[1].metric("Right Ascension", f"{ra:.3f} h")
-            scols[2].metric("Declination", f"{dec:+.2f}°")
+            scols[0].metric("Apparent Magnitude", f"{mag:.2f}",
+                            help="How bright the object appears from Earth. Lower (or more negative) numbers are brighter. Each step of 1 magnitude is ~2.5× in brightness; a difference of 5 is exactly 100×.")
+            scols[1].metric("Right Ascension", f"{ra:.3f} h",
+                            help="The celestial equivalent of longitude — how far east the object sits on the celestial sphere, measured in hours (0–24 h).")
+            scols[2].metric("Declination", f"{dec:+.2f}°",
+                            help="The celestial equivalent of latitude — how far north (+) or south (−) the object sits from the celestial equator, in degrees (−90° to +90°).")
             if info.get("distance_ly"):
                 d = info["distance_ly"]
-                scols[3].metric("Distance", f"{d:,.0f} ly" if d >= 1000 else f"{d} ly")
+                scols[3].metric("Distance", f"{d:,.0f} ly" if d >= 1000 else f"{d} ly",
+                                help="Approximate distance from Earth in light-years. One light-year is the distance light travels in a year — about 9.46 trillion km.")
 
             if info.get("type"):
                 st.markdown("<br>", unsafe_allow_html=True)
                 tcols = st.columns(3)
-                tcols[0].metric("Classification", info["type"])
+                tcols[0].metric("Classification", info["type"],
+                                help="Physical category based on the object's size, luminosity, evolutionary stage, and spectral properties.")
                 if st.session_state.searched:
                     rb = st.session_state.radiance_by_year
                     lm12 = radiance_to_limiting_magnitude(rb.get(2012, SD_RADIANCE[2012]))
@@ -1083,15 +1092,18 @@ if st.session_state.page == "stars":
                         vis_label, vis_color = "Lost since 2012", "#FF6B6B"
                     else:
                         vis_label, vis_color = "Too faint for naked eye", "#445566"
-                    tcols[1].metric("Visibility", vis_label)
+                    tcols[1].metric("Visibility", vis_label,
+                                    help="Whether this object is visible to the naked eye from your searched location based on 2023 light pollution data.")
                     st.markdown(f"<p style='font-size:0.65rem; letter-spacing:0.1em; color:{vis_color}; margin-top:-1rem;'>{st.session_state.place_name.upper() if st.session_state.place_name else ''}</p>",
                                 unsafe_allow_html=True)
 
             if info.get("spectral"):
                 st.markdown("<br>", unsafe_allow_html=True)
                 pcols = st.columns(4)
-                pcols[0].metric("Spectral Class", info["spectral"])
-                pcols[1].metric("Surface Temperature", f"{info['temp_k']:,} K")
+                pcols[0].metric("Spectral Class", info["spectral"],
+                                help="A letter code describing the star's temperature and chemistry. O B A F G K M runs hottest (blue) to coolest (red). A Roman numeral suffix indicates luminosity class (I = supergiant, V = main sequence). Our Sun is G2V.")
+                pcols[1].metric("Surface Temperature", f"{info['temp_k']:,} K",
+                                help="Effective temperature of the star's photosphere — the layer from which its light escapes. Hotter stars appear blue-white; cooler stars appear orange-red.")
                 lum = info.get("luminosity_sun")
                 if lum is not None:
                     if lum >= 1000:
@@ -1100,11 +1112,13 @@ if st.session_state.page == "stars":
                         lum_str = f"{lum:.2f}× ☉"
                     else:
                         lum_str = f"{lum:.3f}× ☉"
-                    pcols[2].metric("Luminosity", lum_str)
+                    pcols[2].metric("Luminosity", lum_str,
+                                    help="Total energy output compared to our Sun (☉ = 1 solar luminosity = 3.828 × 10²⁶ watts). A star 100× the Sun's luminosity radiates 100 times as much energy across all wavelengths.")
                 rad = info.get("radius_sun")
                 if rad is not None:
                     rad_str = f"{rad:.0f}× ☉" if rad >= 10 else f"{rad:.2f}× ☉"
-                    pcols[3].metric("Radius", rad_str)
+                    pcols[3].metric("Radius", rad_str,
+                                    help="Physical size compared to our Sun's radius (☉ = 696,000 km). A star with radius 10× ☉ is ten times wider than the Sun in diameter.")
 
             if others:
                 st.markdown(f"<p style='font-size:0.7rem; color:#334455; margin-top:1.5rem;'>other matches: "
