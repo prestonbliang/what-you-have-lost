@@ -233,13 +233,13 @@ STAR_FACTS = {
     "Sirius":          "the brightest star in the entire night sky — at magnitude −1.46 it can cast faint shadows on a moonless night",
     "Arcturus":        "one of the fastest-moving stars visible to the naked eye, hurtling through space at 122 km/s relative to the Sun",
     "Vega":            "so perfectly studied that in 1850 it became the original zero-point anchor for the entire stellar magnitude scale",
-    "Rigel":           "a blue supergiant 120,000× more luminous than the Sun — its light now reaching you left before the last mammoths went extinct",
+    "Rigel":           "a blue supergiant 120,000× more luminous than the Sun — its light took 860 years to reach your eye, leaving this star around the time the first Gothic cathedrals were being raised in Europe",
     "Procyon":         "one of our closest stellar neighbors at just 11.5 light-years; its name is Greek for 'before the dog' because it rises just ahead of Sirius",
     "Betelgeuse":      "a red supergiant so vast it would swallow every planet out to Jupiter if placed where our Sun sits — and it could explode any day",
     "Altair":          "one of the fastest-spinning stars known, rotating so quickly its equator bulges visibly — it completes a full rotation in under 9 hours",
     "Aldebaran":       "the 'eye of the Bull' in Taurus, used by sailors for thousands of years as a navigation reference and still 44× the diameter of our Sun",
     "Antares":         "so large that if it replaced our Sun, its surface would extend past Mars — its name means 'rival of Mars' for its fiery red hue",
-    "Spica":           "actually two blue stars so close together they distort into an egg shape from mutual gravity, completing an orbit every four days",
+    "Spica":           "actually two blue stars so close their mutual gravity distorts them into an egg shape — they orbit each other every four days, and Spica sits so near the ecliptic that Hipparchus used a lunar occultation of it in 127 BC to discover the precession of the equinoxes",
     "Pollux":          "the first star confirmed to host an exoplanet; Pollux b is a giant world 2.3× Jupiter's mass orbiting at 1.6 AU",
     "Fomalhaut":       "surrounded by a dramatic debris ring of comets and dust — one of the first stars where a planet was directly photographed",
     "Deneb":           "one of the most luminous stars in the galaxy: if Deneb were as close as Sirius, it would cast shadows at night and be visible in daytime",
@@ -259,14 +259,12 @@ STAR_FACTS = {
     "Denebola":        "the tail of Leo; early Islamic astronomers believed its rising foretold bad luck — in reality it is a young star just 400 million years old",
     "Alphecca":        "the gem of Corona Borealis — its name means 'the bright one of the dish,' and it is actually a spectroscopic binary orbiting in 17.36 days",
     "Mizar":           "the first double star ever resolved through a telescope (1617) and the first star system to be discovered photographically to be a binary",
-    "Polaris":         "has not always been the North Star — Earth's axial wobble will move the pole toward Vega by the year 14,000",
     "Peacock":         "named by the British Air Ministry in the 1930s when they needed names for southern stars to teach RAF navigators",
-    "Cor Caroli":      "named 'Heart of Charles' to commemorate King Charles II of England; its magnetic field is 1,500 times stronger than our Sun's",
+    "Cor Caroli":      "named 'Heart of Charles' to commemorate King Charles II of England; as a chemically peculiar Ap star its magnetic field is thousands of times stronger than our Sun's",
     "Andromeda Galaxy":"the most distant object visible to the naked eye — its light has traveled 2.5 million years to reach your eye, longer than our entire species has existed",
     "Beehive Cluster": "contains at least two confirmed exoplanets — both hot Jupiters orbiting Sun-like stars, making it one of the first clusters with known planets",
-    "Omega Centauri":  "the largest and most massive globular cluster in the Milky Way — ten million stars packed into a sphere, possibly the stripped core of a ancient dwarf galaxy",
+    "Omega Centauri":  "the largest and most massive globular cluster in the Milky Way — ten million stars packed into a sphere, possibly the stripped core of an ancient dwarf galaxy",
     "Orion Nebula":    "a stellar nursery just 1,344 light-years away where new solar systems are forming right now — the faint smudge below Orion's Belt is visible to the naked eye",
-    "Spica":           "so close to the ecliptic that the Moon frequently passes in front of it — Hipparchus used one such occultation in 127 BC to discover the precession of the equinoxes",
 }
 
 
@@ -348,7 +346,7 @@ def get_sky_description(lm):
         )
     else:
         return (
-            "Inner City", "Bortle 9+", "< 20",
+            "Inner City", "Bortle 9+", "25–50",
             "The sky never truly darkens. A uniform orange-white glow fills the night from "
             "horizon to horizon — a permanent artificial dawn. Only the very brightest stars "
             "— Sirius, Arcturus, Vega — cut through the haze. Most constellation patterns "
