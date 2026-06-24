@@ -624,7 +624,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
             marker=dict(symbol='circle', size=vis_sizes, color=vis_colors, line=dict(width=0)),
             text=vis_labels,
             textposition='top center',
-            textfont=dict(size=8, color="#7799CC"),
+            textfont=dict(size=10, color="#7799CC"),
             customdata=vis_names,
             hovertemplate='<b>%{customdata}</b><extra></extra>',
             showlegend=False, name='visible'
@@ -639,7 +639,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
                         opacity=0.7, line=dict(width=0)),
             text=lost_labels,
             textposition='top center',
-            textfont=dict(size=7, color=lost_label_colors),
+            textfont=dict(size=9, color=lost_label_colors),
             customdata=lost_names,
             hovertemplate='<b>%{customdata}</b><br><i>lost since 2012</i><extra></extra>',
             showlegend=False, name='lost'
@@ -653,7 +653,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
             marker=dict(symbol='star', size=bh_sizes, color=bh_colors_list, line=dict(width=0)),
             text=bh_labels,
             textposition='bottom center',
-            textfont=dict(size=7, color=bh_colors_list),
+            textfont=dict(size=9, color=bh_colors_list),
             customdata=bh_names,
             hovertemplate='<b>%{customdata}</b><br><i>below horizon</i><extra></extra>',
             opacity=0.35,
