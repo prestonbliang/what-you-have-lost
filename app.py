@@ -745,8 +745,16 @@ if st.session_state.page == "landing":
     st.markdown("<p style='text-align:center; font-size:0.8rem; letter-spacing:0.3em; color:#6666AA;'>A LIGHT POLLUTION OBSERVATORY</p>", unsafe_allow_html=True)
 
     st.markdown("""
-<p style='text-align:center; max-width:560px; margin:0 auto; font-size:1.05rem; line-height:2.2; color:#8899BB; letter-spacing:0.02em;'>
+<p style='text-align:center; max-width:600px; margin:0 auto; font-size:1.05rem; line-height:2.2; color:#8899BB; letter-spacing:0.02em;'>
 Every year, artificial light drowns out more of the night sky. Stars that your grandparents could name from memory have silently vanished — not from the universe, but from your view.
+</p>
+""", unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown("""
+<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#667799; letter-spacing:0.01em;'>
+Light pollution is the only form of pollution that erases something from human experience entirely. A child growing up in New York City today has never seen the Milky Way. Most have never seen more than a handful of stars at all. What was once an unbroken human inheritance — a canopy of thousands of points of light overhead on any clear night — has been quietly switched off over the course of a single lifetime.
 </p>
 """, unsafe_allow_html=True)
 
@@ -772,9 +780,24 @@ Every year, artificial light drowns out more of the night sky. Stars that your g
     st.markdown("<br><br><br>", unsafe_allow_html=True)
 
     st.markdown("""
-<p style='text-align:center; max-width:500px; margin:0 auto; font-size:0.85rem; line-height:2; color:#556688;'>
-This tool uses NASA Black Marble satellite data to translate raw light radiance into something human — the actual named stars you can no longer see from your backyard, mapped year by year since 2012.
+<p style='text-align:center; max-width:580px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#556688;'>
+This tool uses NASA Black Marble satellite data to translate raw light radiance into something human — the actual named stars you can no longer see from your backyard, mapped year by year since 2012. Enter your zip code and watch stars wink out as the years advance. Tap any star to learn its story.
 </p>
+""", unsafe_allow_html=True)
+
+    st.markdown("<br><br>", unsafe_allow_html=True)
+
+    st.markdown("""
+<div style='display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:680px; margin:0 auto;'>
+  <div style='background:rgba(8,8,20,0.7); border:1px solid #0e0e2a; border-left:2px solid #2a3a6a; padding:1.2rem 1.5rem; backdrop-filter:blur(4px);'>
+    <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.4rem 0;'>THE SCIENCE</p>
+    <p style='font-size:0.82rem; line-height:1.9; color:#667799; margin:0;'>Satellite sensors aboard the Suomi-NPP spacecraft measure upward radiance at night. We convert that radiance into a limiting magnitude — the faintest star your eye can detect — and then cross-reference a catalog of 69 named objects to show you exactly what has been lost.</p>
+  </div>
+  <div style='background:rgba(8,8,20,0.7); border:1px solid #0e0e2a; border-left:2px solid #2a3a6a; padding:1.2rem 1.5rem; backdrop-filter:blur(4px);'>
+    <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.4rem 0;'>WHY IT MATTERS</p>
+    <p style='font-size:0.82rem; line-height:1.9; color:#667799; margin:0;'>99% of Americans live under light-polluted skies. Beyond the human cost, artificial light disrupts nocturnal ecosystems, confuses bird migration, and suppresses melatonin in ways that affect human health. The night sky is not a luxury — it is a commons, and it is being privatized by default.</p>
+  </div>
+</div>
 """, unsafe_allow_html=True)
 
     st.markdown("<br><br><br>", unsafe_allow_html=True)
