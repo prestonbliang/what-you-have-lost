@@ -1112,8 +1112,8 @@ if st.session_state.page == "stars":
             if siblings:
                 st.markdown("<br>", unsafe_allow_html=True)
                 sib_links = "  ·  ".join(
-                    f"<a href='?page=stars&star={s[0].replace(\" \", \"%20\")}' target='_self' "
-                    f"style='color:#445577; text-decoration:none; font-size:0.8rem;'>{s[0]}</a>"
+                    "<a href='?page=stars&star=" + s[0].replace(" ", "%20") + "' target='_self' "
+                    "style='color:#445577; text-decoration:none; font-size:0.8rem;'>" + s[0] + "</a>"
                     for s in siblings
                 )
                 st.markdown(
