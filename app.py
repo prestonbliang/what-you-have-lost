@@ -342,17 +342,17 @@ def get_sky_description(lm):
         return (
             "City Sky", "Bortle 9", "20–50",
             "The sky has color all night — an orange, yellow, or amber glow stretches from "
-            "horizon to horizon. Only the 20–50 brightest stars cut through. On humid or "
-            "hazy nights even Orion's Belt can be hard to spot. Airplane lights compete "
+            "horizon to horizon. Only the brightest stars cut through. On humid or hazy "
+            "nights even Orion's Belt can be hard to spot. Airplane lights compete "
             "with the stars."
         )
     else:
         return (
-            "Inner City", "Bortle 9+", "< 15",
+            "Inner City", "Bortle 9+", "< 20",
             "The sky never truly darkens. A uniform orange-white glow fills the night from "
-            "horizon to horizon — a permanent artificial dawn. Fewer than 15 stars are "
-            "reliably visible: mostly the very brightest giants like Sirius, Arcturus, and "
-            "Vega, plus the planets. Most constellation patterns are invisible."
+            "horizon to horizon — a permanent artificial dawn. Only the very brightest stars "
+            "— Sirius, Arcturus, Vega — cut through the haze. Most constellation patterns "
+            "are completely invisible."
         )
 
 
@@ -867,7 +867,7 @@ if st.session_state.searched and st.session_state.page != "stars":
     else:
         gained = [(n, m) for n, m in star_mags if lm_2012 < m <= lm_2023]
         m2.metric("stars gained since 2012", len(gained))
-    m3.metric("still visible tonight", len(still_visible))
+    m3.metric("visible in our atlas", len(still_visible))
 
     # Sky quality + change explanation cards
     sky_label_now, sky_bortle_now, sky_stars_now, sky_exp_now = get_sky_description(lm_2023)
@@ -884,7 +884,7 @@ if st.session_state.searched and st.session_state.page != "stars":
   <div style='background:#080818; border:1px solid #111133; border-left:2px solid {sky_color_now}; padding:1.4rem 1.5rem;'>
     <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.45rem 0;'>WHAT YOUR SKY LOOKS LIKE</p>
     <p style='font-size:1.05rem; color:{sky_color_now}; font-family:"Space Grotesk",sans-serif; font-weight:300; margin:0 0 0.2rem 0;'>{sky_label_now}</p>
-    <p style='font-size:0.62rem; letter-spacing:0.08em; color:#334466; margin:0 0 0.9rem 0;'>{sky_bortle_now} &nbsp;·&nbsp; ~{sky_stars_now} stars visible to the naked eye</p>
+    <p style='font-size:0.62rem; letter-spacing:0.08em; color:#334466; margin:0 0 0.9rem 0;'>{sky_bortle_now} &nbsp;·&nbsp; ~{sky_stars_now} total naked-eye stars across full sky</p>
     <p style='font-size:0.8rem; line-height:1.9; color:#7788AA; margin:0;'>{sky_exp_now}</p>
   </div>
   <div style='background:#080818; border:1px solid #111133; border-left:2px solid #2a3a6a; padding:1.4rem 1.5rem;'>
@@ -945,7 +945,7 @@ if st.session_state.searched and st.session_state.page != "stars":
      background:#080818; border:1px solid #0e0e2a; max-width:600px; border-radius:2px;'>
   <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.3rem 0;'>IN {year} YOUR SKY WAS</p>
   <p style='font-size:0.9rem; color:{sky_color_yr}; font-family:"Space Grotesk",sans-serif; font-weight:300; margin:0 0 0.2rem 0;'>{sky_label_yr}</p>
-  <p style='font-size:0.62rem; color:#334466; margin:0 0 0.6rem 0;'>{sky_bortle_yr} · ~{sky_stars_yr} stars visible</p>
+  <p style='font-size:0.62rem; color:#334466; margin:0 0 0.6rem 0;'>{sky_bortle_yr} · ~{sky_stars_yr} total naked-eye stars across full sky</p>
   <p style='font-size:0.78rem; line-height:1.85; color:#556677; margin:0; text-align:left;'>{sky_exp_yr}</p>
 </div>
 """, unsafe_allow_html=True)
