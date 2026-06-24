@@ -5,7 +5,6 @@ import matplotlib.patches as mpatches
 import requests
 import math
 import plotly.graph_objects as go
-from streamlit_plotly_events import plotly_events
 
 st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wide")
 
@@ -871,12 +870,9 @@ if st.session_state.searched and st.session_state.page != "stars":
                 unsafe_allow_html=True)
 
     _chart_key = f"star_chart_{st.session_state.get('_star_chart_ver', 0)}"
-    selected_points = plotly_events(
-        fig, click_event=True, select_event=False,
-        hover_event=False, override_height=1200, key=_chart_key
-    )
-    if selected_points:
-        pt = selected_points[0]
+    event_data = st.plotly_chart(fig, on_select="rerun", key=_chart_key)
+    if event_data.selection.points:
+        pt = event_data.selection.points[0]
         raw = pt.get("customdata")
         if raw is not None:
             while isinstance(raw, (list, tuple)) and len(raw) == 1:
