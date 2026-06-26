@@ -1,4 +1,4 @@
-import streamlit as st
+﻿import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 
 st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wide")
 
-st.markdown("""
+st.html("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600&display=swap');
     * { font-family: 'Inter', sans-serif; }
@@ -56,7 +56,7 @@ st.markdown("""
     }
     .tt-wrap:hover .tt-box { display: block; }
 </style>
-""", unsafe_allow_html=True)
+""")
 
 STARS = [
     ("Sirius",          -1.46,  6.752, -16.716),
@@ -1303,7 +1303,7 @@ if _star_qp and any(s[0] == _star_qp for s in STARS):
 
 # ── Nav bar (fixed, full-width) ───────────────────────────────────────────────
 _p = st.session_state.page
-st.markdown(f"""
+st.html(f"""
 <div class='wyhl-topnav'>
   <a href='?page=landing' target='_self' class='wyhl-brand'>✦ &nbsp;WHAT HAVE YOU LOST</a>
   <div class='wyhl-navlinks'>
@@ -1312,11 +1312,11 @@ st.markdown(f"""
     <a href='?page=stars'   target='_self' class='wyhl-navlink {"active" if _p == "stars"   else ""}'>STARS</a>
   </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
 # ── Landing page ──────────────────────────────────────────────────────────────
 if st.session_state.page == "landing":
-    st.markdown("""
+    st.html("""
 <style>
 .stApp {
     background-image:
@@ -1327,29 +1327,29 @@ if st.session_state.page == "landing":
     background-attachment: fixed !important;
 }
 </style>
-""", unsafe_allow_html=True)
+""")
 
-    st.markdown("<br><br><br><br>", unsafe_allow_html=True)
-    st.markdown("<h1 style='text-align:center; font-size:3.5rem; letter-spacing:0.25em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size:0.8rem; letter-spacing:0.3em; color:#6666AA;'>A LIGHT POLLUTION OBSERVATORY</p>", unsafe_allow_html=True)
+    st.html("<br><br><br><br>")
+    st.html("<h1 style='text-align:center; font-size:3.5rem; letter-spacing:0.25em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>")
+    st.html("<p style='text-align:center; font-size:0.8rem; letter-spacing:0.3em; color:#6666AA;'>A LIGHT POLLUTION OBSERVATORY</p>")
 
-    st.markdown("""
+    st.html("""
 <p style='text-align:center; max-width:600px; margin:0 auto; font-size:1.05rem; line-height:2.2; color:#8899BB; letter-spacing:0.02em;'>
 Every year, artificial light drowns out more of the night sky. Stars that your grandparents could name from memory have silently vanished — not from the universe, but from your view.
 </p>
-""", unsafe_allow_html=True)
+""")
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.html("<br>")
 
-    st.markdown("""
+    st.html("""
 <p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#667799; letter-spacing:0.01em;'>
 Light pollution is the only form of pollution that erases something from human experience entirely. A child growing up in New York City today has never seen the Milky Way. Most have never seen more than a handful of stars at all. What was once an unbroken human inheritance — a canopy of thousands of points of light overhead on any clear night — has been quietly switched off over the course of a single lifetime.
 </p>
-""", unsafe_allow_html=True)
+""")
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.html("<br><br>")
 
-    st.markdown("""
+    st.html("""
 <div style='display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; max-width:680px; margin:0 auto;'>
   <div style='background:rgba(10,10,24,0.7); border:1px solid #111133; padding:2rem 1rem; text-align:center; backdrop-filter:blur(4px);'>
     <div style='font-size:2.2rem; font-weight:300; color:white; font-family:"Space Grotesk",sans-serif;'>10+</div>
@@ -1364,19 +1364,19 @@ Light pollution is the only form of pollution that erases something from human e
     <div style='font-size:0.65rem; letter-spacing:0.15em; color:#444466; margin-top:0.5rem;'>AVG SKY GLOW SINCE 2012</div>
   </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.html("<br><br><br>")
 
-    st.markdown("""
+    st.html("""
 <p style='text-align:center; max-width:580px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#556688;'>
 This tool uses NASA Black Marble satellite data to translate raw light radiance into something human — the actual named stars you can no longer see from your backyard, mapped year by year since 2012. Enter your zip code and watch stars wink out as the years advance. Tap any star to learn its story.
 </p>
-""", unsafe_allow_html=True)
+""")
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.html("<br><br>")
 
-    st.markdown("""
+    st.html("""
 <p style='text-align:center; font-size:0.58rem; letter-spacing:0.22em; color:#334455; margin:0 0 1.5rem 0;'>A BRIEF HISTORY OF ARTIFICIAL NIGHT</p>
 <div style='max-width:680px; margin:0 auto; position:relative;'>
   <div style='position:absolute; left:80px; top:0; bottom:0; width:1px; background:#111133;'></div>
@@ -1432,11 +1432,11 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
 
   </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.html("<br><br>")
 
-    st.markdown("""
+    st.html("""
 <div style='display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:680px; margin:0 auto;'>
   <div style='background:rgba(8,8,20,0.7); border:1px solid #0e0e2a; border-left:2px solid #2a3a6a; padding:1.2rem 1.5rem; backdrop-filter:blur(4px);'>
     <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.4rem 0;'>THE SCIENCE</p>
@@ -1447,9 +1447,9 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
     <p style='font-size:0.82rem; line-height:1.9; color:#667799; margin:0;'>99% of Americans live under light-polluted skies. Beyond the human cost, artificial light disrupts nocturnal ecosystems, confuses bird migration, and suppresses melatonin in ways that affect human health. The night sky is not a luxury — it is a commons, and it is being privatized by default.</p>
   </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.html("<br><br><br>")
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -1458,29 +1458,29 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
             st.query_params["page"] = "finder"
             st.rerun()
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#333355;'>ENTER YOUR ZIP CODE TO BEGIN</p>", unsafe_allow_html=True)
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
-    st.markdown("<hr>", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; letter-spacing:0.15em; font-size:0.65rem; color:#444466;'>WHY DOES THE DATA STOP AT 2023?</p>", unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown("""
+    st.html("<br>")
+    st.html("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#333355;'>ENTER YOUR ZIP CODE TO BEGIN</p>")
+    st.html("<br><br><br>")
+    st.html("<hr>")
+    st.html("<br>")
+    st.html("<p style='text-align:center; letter-spacing:0.15em; font-size:0.65rem; color:#444466;'>WHY DOES THE DATA STOP AT 2023?</p>")
+    st.html("<br>")
+    st.html("""
 <p style='text-align:center; max-width:560px; margin:0 auto; font-size:0.8rem; line-height:2; color:#445566;'>
 This tool is built on NASA's Black Marble VNP46A4 dataset — annual composites of nighttime light radiance captured by the VIIRS sensor aboard the Suomi-NPP satellite. 2023 is the most recent complete annual composite currently released by NASA. As new years are published, the data here can be updated to match.
 </p>
-""", unsafe_allow_html=True)
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#334455;'>NASA BLACK MARBLE VNP46A4  ·  BACKGROUND: NASA/GALEX M31</p>", unsafe_allow_html=True)
-    st.markdown("<br><br>", unsafe_allow_html=True)
+""")
+    st.html("<br><br>")
+    st.html("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#334455;'>NASA BLACK MARBLE VNP46A4  ·  BACKGROUND: NASA/GALEX M31</p>")
+    st.html("<br><br>")
     st.stop()
 
 # ── Zip code finder ───────────────────────────────────────────────────────────
 if st.session_state.page != "stars":
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>", unsafe_allow_html=True)
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.html("<br><br>")
+    st.html("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>")
+    st.html("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>")
+    st.html("<br><br>")
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -1496,10 +1496,9 @@ if st.session_state.page != "stars":
                 st.session_state.lon = lon
                 st.session_state.place_name = display_name
             else:
-                st.markdown("<p style='text-align:center; color:#442222;'>zip code not found</p>",
-                            unsafe_allow_html=True)
+                st.html("<p style='text-align:center; color:#442222;'>zip code not found</p>")
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.html("<br>")
 
 if st.session_state.searched and st.session_state.page != "stars":
     zipcode = st.session_state.zipcode
@@ -1524,11 +1523,9 @@ if st.session_state.searched and st.session_state.page != "stars":
     all_lost = potentially_lost
     still_visible = [(n, m) for n, m in star_mags if m <= lm_2023]
 
-    st.markdown(f"<p style='text-align:center; letter-spacing:0.15em; font-size:0.75rem; color:#444466;'>ZIP CODE {zipcode}</p>",
-                unsafe_allow_html=True)
-    st.markdown(f"<p style='text-align:center; font-size:0.85rem; color:#7788AA; margin-top:-8px;'>{st.session_state.place_name}</p>",
-                unsafe_allow_html=True)
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.html(f"<p style='text-align:center; letter-spacing:0.15em; font-size:0.75rem; color:#444466;'>ZIP CODE {zipcode}</p>")
+    st.html(f"<p style='text-align:center; font-size:0.85rem; color:#7788AA; margin-top:-8px;'>{st.session_state.place_name}</p>")
+    st.html("<br>")
 
     poll_tip = ("Percentage change in upward light radiance measured by NASA Black Marble satellite "
                 "between 2012 and 2023. Positive = more light pollution; negative = improvement.")
@@ -1545,11 +1542,11 @@ if st.session_state.searched and st.session_state.page != "stars":
         star_value = str(len(gained))
         star_tip = ("Named stars from our 69-object catalog that were not visible in 2012 but have "
                     "become visible due to reduced light pollution.")
-    st.markdown(metrics_row([
+    st.html(metrics_row([
         metric_card("light pollution since 2012", f"{pct_change:+.1f}%", poll_tip),
         metric_card(star_label, star_value, star_tip),
         metric_card("visible in our atlas", str(len(still_visible)), vis_tip),
-    ], 3), unsafe_allow_html=True)
+    ], 3))
 
     # Sky quality + change explanation cards
     sky_label_now, sky_bortle_now, sky_stars_now, sky_exp_now = get_sky_description(lm_2023)
@@ -1560,8 +1557,8 @@ if st.session_state.searched and st.session_state.page != "stars":
     }
     sky_color_now = sky_color_map.get(sky_label_now, "#8899BB")
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown(f"""
+    st.html("<br>")
+    st.html(f"""
 <div style='display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:860px; margin:0 auto;'>
   <div style='background:#080818; border:1px solid #111133; border-left:2px solid {sky_color_now}; padding:1.4rem 1.5rem;'>
     <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.45rem 0;'>WHAT YOUR SKY LOOKS LIKE</p>
@@ -1575,11 +1572,10 @@ if st.session_state.searched and st.session_state.page != "stars":
     <p style='font-size:0.8rem; line-height:1.9; color:#7788AA; margin:0;'>{change_text}</p>
   </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; letter-spacing:0.1em; font-size:0.7rem; color:#334466;'>DRAG TO TRAVEL THROUGH TIME</p>",
-                unsafe_allow_html=True)
+    st.html("<br><br>")
+    st.html("<p style='text-align:center; letter-spacing:0.1em; font-size:0.7rem; color:#334466;'>DRAG TO TRAVEL THROUGH TIME</p>")
 
     year = st.slider("", min_value=2012, max_value=2023, value=2012,
                       label_visibility="collapsed")
@@ -1587,9 +1583,8 @@ if st.session_state.searched and st.session_state.page != "stars":
     fig, lost_on_chart, visible_count, rad_now_chart = make_sky_chart(
         STARS, year, radiance_by_year, color_map, lat, lon, CONSTELLATION_LINES)
 
-    st.markdown(f"<p style='text-align:center; font-size:2rem; font-family:\"Space Grotesk\",sans-serif; "
-                f"font-weight:300; color:white; letter-spacing:0.15em; margin:0 0 0.2rem 0;'>{year}</p>",
-                unsafe_allow_html=True)
+    st.html(f"<p style='text-align:center; font-size:2rem; font-family:\"Space Grotesk\",sans-serif; "
+                f"font-weight:300; color:white; letter-spacing:0.15em; margin:0 0 0.2rem 0;'>{year}</p>")
 
     _chart_key = f"star_chart_{st.session_state.get('_star_chart_ver', 0)}"
     event_data = st.plotly_chart(fig, on_select="rerun", key=_chart_key)
@@ -1607,22 +1602,20 @@ if st.session_state.searched and st.session_state.page != "stars":
                 st.query_params["page"] = "stars"
                 st.rerun()
 
-    st.markdown(
+    st.html(
         f"<p style='text-align:center; font-size:0.68rem; color:#334455; margin:0.3rem 0 0;'>"
         f"● <span style='color:#8899BB;'>visible</span> &nbsp;&nbsp; "
         f"★ <span style='color:#CC6666;'>lost since 2012</span> &nbsp;&nbsp;&nbsp; "
         f"<span style='color:#334455;'>{rad_now_chart:.1f} nW/cm²/sr · {visible_count} visible</span>"
-        f"</p>",
-        unsafe_allow_html=True
+        f"</p>"
     )
 
-    st.markdown("<p style='text-align:center; font-size:0.7rem; color:#334455; margin-top:0.5rem;'>face south · center is straight up · stars near the edge sit low on the horizon</p>",
-                unsafe_allow_html=True)
+    st.html("<p style='text-align:center; font-size:0.7rem; color:#334455; margin-top:0.5rem;'>face south · center is straight up · stars near the edge sit low on the horizon</p>")
 
     lm_year = radiance_to_limiting_magnitude(radiance_by_year[year])
     sky_label_yr, sky_bortle_yr, sky_stars_yr, sky_exp_yr = get_sky_description(lm_year)
     sky_color_yr = sky_color_map.get(sky_label_yr, "#8899BB")
-    st.markdown(f"""
+    st.html(f"""
 <div style='text-align:center; margin:1.2rem auto 0.2rem; padding:1rem 1.5rem;
      background:#080818; border:1px solid #0e0e2a; max-width:600px; border-radius:2px;'>
   <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.3rem 0;'>IN {year} YOUR SKY WAS</p>
@@ -1630,7 +1623,7 @@ if st.session_state.searched and st.session_state.page != "stars":
   <p style='font-size:0.62rem; color:#334466; margin:0 0 0.6rem 0;'>{sky_bortle_yr} · ~{sky_stars_yr} total naked-eye stars across full sky</p>
   <p style='font-size:0.78rem; line-height:1.85; color:#556677; margin:0; text-align:left;'>{sky_exp_yr}</p>
 </div>
-""", unsafe_allow_html=True)
+""")
     all_lost_for_year = sorted(
         [(n, m) for n, m in star_mags if lm_year < m <= lm_2012],
         key=lambda x: x[1]
@@ -1638,10 +1631,9 @@ if st.session_state.searched and st.session_state.page != "stars":
     on_chart_names = {name for name, _ in lost_on_chart}
 
     if all_lost_for_year:
-        st.markdown("<br>", unsafe_allow_html=True)
-        st.markdown(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year} — tap a name to learn more</p>",
-                    unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.html("<br>")
+        st.html(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year} — tap a name to learn more</p>")
+        st.html("<br>")
         html = "<div style='display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;'>"
         for name, mag in all_lost_for_year:
             color = color_map.get((name, mag), "#FF4444")
@@ -1654,18 +1646,58 @@ if st.session_state.searched and st.session_state.page != "stars":
                          f"style='color:{color}; font-size:0.85rem; text-decoration:none;'>★ {name} "
                          f"<span style='font-size:0.65rem; letter-spacing:0.05em;'>below horizon</span></a></div>")
         html += "</div>"
-        st.markdown(html, unsafe_allow_html=True)
+        st.html(html)
 
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#445566;'>NASA BLACK MARBLE VNP46A4</p>",
-                unsafe_allow_html=True)
+    st.html("<br>")
+
+    travel_hint = {
+        "Inner City":       "typically 50+ miles",
+        "City Sky":         "typically 35–50 miles",
+        "Urban Fringe":     "typically 20–35 miles",
+        "Suburban":         "typically 15–25 miles",
+        "Bright Suburban":  "typically 10–20 miles",
+    }
+    lm_2023 = radiance_to_limiting_magnitude(radiance_by_year[2023])
+    sky_label_now, _, _, _ = get_sky_description(lm_2023)
+    hint = travel_hint.get(sky_label_now, "typically 20–50 miles")
+    city_short = place_name.split(",")[0] if place_name else "your location"
+    map_url = f"https://www.lightpollutionmap.info/#zoom=9&lat={lat:.4f}&lng={lon:.4f}"
+    ida_url = "https://www.darksky.org/our-work/conservation/idsp/finder/"
+
+    st.html(f"""
+<div style='max-width:680px; margin:1.5rem auto 0; border-top:1px solid #111133; padding-top:2rem;'>
+  <p style='font-size:0.58rem; letter-spacing:0.22em; color:#334455; margin:0 0 0.8rem 0;'>FIND DARK SKIES NEAR YOU</p>
+  <p style='font-size:0.82rem; line-height:1.9; color:#667799; margin:0 0 1.2rem 0;'>
+    The stars haven't gone anywhere — they're just drowned out from {city_short}.
+    From here, you'll need to travel {hint} to reach skies dark enough for the Milky Way to reappear.
+    Use the tools below to find the nearest dark patches and plan a night out.
+  </p>
+  <div style='display:grid; grid-template-columns:1fr 1fr; gap:10px;'>
+    <a href='{map_url}' target='_blank' style='display:block; background:rgba(8,8,20,0.7);
+       border:1px solid #0e0e2a; border-left:2px solid #2a3a6a; padding:1rem 1.25rem;
+       text-decoration:none; backdrop-filter:blur(4px);'>
+      <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.3rem 0;'>LIGHT POLLUTION MAP</p>
+      <p style='font-size:0.82rem; color:#667799; margin:0;'>Interactive satellite radiance map centered on {city_short} — darker patches nearby are your targets. →</p>
+    </a>
+    <a href='{ida_url}' target='_blank' style='display:block; background:rgba(8,8,20,0.7);
+       border:1px solid #0e0e2a; border-left:2px solid #2a3a6a; padding:1rem 1.25rem;
+       text-decoration:none; backdrop-filter:blur(4px);'>
+      <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.3rem 0;'>IDA DARK SKY PLACES</p>
+      <p style='font-size:0.82rem; color:#667799; margin:0;'>Official International Dark-Sky Association registry of parks, reserves, and sanctuaries near you. →</p>
+    </a>
+  </div>
+</div>
+""")
+
+    st.html("<br><br>")
+    st.html("<p style='text-align:center; font-size:0.65rem; letter-spacing:0.1em; color:#445566;'>NASA BLACK MARBLE VNP46A4</p>")
 
 # ── Stars page ────────────────────────────────────────────────────────────────
 if st.session_state.page == "stars":
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    st.markdown("<h1 style='text-align:center; font-size:2.5rem; letter-spacing:0.18em;'>STAR ATLAS</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center; font-size:0.72rem; letter-spacing:0.2em; color:#444466;'>SEARCH THE CATALOG — 68 OBJECTS</p>", unsafe_allow_html=True)
-    st.markdown("<br><br>", unsafe_allow_html=True)
+    st.html("<br><br>")
+    st.html("<h1 style='text-align:center; font-size:2.5rem; letter-spacing:0.18em;'>STAR ATLAS</h1>")
+    st.html("<p style='text-align:center; font-size:0.72rem; letter-spacing:0.2em; color:#444466;'>SEARCH THE CATALOG — 68 OBJECTS</p>")
+    st.html("<br><br>")
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -1679,8 +1711,7 @@ if st.session_state.page == "stars":
         matches = [s for s in STARS if query.lower() in s[0].lower()]
 
         if not matches:
-            st.markdown("<p style='text-align:center; color:#442222; margin-top:2rem;'>no match found — try a different name</p>",
-                        unsafe_allow_html=True)
+            st.html("<p style='text-align:center; color:#442222; margin-top:2rem;'>no match found — try a different name</p>")
         else:
             if len(matches) > 1:
                 exact = [s for s in matches if s[0].lower() == query.lower()]
@@ -1706,20 +1737,18 @@ if st.session_state.page == "stars":
             description = wiki.get("extract", "")
 
             star_color = temp_to_star_color(info["temp_k"]) if info.get("temp_k") else "#ffffff"
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown(
+            st.html("<br>")
+            st.html(
                 f"<div style='text-align:center;'>"
                 f"<span style='display:inline-block; width:20px; height:20px; border-radius:50%; "
                 f"background:{star_color}; box-shadow:0 0 18px 6px {star_color}55; "
                 f"vertical-align:middle; margin-right:14px; margin-bottom:4px;'></span>"
                 f"<span style='font-family:\"Space Grotesk\",sans-serif; font-size:2.8rem; "
                 f"letter-spacing:0.12em; color:white; font-weight:300;'>{name}</span>"
-                f"</div>",
-                unsafe_allow_html=True)
+                f"</div>")
             if info.get("constellation"):
-                st.markdown(f"<p style='text-align:center; font-size:0.65rem; letter-spacing:0.2em; color:#445566; margin-top:0.3rem;'>{info['constellation'].upper()}</p>",
-                            unsafe_allow_html=True)
-            st.markdown("<br>", unsafe_allow_html=True)
+                st.html(f"<p style='text-align:center; font-size:0.65rem; letter-spacing:0.2em; color:#445566; margin-top:0.3rem;'>{info['constellation'].upper()}</p>")
+            st.html("<br>")
 
             row1 = [
                 metric_card("Apparent Magnitude", f"{mag:.2f}",
@@ -1739,10 +1768,10 @@ if st.session_state.page == "stars":
                 row1.append(metric_card("Distance", dist_str,
                                         "Approximate distance from Earth in light-years. One light-year is "
                                         "the distance light travels in a year — about 9.46 trillion km."))
-            st.markdown(metrics_row(row1), unsafe_allow_html=True)
+            st.html(metrics_row(row1))
 
             if info.get("type"):
-                st.markdown("<br>", unsafe_allow_html=True)
+                st.html("<br>")
                 row2 = [
                     metric_card("Classification", info["type"],
                                 "Physical category based on the object's size, luminosity, evolutionary "
@@ -1765,10 +1794,10 @@ if st.session_state.page == "stars":
                                             sublabel=place_upper,
                                             sublabel_color=vis_color,
                                             value_color=vis_color))
-                st.markdown(metrics_row(row2, cols=3), unsafe_allow_html=True)
+                st.html(metrics_row(row2, cols=3))
 
             if info.get("spectral"):
-                st.markdown("<br>", unsafe_allow_html=True)
+                st.html("<br>")
                 row3 = [
                     metric_card("Spectral Class", info["spectral"],
                                 "A letter code describing the star's temperature and chemistry. "
@@ -1800,12 +1829,12 @@ if st.session_state.page == "stars":
                                             "Physical size compared to our Sun's radius (☉ = 696,000 km). "
                                             "A star with radius 10× ☉ is ten times wider than the Sun "
                                             "in diameter."))
-                st.markdown(metrics_row(row3), unsafe_allow_html=True)
+                st.html(metrics_row(row3))
 
             if others:
-                st.markdown(f"<p style='font-size:0.7rem; color:#334455; margin-top:1.5rem;'>other matches: "
+                st.html(f"<p style='font-size:0.7rem; color:#334455; margin-top:1.5rem;'>other matches: "
                             + "  ·  ".join(f"<span style='color:#556688;'>{o}</span>" for o in others)
-                            + "</p>", unsafe_allow_html=True)
+                            + "</p>")
 
             rb = st.session_state.radiance_by_year if st.session_state.searched else SD_RADIANCE
             lm12 = radiance_to_limiting_magnitude(rb.get(2012, SD_RADIANCE[2012]))
@@ -1813,25 +1842,24 @@ if st.session_state.page == "stars":
             fun = star_fun_fact(name, mag, info, lm12, lm23,
                                 st.session_state.place_name, rb)
             if fun:
-                st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown(f"""
+                st.html("<br>")
+                st.html(f"""
 <div style='max-width:680px; margin:0 auto; background:#0a0a18;
      border-left:2px solid #FF4444; padding:1rem 1.5rem; border-radius:0 4px 4px 0;'>
   <p style='font-size:0.65rem; letter-spacing:0.18em; color:#FF4444; margin:0 0 0.4rem 0;'>FUN FACT</p>
   <p style='font-size:0.88rem; line-height:1.9; color:#8899BB; margin:0;'>{fun}</p>
-</div>""", unsafe_allow_html=True)
+</div>""")
 
             history = STAR_HISTORY.get(name, "")
             if history:
-                st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown(
+                st.html("<br>")
+                st.html(
                     "<div style='max-width:680px; margin:0 auto; background:#0a0a18;"
                     " border-left:2px solid #2a4a8a; padding:1rem 1.5rem; border-radius:0 4px 4px 0;'>"
                     "<p style='font-size:0.65rem; letter-spacing:0.18em; color:#4466AA; margin:0 0 0.4rem 0;'>HISTORY &amp; MYTHOLOGY</p>"
                     "<p style='font-size:0.88rem; line-height:1.9; color:#7799BB; margin:0;'>"
                     + history +
-                    "</p></div>",
-                    unsafe_allow_html=True
+                    "</p></div>"
                 )
 
             siblings = sorted([
@@ -1840,36 +1868,31 @@ if st.session_state.page == "stars":
                 and STAR_INFO.get(s[0], {}).get("constellation") == info.get("constellation")
             ], key=lambda s: s[1])
             if siblings:
-                st.markdown("<br>", unsafe_allow_html=True)
+                st.html("<br>")
                 sib_links = "  ·  ".join(
                     "<a href='?page=stars&star=" + s[0].replace(" ", "%20") + "' target='_self' "
                     "style='color:#445577; text-decoration:none; font-size:0.8rem;'>" + s[0] + "</a>"
                     for s in siblings
                 )
-                st.markdown(
+                st.html(
                     f"<p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.4rem 0;'>"
                     f"ALSO IN {info.get('constellation','').upper()}</p>"
-                    f"<p style='margin:0;'>{sib_links}</p>",
-                    unsafe_allow_html=True)
+                    f"<p style='margin:0;'>{sib_links}</p>")
 
             if description:
-                st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown("<hr>", unsafe_allow_html=True)
-                st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown(f"<p style='max-width:680px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#7788AA;'>{description}</p>",
-                            unsafe_allow_html=True)
-                st.markdown(f"<p style='max-width:680px; margin:0.5rem auto 0; font-size:0.6rem; letter-spacing:0.08em; color:#334455;'>SOURCE: WIKIPEDIA</p>",
-                            unsafe_allow_html=True)
+                st.html("<br>")
+                st.html("<hr>")
+                st.html("<br>")
+                st.html(f"<p style='max-width:680px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#7788AA;'>{description}</p>")
+                st.html(f"<p style='max-width:680px; margin:0.5rem auto 0; font-size:0.6rem; letter-spacing:0.08em; color:#334455;'>SOURCE: WIKIPEDIA</p>")
 
     st.stop()
 
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("<hr>", unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; letter-spacing:0.15em; font-size:0.7rem; color:#6666AA;'>HOW IS THIS DIFFERENT</p>",
-            unsafe_allow_html=True)
-st.markdown("<br>", unsafe_allow_html=True)
-st.markdown("<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2; color:#7788AA;'>Tools like Light Pollution Map, NASA Worldview, and Globe at Night show raw radiance data built for researchers. This tool translates that data into something human — the actual named stars you have lost from your specific sky, since 2012.</p>",
-            unsafe_allow_html=True)
-st.markdown("<br><br>", unsafe_allow_html=True)
-st.markdown("<br><br>", unsafe_allow_html=True)
+st.html("<br><br>")
+st.html("<hr>")
+st.html("<br>")
+st.html("<p style='text-align:center; letter-spacing:0.15em; font-size:0.7rem; color:#6666AA;'>HOW IS THIS DIFFERENT</p>")
+st.html("<br>")
+st.html("<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2; color:#7788AA;'>Tools like Light Pollution Map, NASA Worldview, and Globe at Night show raw radiance data built for researchers. This tool translates that data into something human — the actual named stars you have lost from your specific sky, since 2012.</p>")
+st.html("<br><br>")
+st.html("<br><br>")
