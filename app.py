@@ -1657,10 +1657,10 @@ if st.session_state.searched and st.session_state.page != "stars":
         "Suburban":         "typically 15–25 miles",
         "Bright Suburban":  "typically 10–20 miles",
     }
-    lm_2023 = radiance_to_limiting_magnitude(radiance_by_year[2023])
     sky_label_now, _, _, _ = get_sky_description(lm_2023)
     hint = travel_hint.get(sky_label_now, "typically 20–50 miles")
-    city_short = place_name.split(",")[0] if place_name else "your location"
+    _pn = st.session_state.place_name
+    city_short = _pn.split(",")[0] if _pn else "your location"
     map_url = f"https://www.lightpollutionmap.info/#zoom=9&lat={lat:.4f}&lng={lon:.4f}"
     ida_url = "https://www.darksky.org/our-work/conservation/idsp/finder/"
 
