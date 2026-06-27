@@ -15,7 +15,14 @@ st.html("""
     .stApp { background-color: #03030a; }
     section[data-testid="stSidebar"] { display: none; }
     header[data-testid="stHeader"] { display: none !important; }
-    .main .block-container { max-width: 100%; margin: 0 auto; padding: 5.5rem 2rem 4rem 2rem; }
+    @keyframes pageEnter {
+        from { opacity: 0; transform: translateY(18px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .main .block-container {
+        max-width: 100%; margin: 0 auto; padding: 5.5rem 2rem 4rem 2rem;
+        animation: pageEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
     h1, h2, h3 { font-family: 'Space Grotesk', sans-serif !important; color: white !important; font-weight: 300 !important; letter-spacing: 0.05em !important; }
     .stTextInput input { background-color: #0d0d1a !important; border: 1px solid #222244 !important; border-radius: 4px !important; color: white !important; padding: 0.75rem 1rem !important; font-size: 16px !important; }
     .stButton button { background-color: transparent !important; border: 1px solid #4444AA !important; border-radius: 4px !important; color: #8888CC !important; padding: 0.75rem 2rem !important; font-size: 14px !important; letter-spacing: 0.15em !important; text-transform: uppercase !important; width: 100% !important; }
@@ -65,7 +72,7 @@ st.html("""
     .wyhl-metric-row-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
     /* Mobile breakpoint */
     @media (max-width: 640px) {
-        .main .block-container { padding: 4.5rem 0.75rem 3rem 0.75rem !important; }
+        .main .block-container { padding: 4.5rem 0.75rem 3rem 0.75rem !important; animation: pageEnter 0.55s cubic-bezier(0.22, 1, 0.36, 1) both !important; }
         .wyhl-topnav { padding: 0 0.85rem; }
         .wyhl-brand { font-size: 0.58rem; letter-spacing: 0.1em; }
         .wyhl-navlinks { gap: 1.1rem; }
@@ -1345,15 +1352,32 @@ if st.session_state.page == "landing":
     background-position: center 30% !important;
     background-attachment: fixed !important;
 }
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes glowPulse {
+    0%, 100% { text-shadow: 0 0 20px rgba(255,68,68,0.25); }
+    50%       { text-shadow: 0 0 55px rgba(255,68,68,0.6), 0 0 110px rgba(255,68,68,0.18); }
+}
+.wyhl-tl-entry {
+    opacity: 0;
+    transform: translateX(-18px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.wyhl-tl-entry.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
 </style>
 """)
 
     st.html("<br><br><br><br>")
-    st.html("<h1 style='text-align:center; font-size:clamp(1.8rem,7vw,3.5rem); letter-spacing:clamp(0.08em,1.5vw,0.25em); color:#FF4444;'>WHAT HAVE YOU LOST</h1>")
-    st.html("<p style='text-align:center; font-size:clamp(0.6rem,2vw,0.8rem); letter-spacing:clamp(0.12em,1vw,0.3em); color:#6666AA;'>A LIGHT POLLUTION OBSERVATORY</p>")
+    st.html("<h1 style='text-align:center; font-size:clamp(1.8rem,7vw,3.5rem); letter-spacing:clamp(0.08em,1.5vw,0.25em); color:#FF4444; opacity:0; animation: fadeInUp 1.2s ease 0.1s forwards, glowPulse 4s ease 2s infinite;'>WHAT HAVE YOU LOST</h1>")
+    st.html("<p style='text-align:center; font-size:clamp(0.6rem,2vw,0.8rem); letter-spacing:clamp(0.12em,1vw,0.3em); color:#6666AA; opacity:0; animation: fadeInUp 1s ease 0.55s forwards;'>A LIGHT POLLUTION OBSERVATORY</p>")
 
     st.html("""
-<p style='text-align:center; max-width:600px; margin:0 auto; font-size:1.05rem; line-height:2.2; color:#8899BB; letter-spacing:0.02em;'>
+<p style='text-align:center; max-width:600px; margin:0 auto; font-size:1.05rem; line-height:2.2; color:#8899BB; letter-spacing:0.02em; opacity:0; animation: fadeInUp 1s ease 0.95s forwards;'>
 Every year, artificial light drowns out more of the night sky. Stars that your grandparents could name from memory have silently vanished — not from the universe, but from your view.
 </p>
 """)
@@ -1361,7 +1385,7 @@ Every year, artificial light drowns out more of the night sky. Stars that your g
     st.html("<br>")
 
     st.html("""
-<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#667799; letter-spacing:0.01em;'>
+<p style='text-align:center; max-width:600px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#667799; letter-spacing:0.01em; opacity:0; animation: fadeInUp 1s ease 1.25s forwards;'>
 Light pollution is the only form of pollution that erases something from human experience entirely. A child growing up in New York City today has never seen the Milky Way. Most have never seen more than a handful of stars at all. What was once an unbroken human inheritance — a canopy of thousands of points of light overhead on any clear night — has been quietly switched off over the course of a single lifetime.
 </p>
 """)
@@ -1370,15 +1394,15 @@ Light pollution is the only form of pollution that erases something from human e
 
     st.html("""
 <div class='wyhl-grid-3' style='gap:2px; max-width:680px; margin:0 auto;'>
-  <div style='background:rgba(10,10,24,0.7); border:1px solid #111133; padding:2rem 1rem; text-align:center; backdrop-filter:blur(4px);'>
+  <div style='background:rgba(10,10,24,0.7); border:1px solid #111133; padding:2rem 1rem; text-align:center; backdrop-filter:blur(4px); opacity:0; animation: fadeInUp 0.8s ease 1.55s forwards;'>
     <div style='font-size:2.2rem; font-weight:300; color:white; font-family:"Space Grotesk",sans-serif;'>10+</div>
     <div style='font-size:0.65rem; letter-spacing:0.15em; color:#444466; margin-top:0.5rem;'>YEARS OF DATA</div>
   </div>
-  <div style='background:rgba(10,10,24,0.7); border:1px solid #111133; padding:2rem 1rem; text-align:center; backdrop-filter:blur(4px);'>
+  <div style='background:rgba(10,10,24,0.7); border:1px solid #111133; padding:2rem 1rem; text-align:center; backdrop-filter:blur(4px); opacity:0; animation: fadeInUp 0.8s ease 1.75s forwards;'>
     <div style='font-size:2.2rem; font-weight:300; color:white; font-family:"Space Grotesk",sans-serif;'>~30K</div>
     <div style='font-size:0.65rem; letter-spacing:0.15em; color:#444466; margin-top:0.5rem;'>US ZIP CODES</div>
   </div>
-  <div style='background:rgba(10,10,24,0.7); border:1px solid #111133; padding:2rem 1rem; text-align:center; backdrop-filter:blur(4px);'>
+  <div style='background:rgba(10,10,24,0.7); border:1px solid #111133; padding:2rem 1rem; text-align:center; backdrop-filter:blur(4px); opacity:0; animation: fadeInUp 0.8s ease 1.95s forwards;'>
     <div style='font-size:2.2rem; font-weight:300; color:#FF4444; font-family:"Space Grotesk",sans-serif;'>↑ 15%</div>
     <div style='font-size:0.65rem; letter-spacing:0.15em; color:#444466; margin-top:0.5rem;'>AVG SKY GLOW SINCE 2012</div>
   </div>
@@ -1388,7 +1412,7 @@ Light pollution is the only form of pollution that erases something from human e
     st.html("<br><br><br>")
 
     st.html("""
-<p style='text-align:center; max-width:580px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#556688;'>
+<p style='text-align:center; max-width:580px; margin:0 auto; font-size:0.9rem; line-height:2.1; color:#556688; opacity:0; animation: fadeInUp 1s ease 0.25s forwards;'>
 This tool uses NASA Black Marble satellite data to translate raw light radiance into something human — the actual named stars you can no longer see from your backyard, mapped year by year since 2012. Enter your zip code and watch stars wink out as the years advance. Tap any star to learn its story.
 </p>
 """)
@@ -1396,54 +1420,54 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
     st.html("<br><br>")
 
     st.html("""
-<p style='text-align:center; font-size:0.58rem; letter-spacing:0.22em; color:#334455; margin:0 0 1.5rem 0;'>A BRIEF HISTORY OF ARTIFICIAL NIGHT</p>
+<p style='text-align:center; font-size:0.58rem; letter-spacing:0.22em; color:#334455; margin:0 0 1.5rem 0; opacity:0; animation: fadeInUp 0.8s ease 0.1s forwards;'>A BRIEF HISTORY OF ARTIFICIAL NIGHT</p>
 <div style='max-width:680px; margin:0 auto; position:relative;'>
   <div style='position:absolute; left:80px; top:0; bottom:0; width:1px; background:#111133;'></div>
   <div style='display:flex; flex-direction:column; gap:0;'>
 
-    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+    <div class='wyhl-tl-entry' style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
       <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>1879</div>
       <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
       <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>Thomas Edison demonstrates the first practical incandescent bulb. Electric street lighting begins spreading from city centres outward.</div>
     </div>
 
-    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+    <div class='wyhl-tl-entry' style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
       <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>1930s</div>
       <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
       <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>The Milky Way disappears from the skies above every major American and European city. Observatories begin relocating away from urban centres.</div>
     </div>
 
-    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+    <div class='wyhl-tl-entry' style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
       <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>1950s–70s</div>
       <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
       <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>Post-war suburban expansion and the interstate highway system blanket the continental US in roadway lighting. The dark sky retreats hundreds of miles from major cities.</div>
     </div>
 
-    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+    <div class='wyhl-tl-entry' style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
       <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>1994</div>
       <div style='width:7px; height:7px; border-radius:50%; background:#333355; border:1px solid #445577; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
       <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>After the Northridge earthquake cuts power to Los Angeles, thousands of residents call 911 to report a strange silvery cloud overhead. They had seen the Milky Way for the first time in their lives.</div>
     </div>
 
-    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+    <div class='wyhl-tl-entry' style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
       <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>2001</div>
       <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
       <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>Scientists estimate one-third of humanity can no longer see the Milky Way at all. The figure is already higher in the United States and Europe.</div>
     </div>
 
-    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+    <div class='wyhl-tl-entry' style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
       <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>2016</div>
       <div style='width:7px; height:7px; border-radius:50%; background:#222244; border:1px solid #334466; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
       <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>The <em>World Atlas of Artificial Night Sky Brightness</em> reveals 99% of Americans and Europeans live under light-polluted skies. 83% of the global population — and one-third of humanity — has never seen a truly dark night sky.</div>
     </div>
 
-    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+    <div class='wyhl-tl-entry' style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
       <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#334455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>2012–23</div>
       <div style='width:7px; height:7px; border-radius:50%; background:#333355; border:1px solid #445577; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
       <div style='font-size:0.8rem; line-height:1.8; color:#556688;'>LED adoption accelerates globally. Although individual LEDs are more efficient, the rebound effect means far more lights are installed. Total light pollution rises more than 10% per year across the US.</div>
     </div>
 
-    <div style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
+    <div class='wyhl-tl-entry' style='display:flex; gap:0; align-items:flex-start; padding:0.6rem 0;'>
       <div style='min-width:80px; font-size:0.65rem; letter-spacing:0.1em; color:#FF444455; padding-top:0.1rem; text-align:right; padding-right:1.2rem;'>2023</div>
       <div style='width:7px; height:7px; border-radius:50%; background:#442233; border:1px solid #FF4444; flex-shrink:0; margin-top:0.22rem; margin-right:1.2rem;'></div>
       <div style='font-size:0.8rem; line-height:1.8; color:#667788;'>A study in <em>Science</em> finds that the number of stars visible to the naked eye is decreasing by 9.6% per year — fast enough to halve the visible sky within a human generation.</div>
@@ -1451,6 +1475,19 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
 
   </div>
 </div>
+<script>
+(function() {
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, {threshold: 0.15});
+  document.querySelectorAll('.wyhl-tl-entry').forEach(function(el) { obs.observe(el); });
+})();
+</script>
 """)
 
     st.html("<br><br>")
