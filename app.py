@@ -33,9 +33,9 @@ st.html("""
         padding: 0 2.5rem;
         backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
     }
-    .wyhl-brand { font-family: 'Space Grotesk',sans-serif; font-size: 0.7rem; letter-spacing: 0.22em; color: #FF4444; text-decoration: none; }
+    .wyhl-brand { font-family: 'Space Grotesk',sans-serif; font-size: 0.7rem; letter-spacing: 0.22em; color: #FF4444; text-decoration: none; white-space: nowrap; }
     .wyhl-navlinks { display: flex; gap: 2.5rem; align-items: center; }
-    .wyhl-navlink { font-size: 0.62rem; letter-spacing: 0.18em; color: #44446a; text-decoration: none; padding-bottom: 2px; }
+    .wyhl-navlink { font-size: 0.62rem; letter-spacing: 0.18em; color: #44446a; text-decoration: none; padding-bottom: 2px; white-space: nowrap; }
     .wyhl-navlink:hover { color: #9999CC; }
     .wyhl-navlink.active { color: white; border-bottom: 1px solid #FF4444; }
     /* Custom right-opening tooltip */
@@ -55,6 +55,34 @@ st.html("""
         letter-spacing: 0; font-weight: 300; white-space: normal;
     }
     .tt-wrap:hover .tt-box { display: block; }
+    /* Responsive grid classes */
+    .wyhl-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .wyhl-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 860px; margin: 0 auto; }
+    .wyhl-metric-row { display: grid; gap: 1rem; margin-bottom: 1rem; }
+    .wyhl-metric-row-1 { grid-template-columns: 1fr; }
+    .wyhl-metric-row-2 { grid-template-columns: 1fr 1fr; }
+    .wyhl-metric-row-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .wyhl-metric-row-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    /* Mobile breakpoint */
+    @media (max-width: 640px) {
+        .main .block-container { padding: 4.5rem 0.75rem 3rem 0.75rem !important; }
+        .wyhl-topnav { padding: 0 0.85rem; }
+        .wyhl-brand { font-size: 0.58rem; letter-spacing: 0.1em; }
+        .wyhl-navlinks { gap: 1.1rem; }
+        .wyhl-navlink { font-size: 0.56rem; letter-spacing: 0.1em; }
+        .wyhl-grid-3 { grid-template-columns: 1fr; }
+        .wyhl-grid-2 { grid-template-columns: 1fr; }
+        .wyhl-metric-row-2 { grid-template-columns: 1fr; }
+        .wyhl-metric-row-3 { grid-template-columns: 1fr; }
+        .wyhl-metric-row-4 { grid-template-columns: 1fr 1fr; }
+        .tt-box {
+            left: 50% !important;
+            top: auto !important;
+            bottom: calc(100% + 8px) !important;
+            transform: translateX(-50%) !important;
+            width: 220px !important;
+        }
+    }
 </style>
 """)
 
@@ -538,13 +566,6 @@ STAR_HISTORY = {
         "beyond patient observation. The three Belt stars were called the Three Kings, the Three "
         "Sisters, and the String of Pearls by different traditions around the globe."
     ),
-    "Alioth": (
-        "The brightest of the Big Dipper's seven stars, Alioth has an unusual spectrum produced by "
-        "a strong magnetic field that concentrates patches of rare elements on its surface, causing "
-        "subtle brightness variations. It has been a reliable northern sky landmark for millennia: "
-        "the Big Dipper rotates around the pole all night without setting at latitudes above 41°N, "
-        "making it an eternal, hour-hand clock for northern navigators."
-    ),
     "Mizar": (
         "Mizar was the first double star to be resolved through a telescope, by Giovanni Battista "
         "Riccioli in 1617. Just four decades after Galileo pointed a telescope at the sky, "
@@ -860,10 +881,8 @@ def metric_card(label, value, tooltip, sublabel=None, sublabel_color="#2ED573", 
 
 def metrics_row(cards, cols=None):
     n = cols if cols is not None else len(cards)
-    grid_cols = " ".join(["1fr"] * n)
     return (
-        "<div style='display:grid; grid-template-columns:" + grid_cols
-        + "; gap:1rem; margin-bottom:1rem;'>"
+        f"<div class='wyhl-metric-row wyhl-metric-row-{n}'>"
         + "".join(cards) + "</div>"
     )
 
@@ -1262,7 +1281,7 @@ def make_sky_chart(stars, year, radiance_by_year, color_map, lat, lon, constella
         showlegend=False,
         dragmode=False,
         clickmode='event+select',
-        height=1200,
+        height=650,
         modebar_remove=["zoom", "pan", "zoomIn", "zoomOut", "autoScale",
                         "resetScale", "select2d", "lasso2d"],
     )
@@ -1330,8 +1349,8 @@ if st.session_state.page == "landing":
 """)
 
     st.html("<br><br><br><br>")
-    st.html("<h1 style='text-align:center; font-size:3.5rem; letter-spacing:0.25em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>")
-    st.html("<p style='text-align:center; font-size:0.8rem; letter-spacing:0.3em; color:#6666AA;'>A LIGHT POLLUTION OBSERVATORY</p>")
+    st.html("<h1 style='text-align:center; font-size:clamp(1.8rem,7vw,3.5rem); letter-spacing:clamp(0.08em,1.5vw,0.25em); color:#FF4444;'>WHAT HAVE YOU LOST</h1>")
+    st.html("<p style='text-align:center; font-size:clamp(0.6rem,2vw,0.8rem); letter-spacing:clamp(0.12em,1vw,0.3em); color:#6666AA;'>A LIGHT POLLUTION OBSERVATORY</p>")
 
     st.html("""
 <p style='text-align:center; max-width:600px; margin:0 auto; font-size:1.05rem; line-height:2.2; color:#8899BB; letter-spacing:0.02em;'>
@@ -1350,7 +1369,7 @@ Light pollution is the only form of pollution that erases something from human e
     st.html("<br><br>")
 
     st.html("""
-<div style='display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; max-width:680px; margin:0 auto;'>
+<div class='wyhl-grid-3' style='gap:2px; max-width:680px; margin:0 auto;'>
   <div style='background:rgba(10,10,24,0.7); border:1px solid #111133; padding:2rem 1rem; text-align:center; backdrop-filter:blur(4px);'>
     <div style='font-size:2.2rem; font-weight:300; color:white; font-family:"Space Grotesk",sans-serif;'>10+</div>
     <div style='font-size:0.65rem; letter-spacing:0.15em; color:#444466; margin-top:0.5rem;'>YEARS OF DATA</div>
@@ -1437,7 +1456,7 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
     st.html("<br><br>")
 
     st.html("""
-<div style='display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:680px; margin:0 auto;'>
+<div class='wyhl-grid-2' style='max-width:680px;'>
   <div style='background:rgba(8,8,20,0.7); border:1px solid #0e0e2a; border-left:2px solid #2a3a6a; padding:1.2rem 1.5rem; backdrop-filter:blur(4px);'>
     <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.4rem 0;'>THE SCIENCE</p>
     <p style='font-size:0.82rem; line-height:1.9; color:#667799; margin:0;'>Satellite sensors aboard the Suomi-NPP spacecraft measure upward radiance at night. We convert that radiance into a limiting magnitude — the faintest star your eye can detect — and then cross-reference a catalog of 69 named objects to show you exactly what has been lost.</p>
@@ -1478,8 +1497,8 @@ This tool is built on NASA's Black Marble VNP46A4 dataset — annual composites 
 # ── Zip code finder ───────────────────────────────────────────────────────────
 if st.session_state.page != "stars":
     st.html("<br><br>")
-    st.html("<h1 style='text-align:center; font-size:3rem; letter-spacing:0.2em; color:#FF4444;'>WHAT HAVE YOU LOST</h1>")
-    st.html("<p style='text-align:center; font-size:1rem; letter-spacing:0.1em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>")
+    st.html("<h1 style='text-align:center; font-size:clamp(1.6rem,6vw,3rem); letter-spacing:clamp(0.06em,1.2vw,0.2em); color:#FF4444;'>WHAT HAVE YOU LOST</h1>")
+    st.html("<p style='text-align:center; font-size:clamp(0.8rem,2.5vw,1rem); letter-spacing:0.05em; color:#555577;'>enter your zip code to see which stars have disappeared from your sky since 2012</p>")
     st.html("<br><br>")
 
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -1559,7 +1578,7 @@ if st.session_state.searched and st.session_state.page != "stars":
 
     st.html("<br>")
     st.html(f"""
-<div style='display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:860px; margin:0 auto;'>
+<div class='wyhl-grid-2'>
   <div style='background:#080818; border:1px solid #111133; border-left:2px solid {sky_color_now}; padding:1.4rem 1.5rem;'>
     <p style='font-size:0.58rem; letter-spacing:0.18em; color:#334455; margin:0 0 0.45rem 0;'>WHAT YOUR SKY LOOKS LIKE</p>
     <p style='font-size:1.05rem; color:{sky_color_now}; font-family:"Space Grotesk",sans-serif; font-weight:300; margin:0 0 0.2rem 0;'>{sky_label_now}</p>
@@ -1634,7 +1653,7 @@ if st.session_state.searched and st.session_state.page != "stars":
         st.html("<br>")
         st.html(f"<p style='letter-spacing:0.15em; font-size:0.7rem; color:#333355;'>LOST FROM YOUR SKY BY {year} — tap a name to learn more</p>")
         st.html("<br>")
-        html = "<div style='display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;'>"
+        html = "<div class='wyhl-grid-3'>"
         for name, mag in all_lost_for_year:
             color = color_map.get((name, mag), "#FF4444")
             encoded = name.replace(" ", "%20")
@@ -1657,7 +1676,6 @@ if st.session_state.searched and st.session_state.page != "stars":
         "Suburban":         "typically 15–25 miles",
         "Bright Suburban":  "typically 10–20 miles",
     }
-    sky_label_now, _, _, _ = get_sky_description(lm_2023)
     hint = travel_hint.get(sky_label_now, "typically 20–50 miles")
     _pn = st.session_state.place_name
     city_short = _pn.split(",")[0] if _pn else "your location"
@@ -1672,7 +1690,7 @@ if st.session_state.searched and st.session_state.page != "stars":
     From here, you'll need to travel {hint} to reach skies dark enough for the Milky Way to reappear.
     Use the tools below to find the nearest dark patches and plan a night out.
   </p>
-  <div style='display:grid; grid-template-columns:1fr 1fr; gap:10px;'>
+  <div class='wyhl-grid-2' style='max-width:100%;'>
     <a href='{map_url}' target='_blank' style='display:block; background:rgba(8,8,20,0.7);
        border:1px solid #0e0e2a; border-left:2px solid #2a3a6a; padding:1rem 1.25rem;
        text-decoration:none; backdrop-filter:blur(4px);'>
@@ -1695,8 +1713,8 @@ if st.session_state.searched and st.session_state.page != "stars":
 # ── Stars page ────────────────────────────────────────────────────────────────
 if st.session_state.page == "stars":
     st.html("<br><br>")
-    st.html("<h1 style='text-align:center; font-size:2.5rem; letter-spacing:0.18em;'>STAR ATLAS</h1>")
-    st.html("<p style='text-align:center; font-size:0.72rem; letter-spacing:0.2em; color:#444466;'>SEARCH THE CATALOG — 68 OBJECTS</p>")
+    st.html("<h1 style='text-align:center; font-size:clamp(1.4rem,5vw,2.5rem); letter-spacing:clamp(0.06em,1vw,0.18em);'>STAR ATLAS</h1>")
+    st.html("<p style='text-align:center; font-size:0.72rem; letter-spacing:0.2em; color:#444466;'>SEARCH THE CATALOG — 69 OBJECTS</p>")
     st.html("<br><br>")
 
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -1743,8 +1761,8 @@ if st.session_state.page == "stars":
                 f"<span style='display:inline-block; width:20px; height:20px; border-radius:50%; "
                 f"background:{star_color}; box-shadow:0 0 18px 6px {star_color}55; "
                 f"vertical-align:middle; margin-right:14px; margin-bottom:4px;'></span>"
-                f"<span style='font-family:\"Space Grotesk\",sans-serif; font-size:2.8rem; "
-                f"letter-spacing:0.12em; color:white; font-weight:300;'>{name}</span>"
+                f"<span style='font-family:\"Space Grotesk\",sans-serif; font-size:clamp(1.6rem,5vw,2.8rem); "
+                f"letter-spacing:clamp(0.04em,0.8vw,0.12em); color:white; font-weight:300;'>{name}</span>"
                 f"</div>")
             if info.get("constellation"):
                 st.html(f"<p style='text-align:center; font-size:0.65rem; letter-spacing:0.2em; color:#445566; margin-top:0.3rem;'>{info['constellation'].upper()}</p>")
