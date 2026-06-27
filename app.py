@@ -1468,40 +1468,45 @@ body, #root { background: transparent !important; }
 """)
     st.html("""
 <style>
-.stApp {
+html {
     background-color: #03030a !important;
     background-image:
-        radial-gradient(ellipse 58% 44% at 72% 28%, rgba(70,12,95,0.22), transparent 60%),
-        radial-gradient(ellipse 54% 38% at 18% 65%, rgba(12,30,110,0.18), transparent 55%),
-        radial-gradient(ellipse 48% 34% at 52% 88%, rgba(100,12,25,0.15), transparent 50%),
-        radial-gradient(circle 1px at 8.3% 12.7%, rgba(200,215,255,0.48), transparent),
-        radial-gradient(circle 2px at 23.1% 5.4%, rgba(255,248,225,0.55), transparent),
-        radial-gradient(circle 1px at 41.6% 18.2%, rgba(255,255,255,0.38), transparent),
-        radial-gradient(circle 1px at 58.9% 7.3%, rgba(200,215,255,0.42), transparent),
-        radial-gradient(circle 2px at 74.2% 22.8%, rgba(255,248,225,0.62), transparent),
-        radial-gradient(circle 1px at 87.5% 11.4%, rgba(255,210,170,0.45), transparent),
-        radial-gradient(circle 1px at 3.8% 35.1%, rgba(200,215,255,0.32), transparent),
-        radial-gradient(circle 1px at 16.4% 48.6%, rgba(255,255,255,0.28), transparent),
-        radial-gradient(circle 1px at 31.7% 42.3%, rgba(255,248,225,0.35), transparent),
-        radial-gradient(circle 2px at 48.3% 38.9%, rgba(200,215,255,0.58), transparent),
-        radial-gradient(circle 1px at 65.8% 44.1%, rgba(255,210,170,0.40), transparent),
-        radial-gradient(circle 1px at 81.2% 33.7%, rgba(255,248,225,0.30), transparent),
-        radial-gradient(circle 1px at 92.6% 56.4%, rgba(200,215,255,0.36), transparent),
-        radial-gradient(circle 1px at 12.9% 62.8%, rgba(255,255,255,0.25), transparent),
-        radial-gradient(circle 2px at 29.4% 71.5%, rgba(200,215,255,0.52), transparent),
-        radial-gradient(circle 1px at 54.7% 58.3%, rgba(255,248,225,0.38), transparent),
-        radial-gradient(circle 1px at 68.1% 67.9%, rgba(255,210,170,0.32), transparent),
-        radial-gradient(circle 1px at 83.4% 74.2%, rgba(200,215,255,0.28), transparent),
-        radial-gradient(circle 1px at 6.5% 82.6%, rgba(255,255,255,0.34), transparent),
-        radial-gradient(circle 2px at 22.8% 88.4%, rgba(255,248,225,0.48), transparent),
-        radial-gradient(circle 1px at 45.3% 79.1%, rgba(200,215,255,0.42), transparent),
-        radial-gradient(circle 1px at 71.6% 85.8%, rgba(255,210,170,0.35), transparent),
-        radial-gradient(circle 1px at 95.2% 92.3%, rgba(200,215,255,0.29), transparent) !important;
+        radial-gradient(ellipse 60% 45% at 72% 28%, rgba(100,18,160,0.58), transparent 62%),
+        radial-gradient(ellipse 55% 40% at 18% 65%, rgba(18,45,185,0.50), transparent 58%),
+        radial-gradient(ellipse 50% 36% at 52% 90%, rgba(160,18,35,0.44), transparent 55%),
+        radial-gradient(circle 2px at 8.3% 12.7%, rgba(210,225,255,0.88), transparent),
+        radial-gradient(circle 3px at 23.1% 5.4%, rgba(255,252,230,0.92), transparent),
+        radial-gradient(circle 2px at 41.6% 18.2%, rgba(255,255,255,0.80), transparent),
+        radial-gradient(circle 2px at 58.9% 7.3%, rgba(210,225,255,0.85), transparent),
+        radial-gradient(circle 3px at 74.2% 22.8%, rgba(255,252,230,0.94), transparent),
+        radial-gradient(circle 2px at 87.5% 11.4%, rgba(255,220,185,0.82), transparent),
+        radial-gradient(circle 2px at 3.8% 35.1%, rgba(210,225,255,0.75), transparent),
+        radial-gradient(circle 2px at 16.4% 48.6%, rgba(255,255,255,0.70), transparent),
+        radial-gradient(circle 2px at 31.7% 42.3%, rgba(255,252,230,0.78), transparent),
+        radial-gradient(circle 3px at 48.3% 38.9%, rgba(210,225,255,0.90), transparent),
+        radial-gradient(circle 2px at 65.8% 44.1%, rgba(255,220,185,0.80), transparent),
+        radial-gradient(circle 2px at 81.2% 33.7%, rgba(255,252,230,0.72), transparent),
+        radial-gradient(circle 2px at 92.6% 56.4%, rgba(210,225,255,0.78), transparent),
+        radial-gradient(circle 2px at 12.9% 62.8%, rgba(255,255,255,0.68), transparent),
+        radial-gradient(circle 3px at 29.4% 71.5%, rgba(210,225,255,0.86), transparent),
+        radial-gradient(circle 2px at 54.7% 58.3%, rgba(255,252,230,0.80), transparent),
+        radial-gradient(circle 2px at 68.1% 67.9%, rgba(255,220,185,0.74), transparent),
+        radial-gradient(circle 2px at 83.4% 74.2%, rgba(210,225,255,0.70), transparent),
+        radial-gradient(circle 2px at 6.5% 82.6%, rgba(255,255,255,0.76), transparent),
+        radial-gradient(circle 3px at 22.8% 88.4%, rgba(255,252,230,0.84), transparent),
+        radial-gradient(circle 2px at 45.3% 79.1%, rgba(210,225,255,0.82), transparent),
+        radial-gradient(circle 2px at 71.6% 85.8%, rgba(255,220,185,0.76), transparent),
+        radial-gradient(circle 2px at 95.2% 92.3%, rgba(210,225,255,0.72), transparent) !important;
+    background-attachment: fixed !important;
+    background-size: 100% 100% !important;
     animation: wyhlLandingBg 32s ease-in-out infinite alternate;
 }
+body, #root, .stApp, [data-testid="stAppViewContainer"], .main {
+    background: transparent !important;
+}
 @keyframes wyhlLandingBg {
-    0%   { background-position: 0% 0%; }
-    100% { background-position: 3% -2%; }
+    0%   { background-size: 100% 100%; }
+    100% { background-size: 105% 105%; }
 }
 </style>
 """)
@@ -1762,29 +1767,34 @@ body, #root { background: transparent !important; }
 """)
     st.html("""
 <style>
-.stApp {
+html {
     background-color: #03030a !important;
     background-image:
-        radial-gradient(ellipse 80% 55% at 50% 115%, rgba(210,115,30,0.20), transparent 55%),
-        radial-gradient(ellipse 55% 38% at 20% 110%, rgba(255,180,50,0.10), transparent 50%),
-        radial-gradient(ellipse 50% 33% at 78% 112%, rgba(230,150,40,0.09), transparent 45%),
-        radial-gradient(circle 1px at 12.4% 8.3%, rgba(210,220,255,0.38), transparent),
-        radial-gradient(circle 1px at 28.7% 13.9%, rgba(255,248,225,0.42), transparent),
-        radial-gradient(circle 1px at 45.1% 6.2%, rgba(200,215,255,0.35), transparent),
-        radial-gradient(circle 1px at 63.8% 11.5%, rgba(255,248,225,0.40), transparent),
-        radial-gradient(circle 2px at 78.2% 9.4%, rgba(210,220,255,0.28), transparent),
-        radial-gradient(circle 1px at 88.6% 5.1%, rgba(200,215,255,0.44), transparent),
-        radial-gradient(circle 1px at 5.3% 19.7%, rgba(255,255,255,0.22), transparent),
-        radial-gradient(circle 1px at 35.4% 21.8%, rgba(210,220,255,0.30), transparent),
-        radial-gradient(circle 1px at 55.9% 17.3%, rgba(255,248,225,0.28), transparent),
-        radial-gradient(circle 1px at 72.1% 24.6%, rgba(200,215,255,0.25), transparent),
-        radial-gradient(circle 1px at 91.5% 16.8%, rgba(255,255,255,0.32), transparent),
-        linear-gradient(to bottom, #03030a 0%, #04030c 38%, #090604 62%, #120804 80%, #1b0c04 100%) !important;
+        radial-gradient(ellipse 90% 60% at 50% 108%, rgba(210,115,30,0.55), transparent 58%),
+        radial-gradient(ellipse 60% 42% at 18% 104%, rgba(255,180,50,0.38), transparent 52%),
+        radial-gradient(ellipse 55% 36% at 80% 106%, rgba(230,150,40,0.34), transparent 48%),
+        radial-gradient(circle 2px at 12.4% 8.3%, rgba(210,220,255,0.88), transparent),
+        radial-gradient(circle 2px at 28.7% 13.9%, rgba(255,248,225,0.90), transparent),
+        radial-gradient(circle 2px at 45.1% 6.2%, rgba(200,215,255,0.82), transparent),
+        radial-gradient(circle 2px at 63.8% 11.5%, rgba(255,248,225,0.86), transparent),
+        radial-gradient(circle 3px at 78.2% 9.4%, rgba(210,220,255,0.78), transparent),
+        radial-gradient(circle 2px at 88.6% 5.1%, rgba(200,215,255,0.84), transparent),
+        radial-gradient(circle 2px at 5.3% 19.7%, rgba(255,255,255,0.72), transparent),
+        radial-gradient(circle 2px at 35.4% 21.8%, rgba(210,220,255,0.78), transparent),
+        radial-gradient(circle 2px at 55.9% 17.3%, rgba(255,248,225,0.74), transparent),
+        radial-gradient(circle 2px at 72.1% 24.6%, rgba(200,215,255,0.70), transparent),
+        radial-gradient(circle 2px at 91.5% 16.8%, rgba(255,255,255,0.76), transparent),
+        linear-gradient(to bottom, #03030a 0%, #06040f 38%, #0d0806 62%, #180a05 80%, #220e04 100%) !important;
+    background-attachment: fixed !important;
+    background-size: 100% 100% !important;
     animation: wyhlExploreBg 24s ease-in-out infinite alternate;
 }
+body, #root, .stApp, [data-testid="stAppViewContainer"], .main {
+    background: transparent !important;
+}
 @keyframes wyhlExploreBg {
-    0%   { background-position: 0% 0%; }
-    100% { background-position: 2% 0%; }
+    0%   { background-size: 100% 100%; }
+    100% { background-size: 104% 104%; }
 }
 </style>
 """)
@@ -2119,44 +2129,49 @@ body, #root { background: transparent !important; }
 """)
     st.html("""
 <style>
-.stApp {
+html {
     background-color: #03030a !important;
     background-image:
-        linear-gradient(108deg, transparent 32%, rgba(65,78,148,0.10) 44%, rgba(80,95,168,0.14) 50%, rgba(65,78,148,0.10) 56%, transparent 68%),
-        radial-gradient(ellipse 55% 40% at 78% 32%, rgba(65,12,88,0.17), transparent 58%),
-        radial-gradient(ellipse 50% 35% at 22% 60%, rgba(12,28,100,0.14), transparent 53%),
-        radial-gradient(circle 1px at 7.2% 9.8%, rgba(200,215,255,0.42), transparent),
-        radial-gradient(circle 2px at 18.6% 3.4%, rgba(255,248,225,0.58), transparent),
-        radial-gradient(circle 1px at 34.1% 14.7%, rgba(255,255,255,0.35), transparent),
-        radial-gradient(circle 1px at 52.4% 8.1%, rgba(200,215,255,0.48), transparent),
-        radial-gradient(circle 2px at 67.8% 18.3%, rgba(255,248,225,0.55), transparent),
-        radial-gradient(circle 1px at 83.5% 5.9%, rgba(255,210,170,0.40), transparent),
-        radial-gradient(circle 1px at 94.2% 22.6%, rgba(200,215,255,0.32), transparent),
-        radial-gradient(circle 1px at 5.8% 31.4%, rgba(255,255,255,0.28), transparent),
-        radial-gradient(circle 1px at 22.3% 45.8%, rgba(255,248,225,0.38), transparent),
-        radial-gradient(circle 2px at 41.7% 39.2%, rgba(200,215,255,0.52), transparent),
-        radial-gradient(circle 1px at 59.6% 52.4%, rgba(255,210,170,0.34), transparent),
-        radial-gradient(circle 1px at 76.4% 43.1%, rgba(255,248,225,0.30), transparent),
-        radial-gradient(circle 1px at 88.9% 37.8%, rgba(200,215,255,0.36), transparent),
-        radial-gradient(circle 1px at 14.5% 58.3%, rgba(255,255,255,0.26), transparent),
-        radial-gradient(circle 2px at 32.8% 67.9%, rgba(200,215,255,0.48), transparent),
-        radial-gradient(circle 1px at 48.4% 72.6%, rgba(255,248,225,0.40), transparent),
-        radial-gradient(circle 1px at 64.2% 63.5%, rgba(255,210,170,0.30), transparent),
-        radial-gradient(circle 1px at 79.7% 78.4%, rgba(200,215,255,0.34), transparent),
-        radial-gradient(circle 1px at 91.3% 56.1%, rgba(255,255,255,0.28), transparent),
-        radial-gradient(circle 2px at 11.6% 84.7%, rgba(255,248,225,0.45), transparent),
-        radial-gradient(circle 1px at 27.9% 91.2%, rgba(200,215,255,0.38), transparent),
-        radial-gradient(circle 1px at 44.8% 86.5%, rgba(255,255,255,0.32), transparent),
-        radial-gradient(circle 1px at 57.3% 94.8%, rgba(255,210,170,0.28), transparent),
-        radial-gradient(circle 1px at 73.6% 81.3%, rgba(200,215,255,0.35), transparent),
-        radial-gradient(circle 2px at 86.1% 89.4%, rgba(255,248,225,0.52), transparent),
-        radial-gradient(circle 1px at 3.4% 71.8%, rgba(255,210,170,0.25), transparent),
-        radial-gradient(circle 1px at 96.5% 68.2%, rgba(200,215,255,0.30), transparent) !important;
+        linear-gradient(108deg, transparent 30%, rgba(65,78,200,0.28) 43%, rgba(90,110,220,0.36) 50%, rgba(65,78,200,0.28) 57%, transparent 70%),
+        radial-gradient(ellipse 58% 42% at 80% 32%, rgba(95,18,130,0.50), transparent 60%),
+        radial-gradient(ellipse 52% 38% at 20% 62%, rgba(18,38,160,0.44), transparent 55%),
+        radial-gradient(circle 2px at 7.2% 9.8%, rgba(200,215,255,0.88), transparent),
+        radial-gradient(circle 3px at 18.6% 3.4%, rgba(255,248,225,0.92), transparent),
+        radial-gradient(circle 2px at 34.1% 14.7%, rgba(255,255,255,0.80), transparent),
+        radial-gradient(circle 2px at 52.4% 8.1%, rgba(200,215,255,0.86), transparent),
+        radial-gradient(circle 3px at 67.8% 18.3%, rgba(255,248,225,0.90), transparent),
+        radial-gradient(circle 2px at 83.5% 5.9%, rgba(255,210,170,0.82), transparent),
+        radial-gradient(circle 2px at 94.2% 22.6%, rgba(200,215,255,0.76), transparent),
+        radial-gradient(circle 2px at 5.8% 31.4%, rgba(255,255,255,0.72), transparent),
+        radial-gradient(circle 2px at 22.3% 45.8%, rgba(255,248,225,0.80), transparent),
+        radial-gradient(circle 3px at 41.7% 39.2%, rgba(200,215,255,0.88), transparent),
+        radial-gradient(circle 2px at 59.6% 52.4%, rgba(255,210,170,0.76), transparent),
+        radial-gradient(circle 2px at 76.4% 43.1%, rgba(255,248,225,0.74), transparent),
+        radial-gradient(circle 2px at 88.9% 37.8%, rgba(200,215,255,0.78), transparent),
+        radial-gradient(circle 2px at 14.5% 58.3%, rgba(255,255,255,0.68), transparent),
+        radial-gradient(circle 3px at 32.8% 67.9%, rgba(200,215,255,0.84), transparent),
+        radial-gradient(circle 2px at 48.4% 72.6%, rgba(255,248,225,0.80), transparent),
+        radial-gradient(circle 2px at 64.2% 63.5%, rgba(255,210,170,0.72), transparent),
+        radial-gradient(circle 2px at 79.7% 78.4%, rgba(200,215,255,0.76), transparent),
+        radial-gradient(circle 2px at 91.3% 56.1%, rgba(255,255,255,0.70), transparent),
+        radial-gradient(circle 3px at 11.6% 84.7%, rgba(255,248,225,0.82), transparent),
+        radial-gradient(circle 2px at 27.9% 91.2%, rgba(200,215,255,0.78), transparent),
+        radial-gradient(circle 2px at 44.8% 86.5%, rgba(255,255,255,0.74), transparent),
+        radial-gradient(circle 2px at 57.3% 94.8%, rgba(255,210,170,0.70), transparent),
+        radial-gradient(circle 2px at 73.6% 81.3%, rgba(200,215,255,0.76), transparent),
+        radial-gradient(circle 3px at 86.1% 89.4%, rgba(255,248,225,0.84), transparent),
+        radial-gradient(circle 2px at 3.4% 71.8%, rgba(255,210,170,0.68), transparent),
+        radial-gradient(circle 2px at 96.5% 68.2%, rgba(200,215,255,0.74), transparent) !important;
+    background-attachment: fixed !important;
+    background-size: 100% 100% !important;
     animation: wyhlAtlasBg 90s ease-in-out infinite alternate;
 }
+body, #root, .stApp, [data-testid="stAppViewContainer"], .main {
+    background: transparent !important;
+}
 @keyframes wyhlAtlasBg {
-    0%   { background-position: 0% 0%; }
-    100% { background-position: 6% 0%; }
+    0%   { background-size: 100% 100%; }
+    100% { background-size: 107% 107%; }
 }
 </style>
 """)
