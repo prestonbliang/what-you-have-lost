@@ -1344,14 +1344,8 @@ st.html(f"""
 if st.session_state.page == "landing":
     st.html("""
 <style>
-.stApp {
-    background-image:
-        linear-gradient(to bottom, rgba(3,3,10,0.55) 0%, rgba(3,3,10,0.75) 55%, rgba(3,3,10,0.97) 100%),
-        url('https://science.nasa.gov/wp-content/uploads/2023/09/m31-layered-uv-and-optical.jpg') !important;
-    background-size: cover !important;
-    background-position: center 30% !important;
-    background-attachment: fixed !important;
-}
+body { background: #03030a !important; }
+.stApp, [data-testid="stAppViewContainer"], .main { background: transparent !important; background-image: none !important; }
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(28px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -1370,6 +1364,106 @@ if st.session_state.page == "landing":
     transform: translateX(0);
 }
 </style>
+<script>
+(function () {
+  var old = document.getElementById('wyhl-bg');
+  if (old) old.remove();
+  var cv = document.createElement('canvas');
+  cv.id = 'wyhl-bg';
+  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
+  document.body.insertBefore(cv, document.body.firstChild);
+  var ctx = cv.getContext('2d');
+  var W, H, cx, cy;
+  function resize() { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; cx = W/2; cy = H/2; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  var SPEED = 0.0007, FOV = 260;
+  var COLS = [[200,215,255],[255,245,220],[255,210,170],[180,205,255]];
+  function mkStar(z) {
+    return { x:(Math.random()-0.5)*2, y:(Math.random()-0.5)*2, z:z!==undefined?z:(0.02+Math.random()*0.96),
+             pz:null, col:COLS[Math.random()*COLS.length|0], tw:Math.random()*6.28, twr:0.006+Math.random()*0.014 };
+  }
+  var stars = [];
+  for (var i=0; i<320; i++) stars.push(mkStar());
+
+  var NEBS = [
+    {fx:0.72,fy:0.28,r:0.32,rgb:'70,12,95',a:0.14},
+    {fx:0.18,fy:0.62,r:0.26,rgb:'12,28,100',a:0.11},
+    {fx:0.48,fy:0.82,r:0.22,rgb:'95,12,22',a:0.09},
+  ];
+  var nT=0, shooters=[], shootCd=220+Math.random()*280, frame=0;
+
+  function drawShip(x,y,ang,s,a) {
+    ctx.save(); ctx.translate(x,y); ctx.rotate(ang); ctx.globalAlpha=a;
+    ctx.strokeStyle='#8899bb'; ctx.lineWidth=0.9; ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.beginPath(); ctx.moveTo(0,-s*2); ctx.lineTo(s*0.5,s*0.5); ctx.lineTo(0,s*0.2); ctx.lineTo(-s*0.5,s*0.5); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(s*0.4,s*0.1); ctx.lineTo(s*1.5,s*0.8); ctx.lineTo(s*0.5,s*0.5); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-s*0.4,s*0.1); ctx.lineTo(-s*1.5,s*0.8); ctx.lineTo(-s*0.5,s*0.5); ctx.closePath(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(0,-s*0.8,s*0.18,s*0.28,0,0,6.28); ctx.strokeStyle='rgba(100,160,220,'+(a*4)+')'; ctx.lineWidth=0.6; ctx.stroke();
+    var gp=0.4+0.6*(0.5+0.5*Math.sin(frame*0.07));
+    var eg=ctx.createRadialGradient(0,s*0.5,0,0,s*0.5,s*0.85);
+    eg.addColorStop(0,'rgba(255,110,50,'+(gp*a*6)+')'); eg.addColorStop(0.5,'rgba(255,70,30,'+(gp*a*1.5)+')'); eg.addColorStop(1,'rgba(255,50,20,0)');
+    ctx.fillStyle=eg; ctx.globalAlpha=a; ctx.fillRect(-s*2,0,s*4,s*2);
+    ctx.restore();
+  }
+
+  var lastT=0, FRATE=1000/42;
+  function draw(t) {
+    requestAnimationFrame(draw);
+    if (t-lastT < FRATE) return;
+    lastT=t; frame++; nT+=0.00025;
+    ctx.fillStyle='#03030a'; ctx.fillRect(0,0,W,H);
+
+    for (var ni=0; ni<NEBS.length; ni++) {
+      var n=NEBS[ni];
+      var nx=(n.fx+Math.sin(nT+ni*1.8)*0.022)*W, ny=(n.fy+Math.cos(nT*0.75+ni*2.3)*0.018)*H, nr=n.r*Math.min(W,H);
+      var g=ctx.createRadialGradient(nx,ny,0,nx,ny,nr);
+      g.addColorStop(0,'rgba('+n.rgb+','+n.a+')'); g.addColorStop(0.45,'rgba('+n.rgb+','+(n.a*0.4)+')'); g.addColorStop(1,'rgba('+n.rgb+',0)');
+      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    }
+
+    for (var si=0; si<stars.length; si++) {
+      var s=stars[si]; s.pz=s.z; s.z-=SPEED;
+      if (s.z<=0.004) { stars[si]=mkStar(0.97+Math.random()*0.03); continue; }
+      var sx=cx+s.x*FOV/s.z, sy=cy+s.y*FOV/s.z;
+      if (sx<-25||sx>W+25||sy<-25||sy>H+25) { stars[si]=mkStar(0.97+Math.random()*0.03); continue; }
+      s.tw+=s.twr;
+      var depth=1-s.z, a=Math.min(1,(0.2+depth*0.8)*(0.65+0.35*Math.sin(s.tw))), r=Math.max(0.25,depth*2.0);
+      if (s.pz>0.01) {
+        var px=cx+s.x*FOV/s.pz, py=cy+s.y*FOV/s.pz;
+        if (Math.hypot(sx-px,sy-py)>0.4) {
+          var tg=ctx.createLinearGradient(px,py,sx,sy);
+          tg.addColorStop(0,'rgba('+s.col+',0)'); tg.addColorStop(1,'rgba('+s.col+','+(a*0.45)+')');
+          ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(sx,sy);
+          ctx.strokeStyle=tg; ctx.lineWidth=Math.max(0.4,r*0.55); ctx.stroke();
+        }
+      }
+      ctx.beginPath(); ctx.arc(sx,sy,r,0,6.28); ctx.fillStyle='rgba('+s.col+','+a+')'; ctx.fill();
+      if (depth>0.82) { ctx.beginPath(); ctx.arc(sx,sy,r*2.8,0,6.28); ctx.fillStyle='rgba('+s.col+','+(a*0.1)+')'; ctx.fill(); }
+    }
+
+    drawShip(W*0.80+Math.sin(frame*0.006)*6, H*0.22+Math.cos(frame*0.004)*4, -0.2+Math.sin(frame*0.006)*0.08, 11, 0.28);
+
+    if (--shootCd<=0) {
+      shooters.push({x:Math.random()*W*0.75,y:-5+Math.random()*H*0.45,vx:6+Math.random()*10,vy:2.5+Math.random()*5,life:1,mLen:65+Math.random()*75});
+      shootCd=240+Math.random()*350;
+    }
+    shooters=shooters.filter(function(sh){return sh.life>0.01;});
+    for (var shi=0; shi<shooters.length; shi++) {
+      var sh=shooters[shi], spd=Math.hypot(sh.vx,sh.vy);
+      var tx=sh.x-sh.vx/spd*sh.mLen, ty=sh.y-sh.vy/spd*sh.mLen;
+      var sg=ctx.createLinearGradient(tx,ty,sh.x,sh.y);
+      sg.addColorStop(0,'rgba(200,215,255,0)'); sg.addColorStop(1,'rgba(220,232,255,'+(sh.life*0.82)+')');
+      ctx.beginPath(); ctx.moveTo(tx,ty); ctx.lineTo(sh.x,sh.y);
+      ctx.strokeStyle=sg; ctx.lineWidth=1.6; ctx.stroke();
+      sh.x+=sh.vx; sh.y+=sh.vy; sh.life-=0.028;
+      if (sh.x>W+100||sh.y>H+100) sh.life=0;
+    }
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
 """)
 
     st.html("<br><br><br><br>")
