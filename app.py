@@ -11,15 +11,10 @@ st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wi
 
 
 def inject_js(js: str):
-    """Run JS against the *parent* document.
-
-    st.html() strips <script> tags, so any JavaScript placed there never runs.
-    components.html() runs in a same-origin srcdoc iframe whose script DOES
-    execute; by aliasing window/document to the parent we can manipulate the
-    real page (e.g. inject a full-window canvas background or reveal-on-scroll).
-    """
+    """Run JS against the parent document (landing page canvas + scroll observer)."""
     components.html(
-        f"""<script>
+        f"""<style>html,body{{margin:0;padding:0;background:transparent;overflow:hidden;}}</style>
+<script>
 (function(window) {{
   var document = window.document;
   var requestAnimationFrame = window.requestAnimationFrame.bind(window);
@@ -29,6 +24,43 @@ def inject_js(js: str):
 </script>""",
         height=0,
     )
+
+
+def canvas_bg(js: str, bg: str = '#03030a'):
+    """Full-screen animated canvas background in a self-contained iframe.
+
+    Unlike inject_js, this doesn't manipulate window.parent — the canvas
+    lives inside the component iframe itself. window.frameElement is used to
+    pin the iframe as a fixed viewport overlay with a MutationObserver that
+    re-applies the style whenever Streamlit resets the element's height.
+
+    The caller's js receives: cv (canvas), ctx, W, H, resize(), requestAnimationFrame.
+    """
+    components.html(f"""<!DOCTYPE html>
+<html><head><style>
+html,body{{margin:0;padding:0;background:{bg};overflow:hidden;width:100%;height:100%;}}
+</style></head>
+<body>
+<canvas id="cv" style="display:block;position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
+<script>
+(function(){{
+  var fr=window.frameElement;
+  if(fr){{
+    function pin(){{fr.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;border:none;pointer-events:none;display:block;';}}
+    pin();
+    var mo=new MutationObserver(function(){{mo.disconnect();pin();mo.observe(fr,{{attributes:true}});}});
+    mo.observe(fr,{{attributes:true}});
+  }}
+  var cv=document.getElementById('cv');
+  var ctx=cv.getContext('2d');
+  var W,H;
+  function resize(){{W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}}
+  resize();
+  window.addEventListener('resize',resize);
+{js}
+}})();
+</script>
+</body></html>""", height=1)
 
 st.html("""
 <style>
@@ -1701,18 +1733,7 @@ body, #root { background: transparent !important; }
 .stApp, [data-testid="stAppViewContainer"], .main { background: transparent !important; }
 </style>
 """)
-    inject_js("""
-  var old = document.getElementById('wyhl-bg');
-  if (old) old.remove();
-  var cv = document.createElement('canvas');
-  cv.id = 'wyhl-bg';
-  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
-  document.body.insertBefore(cv, document.body.firstChild);
-  var ctx = cv.getContext('2d');
-  var W, H;
-  function resize() { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
-  resize(); window.addEventListener('resize', resize);
-
+    canvas_bg("""
   var skyS = [];
   for (var i=0;i<110;i++) skyS.push({x:Math.random(),y:Math.random()*0.5,r:0.3+Math.random()*0.8,a:0.05+Math.random()*0.17,tw:Math.random()*6.28,twr:0.004+Math.random()*0.01});
 
@@ -1803,35 +1824,8 @@ body, #root { background: transparent !important; }
 """)
     st.html("""
 <style>
-html {
-    background-color: #03030a !important;
-    background-image:
-        radial-gradient(ellipse 90% 60% at 50% 108%, rgba(210,115,30,0.55), transparent 58%),
-        radial-gradient(ellipse 60% 42% at 18% 104%, rgba(255,180,50,0.38), transparent 52%),
-        radial-gradient(ellipse 55% 36% at 80% 106%, rgba(230,150,40,0.34), transparent 48%),
-        radial-gradient(circle 2px at 12.4% 8.3%, rgba(210,220,255,0.88), transparent),
-        radial-gradient(circle 2px at 28.7% 13.9%, rgba(255,248,225,0.90), transparent),
-        radial-gradient(circle 2px at 45.1% 6.2%, rgba(200,215,255,0.82), transparent),
-        radial-gradient(circle 2px at 63.8% 11.5%, rgba(255,248,225,0.86), transparent),
-        radial-gradient(circle 3px at 78.2% 9.4%, rgba(210,220,255,0.78), transparent),
-        radial-gradient(circle 2px at 88.6% 5.1%, rgba(200,215,255,0.84), transparent),
-        radial-gradient(circle 2px at 5.3% 19.7%, rgba(255,255,255,0.72), transparent),
-        radial-gradient(circle 2px at 35.4% 21.8%, rgba(210,220,255,0.78), transparent),
-        radial-gradient(circle 2px at 55.9% 17.3%, rgba(255,248,225,0.74), transparent),
-        radial-gradient(circle 2px at 72.1% 24.6%, rgba(200,215,255,0.70), transparent),
-        radial-gradient(circle 2px at 91.5% 16.8%, rgba(255,255,255,0.76), transparent),
-        linear-gradient(to bottom, #03030a 0%, #06040f 38%, #0d0806 62%, #180a05 80%, #220e04 100%) !important;
-    background-attachment: fixed !important;
-    background-size: 100% 100% !important;
-    animation: wyhlExploreBg 24s ease-in-out infinite alternate;
-}
-body, #root, .stApp, [data-testid="stAppViewContainer"], .main {
-    background: transparent !important;
-}
-@keyframes wyhlExploreBg {
-    0%   { background-size: 100% 100%; }
-    100% { background-size: 104% 104%; }
-}
+html { background: #03030a !important; }
+body, #root, .stApp, [data-testid="stAppViewContainer"], .main { background: transparent !important; }
 </style>
 """)
 
@@ -2069,19 +2063,7 @@ body, #root { background: transparent !important; }
 .stApp, [data-testid="stAppViewContainer"], .main { background: transparent !important; }
 </style>
 """)
-    inject_js(f"var SD=[{','.join(_sd)}];var LD=[{','.join(_li)}];" + """
-  var old = document.getElementById('wyhl-bg');
-  if (old) old.remove();
-  var cv = document.createElement('canvas');
-  cv.id = 'wyhl-bg';
-  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
-  document.body.insertBefore(cv, document.body.firstChild);
-  var ctx = cv.getContext('2d');
-  var W, H;
-  function resize() { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
-  resize(); window.addEventListener('resize', resize);
-
-  // SD and LD injected by previous script tag
+    canvas_bg(f"var SD=[{','.join(_sd)}];var LD=[{','.join(_li)}];\n" + """
   var tw = SD.map(function() { return { ph:Math.random()*6.28, rate:0.005+Math.random()*0.012 }; });
 
   // Faint background stars drifting with the sky
@@ -2188,50 +2170,8 @@ body, #root { background: transparent !important; }
 """)
     st.html("""
 <style>
-html {
-    background-color: #03030a !important;
-    background-image:
-        linear-gradient(108deg, transparent 30%, rgba(65,78,200,0.28) 43%, rgba(90,110,220,0.36) 50%, rgba(65,78,200,0.28) 57%, transparent 70%),
-        radial-gradient(ellipse 58% 42% at 80% 32%, rgba(95,18,130,0.50), transparent 60%),
-        radial-gradient(ellipse 52% 38% at 20% 62%, rgba(18,38,160,0.44), transparent 55%),
-        radial-gradient(circle 2px at 7.2% 9.8%, rgba(200,215,255,0.88), transparent),
-        radial-gradient(circle 3px at 18.6% 3.4%, rgba(255,248,225,0.92), transparent),
-        radial-gradient(circle 2px at 34.1% 14.7%, rgba(255,255,255,0.80), transparent),
-        radial-gradient(circle 2px at 52.4% 8.1%, rgba(200,215,255,0.86), transparent),
-        radial-gradient(circle 3px at 67.8% 18.3%, rgba(255,248,225,0.90), transparent),
-        radial-gradient(circle 2px at 83.5% 5.9%, rgba(255,210,170,0.82), transparent),
-        radial-gradient(circle 2px at 94.2% 22.6%, rgba(200,215,255,0.76), transparent),
-        radial-gradient(circle 2px at 5.8% 31.4%, rgba(255,255,255,0.72), transparent),
-        radial-gradient(circle 2px at 22.3% 45.8%, rgba(255,248,225,0.80), transparent),
-        radial-gradient(circle 3px at 41.7% 39.2%, rgba(200,215,255,0.88), transparent),
-        radial-gradient(circle 2px at 59.6% 52.4%, rgba(255,210,170,0.76), transparent),
-        radial-gradient(circle 2px at 76.4% 43.1%, rgba(255,248,225,0.74), transparent),
-        radial-gradient(circle 2px at 88.9% 37.8%, rgba(200,215,255,0.78), transparent),
-        radial-gradient(circle 2px at 14.5% 58.3%, rgba(255,255,255,0.68), transparent),
-        radial-gradient(circle 3px at 32.8% 67.9%, rgba(200,215,255,0.84), transparent),
-        radial-gradient(circle 2px at 48.4% 72.6%, rgba(255,248,225,0.80), transparent),
-        radial-gradient(circle 2px at 64.2% 63.5%, rgba(255,210,170,0.72), transparent),
-        radial-gradient(circle 2px at 79.7% 78.4%, rgba(200,215,255,0.76), transparent),
-        radial-gradient(circle 2px at 91.3% 56.1%, rgba(255,255,255,0.70), transparent),
-        radial-gradient(circle 3px at 11.6% 84.7%, rgba(255,248,225,0.82), transparent),
-        radial-gradient(circle 2px at 27.9% 91.2%, rgba(200,215,255,0.78), transparent),
-        radial-gradient(circle 2px at 44.8% 86.5%, rgba(255,255,255,0.74), transparent),
-        radial-gradient(circle 2px at 57.3% 94.8%, rgba(255,210,170,0.70), transparent),
-        radial-gradient(circle 2px at 73.6% 81.3%, rgba(200,215,255,0.76), transparent),
-        radial-gradient(circle 3px at 86.1% 89.4%, rgba(255,248,225,0.84), transparent),
-        radial-gradient(circle 2px at 3.4% 71.8%, rgba(255,210,170,0.68), transparent),
-        radial-gradient(circle 2px at 96.5% 68.2%, rgba(200,215,255,0.74), transparent) !important;
-    background-attachment: fixed !important;
-    background-size: 100% 100% !important;
-    animation: wyhlAtlasBg 90s ease-in-out infinite alternate;
-}
-body, #root, .stApp, [data-testid="stAppViewContainer"], .main {
-    background: transparent !important;
-}
-@keyframes wyhlAtlasBg {
-    0%   { background-size: 100% 100%; }
-    100% { background-size: 107% 107%; }
-}
+html { background: #03030a !important; }
+body, #root, .stApp, [data-testid="stAppViewContainer"], .main { background: transparent !important; }
 </style>
 """)
     st.html("<br><br>")
