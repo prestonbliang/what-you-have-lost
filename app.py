@@ -1,4 +1,5 @@
 ﻿import streamlit as st
+import streamlit.components.v1 as components
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -7,6 +8,27 @@ import math
 import plotly.graph_objects as go
 
 st.set_page_config(page_title="What Have You Lost?", page_icon="✦", layout="wide")
+
+
+def inject_js(js: str):
+    """Run JS against the *parent* document.
+
+    st.html() strips <script> tags, so any JavaScript placed there never runs.
+    components.html() runs in a same-origin srcdoc iframe whose script DOES
+    execute; by aliasing window/document to the parent we can manipulate the
+    real page (e.g. inject a full-window canvas background or reveal-on-scroll).
+    """
+    components.html(
+        f"""<script>
+(function(window) {{
+  var document = window.document;
+  var requestAnimationFrame = window.requestAnimationFrame.bind(window);
+  var IntersectionObserver = window.IntersectionObserver;
+{js}
+}})(window.parent);
+</script>""",
+        height=0,
+    )
 
 st.html("""
 <style>
@@ -1365,8 +1387,8 @@ body, #root { background: transparent !important; }
     transform: translateX(0);
 }
 </style>
-<script>
-(function () {
+""")
+    inject_js("""
   var old = document.getElementById('wyhl-bg');
   if (old) old.remove();
   var cv = document.createElement('canvas');
@@ -1463,8 +1485,6 @@ body, #root { background: transparent !important; }
     }
   }
   requestAnimationFrame(draw);
-})();
-</script>
 """)
     st.html("""
 <style>
@@ -1614,8 +1634,8 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
 
   </div>
 </div>
-<script>
-(function() {
+""")
+    inject_js("""
   var obs = new IntersectionObserver(function(entries) {
     entries.forEach(function(e) {
       if (e.isIntersecting) {
@@ -1625,8 +1645,6 @@ This tool uses NASA Black Marble satellite data to translate raw light radiance 
     });
   }, {threshold: 0.15});
   document.querySelectorAll('.wyhl-tl-entry').forEach(function(el) { obs.observe(el); });
-})();
-</script>
 """)
 
     st.html("<br><br>")
@@ -1678,8 +1696,8 @@ html { background: #03030a !important; }
 body, #root { background: transparent !important; }
 .stApp, [data-testid="stAppViewContainer"], .main { background: transparent !important; }
 </style>
-<script>
-(function() {
+""")
+    inject_js("""
   var old = document.getElementById('wyhl-bg');
   if (old) old.remove();
   var cv = document.createElement('canvas');
@@ -1762,8 +1780,6 @@ body, #root { background: transparent !important; }
     }
   }
   requestAnimationFrame(draw);
-})();
-</script>
 """)
     st.html("""
 <style>
@@ -2026,15 +2042,14 @@ if st.session_state.page == "stars":
     for _n1, _n2 in CONSTELLATION_LINES:
         if _n1 in _si and _n2 in _si:
             _li.append(f"[{_si[_n1]},{_si[_n2]}]")
-    st.html(f"<script>var SD=[{','.join(_sd)}];var LD=[{','.join(_li)}];</script>")
     st.html("""
 <style>
 html { background: #03030a !important; }
 body, #root { background: transparent !important; }
 .stApp, [data-testid="stAppViewContainer"], .main { background: transparent !important; }
 </style>
-<script>
-(function() {
+""")
+    inject_js(f"var SD=[{','.join(_sd)}];var LD=[{','.join(_li)}];" + """
   var old = document.getElementById('wyhl-bg');
   if (old) old.remove();
   var cv = document.createElement('canvas');
@@ -2124,8 +2139,6 @@ body, #root { background: transparent !important; }
     }
   }
   requestAnimationFrame(draw);
-})();
-</script>
 """)
     st.html("""
 <style>
