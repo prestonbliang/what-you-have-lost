@@ -1711,13 +1711,14 @@ This tool is built on NASA's Black Marble VNP46A4 dataset — annual composites 
 
 # ── Zip code finder ───────────────────────────────────────────────────────────
 if st.session_state.page == "finder":
-    st.html("""
-<style>
-html { background: #03030a !important; }
-body, #root, .stApp, [data-testid="stAppViewContainer"], .main { background: transparent !important; }
-</style>
-""")
     inject_js("""
+  var _ps = document.getElementById('wyhl-page-style');
+  if (_ps) _ps.remove();
+  var _st = document.createElement('style');
+  _st.id = 'wyhl-page-style';
+  _st.textContent = 'html{background:#03030a!important}body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockContainer"],.main,.block-container,section.main{background:transparent!important}';
+  document.head.appendChild(_st);
+
   var old = document.getElementById('wyhl-bg');
   if (old) old.remove();
   var cv = document.createElement('canvas');
@@ -2044,13 +2045,14 @@ if st.session_state.page == "stars":
     for _n1, _n2 in CONSTELLATION_LINES:
         if _n1 in _si and _n2 in _si:
             _li.append(f"[{_si[_n1]},{_si[_n2]}]")
-    st.html("""
-<style>
-html { background: #03030a !important; }
-body, #root, .stApp, [data-testid="stAppViewContainer"], .main { background: transparent !important; }
-</style>
-""")
     inject_js(f"""
+  var _ps = document.getElementById('wyhl-page-style');
+  if (_ps) _ps.remove();
+  var _st = document.createElement('style');
+  _st.id = 'wyhl-page-style';
+  _st.textContent = 'html{{background:#03030a!important}}body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockContainer"],.main,.block-container,section.main{{background:transparent!important}}';
+  document.head.appendChild(_st);
+
   var old = document.getElementById('wyhl-bg');
   if (old) old.remove();
   var cv = document.createElement('canvas');
