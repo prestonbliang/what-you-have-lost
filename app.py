@@ -27,40 +27,25 @@ def inject_js(js: str):
 
 
 def canvas_bg(js: str, bg: str = '#03030a'):
-    """Full-screen animated canvas background in a self-contained iframe.
+    """Full-screen animated canvas background injected into the parent Streamlit DOM.
 
-    Unlike inject_js, this doesn't manipulate window.parent — the canvas
-    lives inside the component iframe itself. window.frameElement is used to
-    pin the iframe as a fixed viewport overlay with a MutationObserver that
-    re-applies the style whenever Streamlit resets the element's height.
-
-    The caller's js receives: cv (canvas), ctx, W, H, resize(), requestAnimationFrame.
+    Uses inject_js to place a <canvas> directly in window.parent.document.body,
+    identical to the landing page approach. Provides cv, ctx, W, H, resize() to js.
     """
-    components.html(f"""<!DOCTYPE html>
-<html><head><style>
-html,body{{margin:0;padding:0;background:{bg};overflow:hidden;width:100%;height:100%;}}
-</style></head>
-<body>
-<canvas id="cv" style="display:block;position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
-<script>
-(function(){{
-  var fr=window.frameElement;
-  if(fr){{
-    function pin(){{fr.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;border:none;pointer-events:none;display:block;';}}
-    pin();
-    var mo=new MutationObserver(function(){{mo.disconnect();pin();mo.observe(fr,{{attributes:true}});}});
-    mo.observe(fr,{{attributes:true}});
-  }}
-  var cv=document.getElementById('cv');
-  var ctx=cv.getContext('2d');
-  var W,H;
-  function resize(){{W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}}
+    inject_js(f"""
+  var _old = document.getElementById('wyhl-bg');
+  if (_old) _old.remove();
+  var cv = document.createElement('canvas');
+  cv.id = 'wyhl-bg';
+  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
+  document.body.insertBefore(cv, document.body.firstChild);
+  var ctx = cv.getContext('2d');
+  var W, H;
+  function resize() {{ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }}
   resize();
-  window.addEventListener('resize',resize);
+  window.addEventListener('resize', resize);
 {js}
-}})();
-</script>
-</body></html>""", height=1)
+""")
 
 st.html("""
 <style>
