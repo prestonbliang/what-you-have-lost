@@ -27,48 +27,20 @@ def inject_js(js: str):
 
 
 def canvas_bg(js: str, bg: str = '#03030a'):
-    """Full-screen animated canvas background injected into the parent Streamlit DOM."""
+    """Full-screen canvas overlay at z-index:9990 with pointer-events:none.
+
+    Canvas sits above all Streamlit UI (but below the nav bar at 9999).
+    Animation JS must use clearRect (not fillRect) for the background so only
+    the star/effect pixels are visible — the transparent canvas lets the dark
+    Streamlit background show through, with effects floating over the UI.
+    """
     inject_js(f"""
-  // Persistent stylesheet in parent <head> — survives React re-renders
-  var _sEl = document.getElementById('wyhl-bg-css');
-  if (!_sEl) {{
-    _sEl = document.createElement('style');
-    _sEl.id = 'wyhl-bg-css';
-    document.head.appendChild(_sEl);
-  }}
-  _sEl.textContent = 'html{{background:{bg}!important;background-color:{bg}!important}}' +
-    'body,#root,.stApp,[data-testid="stApp"],[data-testid="stAppViewContainer"],' +
-    '[data-testid="stMain"],.main,[data-testid="stMainBlockContainer"],' +
-    '.block-container,section.main{{background:transparent!important;' +
-    'background-color:transparent!important;background-image:none!important}}';
-  // Inline styles as a second layer (inline !important beats any stylesheet)
-  function _applyBg() {{
-    document.documentElement.style.setProperty('background','{bg}','important');
-    document.documentElement.style.setProperty('background-color','{bg}','important');
-    ['body','#root','.stApp','[data-testid="stApp"]','[data-testid="stAppViewContainer"]',
-     '[data-testid="stMain"]','.main','[data-testid="stMainBlockContainer"]',
-     '.block-container','section.main'].forEach(function(s) {{
-      document.querySelectorAll(s).forEach(function(el) {{
-        el.style.setProperty('background','transparent','important');
-        el.style.setProperty('background-color','transparent','important');
-        el.style.setProperty('background-image','none','important');
-      }});
-    }});
-  }}
-  _applyBg();
-  setTimeout(_applyBg, 200);
-  setTimeout(_applyBg, 800);
-  // Re-apply when Streamlit inserts new DOM nodes (childList only — no attribute loop)
-  new MutationObserver(function() {{
-    clearTimeout(window._wyhlBgTid);
-    window._wyhlBgTid = setTimeout(_applyBg, 50);
-  }}).observe(document.body, {{childList:true, subtree:true}});
   var _old = document.getElementById('wyhl-bg');
   if (_old) _old.remove();
   var cv = document.createElement('canvas');
   cv.id = 'wyhl-bg';
-  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
-  document.body.insertBefore(cv, document.body.firstChild);
+  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9990;pointer-events:none;';
+  document.body.appendChild(cv);
   var ctx = cv.getContext('2d');
   var W, H;
   function resize() {{ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }}
@@ -1801,13 +1773,7 @@ body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockCo
     requestAnimationFrame(draw);
     if (t-lastT<FRATE) return;
     lastT=t; frame++;
-    ctx.fillStyle='#03030a'; ctx.fillRect(0,0,W,H);
-
-    var sky=ctx.createLinearGradient(0,0,0,H);
-    sky.addColorStop(0,'rgba(3,3,10,1)'); sky.addColorStop(0.4,'rgba(5,4,12,1)');
-    sky.addColorStop(0.62,'rgba(10,7,5,1)'); sky.addColorStop(0.8,'rgba(18,11,4,1)');
-    sky.addColorStop(1,'rgba(28,15,5,1)');
-    ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
+    ctx.clearRect(0,0,W,H);
 
     var pulse=0.5+0.5*Math.sin(frame*0.006);
     var dome=ctx.createRadialGradient(W*0.5,H*1.15,0,W*0.5,H*1.15,H*0.95);
@@ -2123,7 +2089,7 @@ body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockCo
     requestAnimationFrame(draw);
     if (t-lastT<FRATE) return;
     lastT=t; frame++; raOff+=RA_DRIFT; nebT+=0.0003;
-    ctx.fillStyle='#03030a'; ctx.fillRect(0,0,W,H);
+    ctx.clearRect(0,0,W,H);
 
     var mwShimmer=0.09+0.025*Math.sin(nebT*2.1)+0.015*Math.sin(nebT*5.7);
     ctx.save();
