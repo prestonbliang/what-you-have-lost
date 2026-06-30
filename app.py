@@ -1748,7 +1748,11 @@ This tool is built on NASA's Black Marble VNP46A4 dataset — annual composites 
 
 # ── Zip code finder ───────────────────────────────────────────────────────────
 if st.session_state.page == "finder":
-    anim_bg("""
+    st.html("""<style>
+html{background:#03030a!important;}
+body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockContainer"],.main,.block-container,section.main{background:transparent!important;background-image:none!important;}
+</style>""")
+    canvas_bg("""
   var skyS = [];
   for (var i=0;i<110;i++) skyS.push({x:Math.random(),y:Math.random()*0.5,r:0.3+Math.random()*0.8,a:0.05+Math.random()*0.17,tw:Math.random()*6.28,twr:0.004+Math.random()*0.01});
   var cityL = [];
@@ -2053,6 +2057,10 @@ if st.session_state.searched and st.session_state.page != "stars":
 
 # ── Stars page ────────────────────────────────────────────────────────────────
 if st.session_state.page == "stars":
+    st.html("""<style>
+html{background:#03030a!important;}
+body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockContainer"],.main,.block-container,section.main{background:transparent!important;background-image:none!important;}
+</style>""")
     _sd = []; _si = {}; _li = []
     for _i, (_n, _m, _ra, _dec) in enumerate(STARS):
         _info = STAR_INFO.get(_n, {})
@@ -2063,7 +2071,7 @@ if st.session_state.page == "stars":
     for _n1, _n2 in CONSTELLATION_LINES:
         if _n1 in _si and _n2 in _si:
             _li.append(f"[{_si[_n1]},{_si[_n2]}]")
-    anim_bg(f"""
+    canvas_bg(f"""
   var SD=[{','.join(_sd)}];
   var LD=[{','.join(_li)}];
   var tw = SD.map(function() {{ return {{ ph:Math.random()*6.28, rate:0.005+Math.random()*0.012 }}; }});
