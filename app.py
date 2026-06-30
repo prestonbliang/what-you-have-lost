@@ -29,13 +29,12 @@ def inject_js(js: str):
 def canvas_bg(js: str, bg: str = '#03030a'):
     """Full-screen animated canvas background injected into the parent Streamlit DOM."""
     inject_js(f"""
-  var _BG_SELS = ['body','#root','.stApp','[data-testid="stApp"]',
-    '[data-testid="stAppViewContainer"]','[data-testid="stMain"]','.main',
-    '[data-testid="stMainBlockContainer"]','.block-container','section.main'];
   function _applyBg() {{
     document.documentElement.style.setProperty('background','{bg}','important');
     document.documentElement.style.setProperty('background-color','{bg}','important');
-    _BG_SELS.forEach(function(s) {{
+    ['body','#root','.stApp','[data-testid="stAppViewContainer"]',
+     '[data-testid="stMain"]','.main','[data-testid="stMainBlockContainer"]',
+     '.block-container','section.main'].forEach(function(s) {{
       document.querySelectorAll(s).forEach(function(el) {{
         el.style.setProperty('background','transparent','important');
         el.style.setProperty('background-color','transparent','important');
@@ -44,7 +43,8 @@ def canvas_bg(js: str, bg: str = '#03030a'):
     }});
   }}
   _applyBg();
-  new MutationObserver(_applyBg).observe(document.body, {{childList:true,subtree:true,attributes:true,attributeFilter:['style','class']}});
+  setTimeout(_applyBg, 200);
+  setTimeout(_applyBg, 800);
   var _old = document.getElementById('wyhl-bg');
   if (_old) _old.remove();
   var cv = document.createElement('canvas');
