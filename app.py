@@ -27,11 +27,7 @@ def inject_js(js: str):
 
 
 def canvas_bg(js: str, bg: str = '#03030a'):
-    """Full-screen animated canvas background injected into the parent Streamlit DOM.
-
-    Uses inject_js to place a <canvas> directly in window.parent.document.body,
-    identical to the landing page approach. Provides cv, ctx, W, H, resize() to js.
-    """
+    """Full-screen animated canvas background injected into the parent Streamlit DOM."""
     inject_js(f"""
   var _old = document.getElementById('wyhl-bg');
   if (_old) _old.remove();
@@ -46,6 +42,47 @@ def canvas_bg(js: str, bg: str = '#03030a'):
   window.addEventListener('resize', resize);
 {js}
 """)
+
+
+def anim_bg(js: str):
+    """Full-screen canvas animation that lives inside its own iframe.
+
+    Uses frameElement to resize the Streamlit component iframe to 100vw x 100vh at
+    z-index:-1 so the browser does not throttle requestAnimationFrame. The canvas
+    lives inside the iframe; js receives cv, ctx, W, H and a resize() helper.
+    """
+    components.html(
+        f"""<style>html,body{{margin:0;padding:0;overflow:hidden;background:transparent;}}</style>
+<script>
+(function(){{
+  var fe = window.frameElement;
+  if (fe) {{
+    fe.style.cssText = 'position:fixed!important;top:0!important;left:0!important;' +
+      'width:100vw!important;height:100vh!important;z-index:-1!important;' +
+      'border:none!important;margin:0!important;padding:0!important;pointer-events:none!important;background:transparent!important;';
+  }}
+  try {{
+    var _ps = window.parent.document.getElementById('wyhl-page-style');
+    if (_ps) _ps.remove();
+    var _st = window.parent.document.createElement('style');
+    _st.id = 'wyhl-page-style';
+    _st.textContent = 'body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockContainer"],.main,.block-container,section.main{{background:transparent!important}}';
+    window.parent.document.head.appendChild(_st);
+  }} catch(e) {{}}
+  var cv = document.createElement('canvas');
+  cv.style.cssText = 'position:fixed;top:0;left:0;display:block;';
+  document.body.appendChild(cv);
+  var ctx = cv.getContext('2d');
+  var W, H;
+  var pw = (window.parent !== window) ? window.parent : window;
+  function resize() {{ W = cv.width = pw.innerWidth; H = cv.height = pw.innerHeight; }}
+  resize();
+  pw.addEventListener('resize', resize);
+{js}
+}})();
+</script>""",
+        height=0,
+    )
 
 st.html("""
 <style>
@@ -1711,26 +1748,7 @@ This tool is built on NASA's Black Marble VNP46A4 dataset — annual composites 
 
 # ── Zip code finder ───────────────────────────────────────────────────────────
 if st.session_state.page == "finder":
-    inject_js("""
-  var _ps = document.getElementById('wyhl-page-style');
-  if (_ps) _ps.remove();
-  var _st = document.createElement('style');
-  _st.id = 'wyhl-page-style';
-  _st.textContent = 'html{background:#03030a!important}body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockContainer"],.main,.block-container,section.main{background:transparent!important}';
-  document.head.appendChild(_st);
-
-  var old = document.getElementById('wyhl-bg');
-  if (old) old.remove();
-  var cv = document.createElement('canvas');
-  cv.id = 'wyhl-bg';
-  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
-  document.body.insertBefore(cv, document.body.firstChild);
-  var ctx = cv.getContext('2d');
-  var W, H;
-  function resize() { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
-  resize();
-  window.addEventListener('resize', resize);
-
+    anim_bg("""
   var skyS = [];
   for (var i=0;i<110;i++) skyS.push({x:Math.random(),y:Math.random()*0.5,r:0.3+Math.random()*0.8,a:0.05+Math.random()*0.17,tw:Math.random()*6.28,twr:0.004+Math.random()*0.01});
   var cityL = [];
@@ -2045,26 +2063,7 @@ if st.session_state.page == "stars":
     for _n1, _n2 in CONSTELLATION_LINES:
         if _n1 in _si and _n2 in _si:
             _li.append(f"[{_si[_n1]},{_si[_n2]}]")
-    inject_js(f"""
-  var _ps = document.getElementById('wyhl-page-style');
-  if (_ps) _ps.remove();
-  var _st = document.createElement('style');
-  _st.id = 'wyhl-page-style';
-  _st.textContent = 'html{{background:#03030a!important}}body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockContainer"],.main,.block-container,section.main{{background:transparent!important}}';
-  document.head.appendChild(_st);
-
-  var old = document.getElementById('wyhl-bg');
-  if (old) old.remove();
-  var cv = document.createElement('canvas');
-  cv.id = 'wyhl-bg';
-  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
-  document.body.insertBefore(cv, document.body.firstChild);
-  var ctx = cv.getContext('2d');
-  var W, H;
-  function resize() {{ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }}
-  resize();
-  window.addEventListener('resize', resize);
-
+    anim_bg(f"""
   var SD=[{','.join(_sd)}];
   var LD=[{','.join(_li)}];
   var tw = SD.map(function() {{ return {{ ph:Math.random()*6.28, rate:0.005+Math.random()*0.012 }}; }});
