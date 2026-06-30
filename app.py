@@ -29,10 +29,23 @@ def inject_js(js: str):
 def canvas_bg(js: str, bg: str = '#03030a'):
     """Full-screen animated canvas background injected into the parent Streamlit DOM."""
     inject_js(f"""
+  // Persistent stylesheet in parent <head> — survives React re-renders
+  var _sEl = document.getElementById('wyhl-bg-css');
+  if (!_sEl) {{
+    _sEl = document.createElement('style');
+    _sEl.id = 'wyhl-bg-css';
+    document.head.appendChild(_sEl);
+  }}
+  _sEl.textContent = 'html{{background:{bg}!important;background-color:{bg}!important}}' +
+    'body,#root,.stApp,[data-testid="stApp"],[data-testid="stAppViewContainer"],' +
+    '[data-testid="stMain"],.main,[data-testid="stMainBlockContainer"],' +
+    '.block-container,section.main{{background:transparent!important;' +
+    'background-color:transparent!important;background-image:none!important}}';
+  // Inline styles as a second layer (inline !important beats any stylesheet)
   function _applyBg() {{
     document.documentElement.style.setProperty('background','{bg}','important');
     document.documentElement.style.setProperty('background-color','{bg}','important');
-    ['body','#root','.stApp','[data-testid="stAppViewContainer"]',
+    ['body','#root','.stApp','[data-testid="stApp"]','[data-testid="stAppViewContainer"]',
      '[data-testid="stMain"]','.main','[data-testid="stMainBlockContainer"]',
      '.block-container','section.main'].forEach(function(s) {{
       document.querySelectorAll(s).forEach(function(el) {{
