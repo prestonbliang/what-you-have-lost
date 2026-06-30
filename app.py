@@ -27,27 +27,68 @@ def inject_js(js: str):
 
 
 def canvas_bg(js: str, bg: str = '#03030a'):
-    """Full-screen canvas overlay at z-index:9990 with pointer-events:none.
+    """Full-screen canvas animation with two-path fallback.
 
-    Canvas sits above all Streamlit UI (but below the nav bar at 9999).
-    Animation JS must use clearRect (not fillRect) for the background so only
-    the star/effect pixels are visible — the transparent canvas lets the dark
-    Streamlit background show through, with effects floating over the UI.
+    Path A: inject canvas into parent DOM via window.parent (works when
+    components.html iframes are same-origin).
+    Path B: make the iframe itself full-screen via window.frameElement
+    (works when same-origin but window.parent.document is blocked).
+    Both paths set z-index:9990 and pointer-events:none; animation JS uses
+    clearRect so only star/glow pixels are opaque.
     """
-    inject_js(f"""
-  var _old = document.getElementById('wyhl-bg');
-  if (_old) _old.remove();
-  var cv = document.createElement('canvas');
-  cv.id = 'wyhl-bg';
-  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9990;pointer-events:none;';
-  document.body.appendChild(cv);
-  var ctx = cv.getContext('2d');
-  var W, H;
-  function resize() {{ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }}
-  resize();
-  window.addEventListener('resize', resize);
-{js}
-""")
+    # Use plain string concat — no f-string escaping for JS braces.
+    components.html(
+        """<style>html,body{margin:0;padding:0;overflow:hidden;background:transparent;}</style>
+<script>
+(function() {
+  var cv, ctx, W, H, requestAnimationFrame;
+  try {
+    /* Path A: canvas lives in the parent document */
+    var pd = window.parent.document;
+    var _old = pd.getElementById('wyhl-bg');
+    if (_old) _old.remove();
+    cv = pd.createElement('canvas');
+    cv.id = 'wyhl-bg';
+    cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9990;pointer-events:none;';
+    pd.body.appendChild(cv);
+    ctx = cv.getContext('2d');
+    requestAnimationFrame = window.parent.requestAnimationFrame.bind(window.parent);
+    W = cv.width = window.parent.innerWidth || screen.width;
+    H = cv.height = window.parent.innerHeight || screen.height;
+    window.parent.addEventListener('resize', function() {
+      W = cv.width = window.parent.innerWidth;
+      H = cv.height = window.parent.innerHeight;
+    });
+  } catch(e) {
+    /* Path B: make this iframe the full-screen background */
+    var fe = window.frameElement;
+    if (fe) {
+      fe.style.cssText = 'position:fixed!important;top:0!important;left:0!important;'
+        + 'width:100vw!important;height:100vh!important;z-index:9990!important;'
+        + 'border:none!important;margin:0!important;padding:0!important;'
+        + 'pointer-events:none!important;background:transparent!important;';
+    }
+    cv = document.createElement('canvas');
+    document.body.appendChild(cv);
+    ctx = cv.getContext('2d');
+    requestAnimationFrame = window.requestAnimationFrame.bind(window);
+    W = cv.width = screen.width;
+    H = cv.height = screen.height;
+    setTimeout(function() {
+      var nw = window.innerWidth || screen.width;
+      var nh = window.innerHeight || screen.height;
+      if (nw > 100 && nh > 100) { W = cv.width = nw; H = cv.height = nh; }
+    }, 200);
+    window.addEventListener('resize', function() {
+      W = cv.width = window.innerWidth || screen.width;
+      H = cv.height = window.innerHeight || screen.height;
+    });
+  }
+""" + js + """
+})();
+</script>""",
+        height=0,
+    )
 
 
 def anim_bg(js: str):
