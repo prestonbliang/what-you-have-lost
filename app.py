@@ -45,6 +45,11 @@ def canvas_bg(js: str, bg: str = '#03030a'):
   _applyBg();
   setTimeout(_applyBg, 200);
   setTimeout(_applyBg, 800);
+  // Re-apply when Streamlit inserts new DOM nodes (childList only — no attribute loop)
+  new MutationObserver(function() {{
+    clearTimeout(window._wyhlBgTid);
+    window._wyhlBgTid = setTimeout(_applyBg, 50);
+  }}).observe(document.body, {{childList:true, subtree:true}});
   var _old = document.getElementById('wyhl-bg');
   if (_old) _old.remove();
   var cv = document.createElement('canvas');
