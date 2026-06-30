@@ -29,6 +29,17 @@ def inject_js(js: str):
 def canvas_bg(js: str, bg: str = '#03030a'):
     """Full-screen animated canvas background injected into the parent Streamlit DOM."""
     inject_js(f"""
+  var _css = document.getElementById('wyhl-bg-css');
+  if (_css) _css.remove();
+  _css = document.createElement('style');
+  _css.id = 'wyhl-bg-css';
+  _css.textContent =
+    'html{{background:{bg}!important}}' +
+    'body,#root{{background:transparent!important;background-image:none!important}}' +
+    '.stApp,[data-testid="stApp"],[data-testid="stAppViewContainer"],' +
+    '[data-testid="stMain"],.main,[data-testid="stMainBlockContainer"],' +
+    '.block-container,.stApp>div,.main>div{{background:transparent!important;background-image:none!important}}';
+  document.head.appendChild(_css);
   var _old = document.getElementById('wyhl-bg');
   if (_old) _old.remove();
   var cv = document.createElement('canvas');
