@@ -1852,7 +1852,7 @@ body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockCo
   for(var i=0;i<18;i++){ var red=Math.random()<0.5; cars.push({x:Math.random(),y:0.93+Math.random()*0.05,red:red,v:(red?-1:1)*(0.0016+Math.random()*0.0026),len:0.02+Math.random()*0.03}); }
 
   var skyS=[];
-  for(var i=0;i<150;i++) skyS.push({x:Math.random(),y:Math.random()*0.62,r:0.3+Math.random()*0.9,a:0.1+Math.random()*0.32,tw:Math.random()*6.28,twr:0.004+Math.random()*0.012});
+  for(var i=0;i<230;i++){ var hero=Math.random()<0.10; skyS.push({x:Math.random(),y:Math.random()*0.66,r:hero?(1.1+Math.random()*1.2):(0.3+Math.random()*0.9),a:hero?(0.7+Math.random()*0.3):(0.25+Math.random()*0.45),hero:hero,col:hero?(Math.random()<0.5?'255,244,224':'206,222,255'):'214,224,255',tw:Math.random()*6.28,twr:0.004+Math.random()*0.012}); }
 
   var plane={t:1.5}, frame=0,lastT=0,FRATE=1000/42;
 
@@ -1928,14 +1928,21 @@ body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockCo
     ctx.fillStyle=mh; ctx.fillRect(mx-mr*5,my-mr*5,mr*10,mr*10);
     ctx.beginPath(); ctx.arc(mx,my,mr,0,6.28); ctx.fillStyle='rgba(232,236,248,'+(0.85-night*0.25)+')'; ctx.fill();
 
-    // stars, progressively washed out by the glow
+    // stars overhead — bright when the city is dark, then slowly wiped out
+    // as the lights come up (low-sky stars drown in the light pollution first)
+    var starK=Math.pow(1-night,1.7);
     for(var i=0;i<skyS.length;i++){
       var s=skyS[i]; s.tw+=s.twr;
-      var fade=(1-night*0.9)*Math.max(0.04,1-s.y*1.5);
-      var a=s.a*(0.55+0.45*Math.sin(s.tw))*fade;
+      var fade=starK*Math.max(0,1-s.y*1.35);
+      var a=s.a*(0.6+0.4*Math.sin(s.tw))*fade;
       if(a<0.01) continue;
+      if(s.hero){
+        var gr=s.r*4.5, gg=ctx.createRadialGradient(s.x*W,s.y*H,0,s.x*W,s.y*H,gr);
+        gg.addColorStop(0,'rgba('+s.col+','+(a*0.5)+')'); gg.addColorStop(1,'rgba('+s.col+',0)');
+        ctx.fillStyle=gg; ctx.fillRect(s.x*W-gr,s.y*H-gr,gr*2,gr*2);
+      }
       ctx.beginPath(); ctx.arc(s.x*W,s.y*H,s.r,0,6.28);
-      ctx.fillStyle='rgba(214,224,255,'+a+')'; ctx.fill();
+      ctx.fillStyle='rgba('+s.col+','+a+')'; ctx.fill();
     }
 
     // blinking aircraft
