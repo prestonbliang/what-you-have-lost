@@ -45,6 +45,7 @@ def canvas_bg(js: str, bg: str = '#03030a'):
   try {
     /* Path A: canvas lives in the parent document */
     var pd = window.parent.document;
+    if (window.parent.__wyhlCleanup) { try { window.parent.__wyhlCleanup(); } catch(e){} window.parent.__wyhlCleanup=null; }
     var _old = pd.getElementById('wyhl-bg');
     if (_old) _old.remove();
     var _oc = pd.getElementById('wyhl-city');
@@ -1492,6 +1493,7 @@ body, #root { background: transparent !important; }
 </style>
 """)
     inject_js("""
+  if (window.__wyhlCleanup) { try { window.__wyhlCleanup(); } catch(e){} window.__wyhlCleanup=null; }
   var old = document.getElementById('wyhl-bg');
   if (old) old.remove();
   var oldCity = document.getElementById('wyhl-city');
@@ -1804,220 +1806,147 @@ html{background:#03030a!important;}
 body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockContainer"],.main,.block-container,section.main{background:transparent!important;background-image:none!important;}
 </style>""")
     inject_js("""
-  // ===== EXPLORE: a layered nighttime city view (light-pollution demo).
-  // Rendered opaque BEHIND the page content, like the landing page. =====
-  var old = document.getElementById('wyhl-bg');
-  if (old) old.remove();
-  var cv = document.createElement('canvas');
-  cv.id = 'wyhl-bg';
-  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-2;pointer-events:none;';
-  document.body.insertBefore(cv, document.body.firstChild);
-  var ctx = cv.getContext('2d');
-  var W, H;
-  function resize(){ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
-  resize();
-  window.addEventListener('resize', resize);
-
-  var night = 0;
-
-  // Realistic city: a real night-skyline photo (Singapore, by Merlion444 on
-  // Wikimedia Commons, public domain / CC0) anchored to the bottom and faded
-  // into the animated sky. Its
-  // brightness is driven by the day/night cycle so the city "turns on"; if the
-  // image fails to load we fall back to the procedural skyline below.
-  var CITY_URL='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Singapore_Skyline_at_Night_with_Black_Sky.JPG/1280px-Singapore_Skyline_at_Night_with_Black_Sky.JPG';
-  var usePhoto=false;
+  // ===== EXPLORE: a real-time 3D city with an orbiting pan-shot camera.
+  // Built with Three.js (WebGL), rendered BEHIND the page content. =====
+  if (window.__wyhlCleanup) { try { window.__wyhlCleanup(); } catch(e){} window.__wyhlCleanup=null; }
+  var oc=document.getElementById('wyhl-bg'); if(oc) oc.remove();
   var oldCity=document.getElementById('wyhl-city'); if(oldCity) oldCity.remove();
-  var cityDiv=document.createElement('div');
-  cityDiv.id='wyhl-city';
-  cityDiv.style.cssText='position:fixed;left:0;bottom:0;width:100vw;height:64vh;z-index:-1;pointer-events:none;'
-    +'background-repeat:no-repeat;background-position:center bottom;background-size:cover;opacity:0;transition:opacity 1.4s ease;'
-    +'-webkit-mask-image:linear-gradient(to top,#000 44%,rgba(0,0,0,0.9) 60%,rgba(0,0,0,0) 100%);'
-    +'mask-image:linear-gradient(to top,#000 44%,rgba(0,0,0,0.9) 60%,rgba(0,0,0,0) 100%);';
-  document.body.insertBefore(cityDiv, document.body.firstChild);
-  var preImg=new Image();
-  preImg.onload=function(){ cityDiv.style.backgroundImage='url('+CITY_URL+')'; cityDiv.style.opacity='1'; usePhoto=true; };
-  preImg.onerror=function(){ usePhoto=false; };
-  preImg.src=CITY_URL;
 
-  // three skyline layers, far -> near, muted & bluer in the distance
-  // (procedural fallback, used only if the photo fails to load)
-  var LAYERS = [
-    { arr:[], base:'36,42,68', winA:0.42, avgW:0.048, minH:0.09, maxH:0.20, gap:0.006, skip:0.34, beacon:false },
-    { arr:[], base:'19,23,45', winA:0.72, avgW:0.066, minH:0.13, maxH:0.30, gap:0.005, skip:0.30, beacon:true  },
-    { arr:[], base:'8,10,22',  winA:1.00, avgW:0.088, minH:0.17, maxH:0.44, gap:0.004, skip:0.28, beacon:true  }
-  ];
+  var cv=document.createElement('canvas');
+  cv.id='wyhl-bg';
+  cv.style.cssText='position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
+  document.body.insertBefore(cv, document.body.firstChild);
 
-  function gen(L){
-    var x=-0.05;
-    while(x<1.07){
-      var w=L.avgW*(0.6+Math.random()*0.95);
-      var h=L.minH+Math.random()*(L.maxH-L.minH);
-      var glass=Math.random()<0.42;
-      var cols=Math.max(2,Math.round(w/(glass?0.011:0.015)));
-      var rows=Math.max(3,Math.round(h/0.030));
-      var rr=Math.random();
-      var roof=rr<0.42?'flat':rr<0.60?'step':rr<0.74?'taper':rr<0.89?'antenna':'tank';
-      var b={x:x,w:w,h:h,cols:cols,rows:rows,glass:glass,roof:roof,rp:Math.random()*6.28,win:[]};
-      for(var r=0;r<rows;r++) for(var c=0;c<cols;c++){
-        if(Math.random()<L.skip) continue;
-        b.win.push({c:c,r:r,thr:Math.random(),warm:Math.random()<0.66,bright:Math.random()<0.12,
-          flick:Math.random()<0.07,fr:0.03+Math.random()*0.06,fp:Math.random()*6.28});
-      }
-      L.arr.push(b);
-      x+=w+L.gap+Math.random()*0.012;
-    }
-  }
-  LAYERS.forEach(gen);
+  var THREE_URL='https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
 
-  var lamps=[];
-  for(var i=0;i<34;i++) lamps.push({x:(i+0.5)/34+(Math.random()-0.5)*0.006,thr:0.10+Math.random()*0.4});
+  // deterministic RNG so the city layout is stable across Streamlit reruns
+  var seed=20240701;
+  function rnd(){ seed=(seed*1664525+1013904223)&0x7fffffff; return seed/0x7fffffff; }
 
-  var cars=[];
-  for(var i=0;i<18;i++){ var red=Math.random()<0.5; cars.push({x:Math.random(),y:0.93+Math.random()*0.05,red:red,v:(red?-1:1)*(0.0016+Math.random()*0.0026),len:0.02+Math.random()*0.03}); }
-
-  var skyS=[];
-  for(var i=0;i<230;i++){ var hero=Math.random()<0.10; skyS.push({x:Math.random(),y:Math.random()*0.66,r:hero?(1.1+Math.random()*1.2):(0.3+Math.random()*0.9),a:hero?(0.7+Math.random()*0.3):(0.25+Math.random()*0.45),hero:hero,col:hero?(Math.random()<0.5?'255,244,224':'206,222,255'):'214,224,255',tw:Math.random()*6.28,twr:0.004+Math.random()*0.012}); }
-
-  var plane={t:1.5}, frame=0,lastT=0,FRATE=1000/42;
-
-  function drawLayer(L){
-    for(var i=0;i<L.arr.length;i++){
-      var b=L.arr[i], bw=b.w*W, bx=b.x*W, bh=b.h*H, by=H-bh;
-      ctx.fillStyle='rgb('+L.base+')';
-      ctx.fillRect(bx,by,bw,bh);
-      var acx=bx+bw*0.5, ah=0;
-      if(b.roof==='step'){ var sw=bw*0.5,sh=bh*0.10; ctx.fillRect(acx-sw/2,by-sh,sw,sh); }
-      else if(b.roof==='taper'){ var tw2=bw*0.46,th=bh*0.13; ctx.beginPath(); ctx.moveTo(bx,by); ctx.lineTo(acx-tw2/2,by-th); ctx.lineTo(acx+tw2/2,by-th); ctx.lineTo(bx+bw,by); ctx.closePath(); ctx.fill(); }
-      else if(b.roof==='antenna'){ ah=bh*0.22; ctx.strokeStyle='rgb('+L.base+')'; ctx.lineWidth=Math.max(1,bw*0.04); ctx.beginPath(); ctx.moveTo(acx,by); ctx.lineTo(acx,by-ah); ctx.stroke(); }
-      else if(b.roof==='tank'){ var kw=bw*0.26,kh=bh*0.07; ctx.fillRect(bx+bw*0.18,by-kh,kw,kh); }
-
-      var cw=bw/b.cols, ch=bh/b.rows;
-      var pw=Math.max(1,cw*(b.glass?0.62:0.5)), ph=Math.max(1.2,ch*(b.glass?0.7:0.55));
-      for(var j=0;j<b.win.length;j++){
-        var wn=b.win[j], on=night-wn.thr; if(on<=0) continue;
-        var lit=Math.min(1,on*5); if(wn.flick) lit*=0.55+0.45*Math.sin(frame*wn.fr+wn.fp);
-        if(lit<0.03) continue;
-        var wx=bx+(wn.c+0.5)*cw, wy=by+(wn.r+0.5)*ch;
-        var col=wn.warm?(wn.bright?'255,214,150':'255,194,108'):(wn.bright?'196,222,255':'150,190,255');
-        ctx.fillStyle='rgba('+col+','+(lit*L.winA*(wn.bright?1:0.85))+')';
-        ctx.fillRect(wx-pw/2,wy-ph/2,pw,ph);
-        if(wn.bright && lit>0.5 && L.winA>0.9){
-          var gr=cw*2.2, gg=ctx.createRadialGradient(wx,wy,0,wx,wy,gr);
-          gg.addColorStop(0,'rgba('+col+','+(lit*0.35)+')'); gg.addColorStop(1,'rgba('+col+',0)');
-          ctx.fillStyle=gg; ctx.fillRect(wx-gr,wy-gr,gr*2,gr*2);
-        }
-      }
-      if(L.beacon && b.roof==='antenna'){
-        var beac=0.5+0.5*Math.sin(frame*0.09+b.rp);
-        ctx.fillStyle='rgba(255,64,52,'+(0.25+beac*0.72)+')';
-        ctx.beginPath(); ctx.arc(acx,by-ah,Math.max(1.2,bw*0.06),0,6.28); ctx.fill();
-      }
-    }
+  function fallbackGradient(){
+    try{
+      var ctx=cv.getContext('2d'); cv.width=window.innerWidth; cv.height=window.innerHeight;
+      var g=ctx.createLinearGradient(0,0,0,cv.height);
+      g.addColorStop(0,'#05060f'); g.addColorStop(1,'#0d0b1e');
+      ctx.fillStyle=g; ctx.fillRect(0,0,cv.width,cv.height);
+    }catch(e){}
   }
 
-  function haze(topF,rgb,a){
-    var g=ctx.createLinearGradient(0,H*topF,0,H);
-    g.addColorStop(0,'rgba('+rgb+',0)'); g.addColorStop(1,'rgba('+rgb+','+a+')');
-    ctx.fillStyle=g; ctx.fillRect(0,H*topF,W,H*(1-topF));
-  }
+  function startCity(){
+    var THREE=window.THREE;
+    if(!THREE){ fallbackGradient(); return; }
+   try {
+    var scene=new THREE.Scene();
+    scene.background=new THREE.Color(0x05060f);
+    scene.fog=new THREE.FogExp2(0x0a0c1a, 0.0023);
 
-  function draw(t){
-    requestAnimationFrame(draw);
-    if(t-lastT<FRATE) return;
-    lastT=t; frame++;
-    var cyc=(frame*0.0016)%2, raw=cyc<1?cyc:2-cyc;
-    night=0.5-0.5*Math.cos(raw*Math.PI);
+    var W=window.innerWidth, H=window.innerHeight;
+    var renderer=new THREE.WebGLRenderer({canvas:cv, antialias:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio||1, 1.75));
+    renderer.setSize(W,H,false);
+    renderer.toneMapping=THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure=1.15;
 
-    // sky: deep indigo up top fading to a warm, light-polluted horizon
-    var sky=ctx.createLinearGradient(0,0,0,H);
-    sky.addColorStop(0,'#05060f');
-    sky.addColorStop(0.42,'#090b1c');
-    sky.addColorStop(0.70,'#12112e');
-    sky.addColorStop(0.86,'rgb('+Math.round(38+night*80)+','+Math.round(26+night*40)+','+Math.round(42+night*24)+')');
-    sky.addColorStop(1,'rgb('+Math.round(66+night*110)+','+Math.round(38+night*48)+','+Math.round(30+night*16)+')');
-    ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
+    var camera=new THREE.PerspectiveCamera(58, W/H, 0.5, 5000);
 
-    // light-pollution dome above the city, grows with the lights
-    var da=0.08+night*0.34;
-    var dome=ctx.createRadialGradient(W*0.5,H*0.94,0,W*0.5,H*0.94,H*0.75);
-    dome.addColorStop(0,'rgba(240,152,60,'+da+')');
-    dome.addColorStop(0.5,'rgba(205,102,40,'+(da*0.4)+')');
-    dome.addColorStop(1,'rgba(205,102,40,0)');
-    ctx.fillStyle=dome; ctx.fillRect(0,0,W,H);
+    scene.add(new THREE.HemisphereLight(0x2a3a66, 0x05060c, 0.6));
+    var moon=new THREE.DirectionalLight(0x93b0da, 0.55);
+    moon.position.set(-1, 1.7, 0.8); scene.add(moon);
 
-    // moon
-    var mx=W*0.80,my=H*0.17, mr=Math.min(W,H)*0.028;
-    var mh=ctx.createRadialGradient(mx,my,0,mx,my,mr*5);
-    mh.addColorStop(0,'rgba(220,228,245,0.22)'); mh.addColorStop(1,'rgba(220,228,245,0)');
-    ctx.fillStyle=mh; ctx.fillRect(mx-mr*5,my-mr*5,mr*10,mr*10);
-    ctx.beginPath(); ctx.arc(mx,my,mr,0,6.28); ctx.fillStyle='rgba(232,236,248,'+(0.85-night*0.25)+')'; ctx.fill();
-
-    // stars overhead — bright when the city is dark, then slowly wiped out
-    // as the lights come up (low-sky stars drown in the light pollution first)
-    var starK=Math.pow(1-night,1.7);
-    for(var i=0;i<skyS.length;i++){
-      var s=skyS[i]; s.tw+=s.twr;
-      var fade=starK*Math.max(0,1-s.y*1.35);
-      var a=s.a*(0.6+0.4*Math.sin(s.tw))*fade;
-      if(a<0.01) continue;
-      if(s.hero){
-        var gr=s.r*4.5, gg=ctx.createRadialGradient(s.x*W,s.y*H,0,s.x*W,s.y*H,gr);
-        gg.addColorStop(0,'rgba('+s.col+','+(a*0.5)+')'); gg.addColorStop(1,'rgba('+s.col+',0)');
-        ctx.fillStyle=gg; ctx.fillRect(s.x*W-gr,s.y*H-gr,gr*2,gr*2);
+    // ---- emissive window textures (a few variants) ----
+    function mkTex(){
+      var c=document.createElement('canvas'); c.width=32; c.height=64;
+      var g=c.getContext('2d');
+      g.fillStyle='#070810'; g.fillRect(0,0,32,64);
+      var cols=3, rows=6, cw=32/cols, ch=64/rows, pad=2.2;
+      for(var y=0;y<rows;y++) for(var x=0;x<cols;x++){
+        if(rnd()<0.32) continue;
+        var warm=rnd()<0.72, a=0.55+rnd()*0.45;
+        g.fillStyle= warm ? 'rgba(255,201,116,'+a+')' : 'rgba(160,196,255,'+a+')';
+        g.fillRect(x*cw+pad, y*ch+pad, cw-pad*2, ch-pad*2);
       }
-      ctx.beginPath(); ctx.arc(s.x*W,s.y*H,s.r,0,6.28);
-      ctx.fillStyle='rgba('+s.col+','+a+')'; ctx.fill();
+      var t=new THREE.CanvasTexture(c);
+      t.wrapS=t.wrapT=THREE.RepeatWrapping;
+      return t;
     }
+    var texs=[]; for(var i=0;i<6;i++) texs.push(mkTex());
 
-    // blinking aircraft
-    plane.t-=0.0010; if(plane.t<-0.6) plane.t=1.6;
-    var px=plane.t*W, py=H*0.14+Math.sin(plane.t*3)*H*0.02;
-    if(px>-20&&px<W+20){ var blink=Math.sin(frame*0.3)>0?1:0.15; ctx.fillStyle='rgba(255,70,60,'+(blink*0.85)+')'; ctx.beginPath(); ctx.arc(px,py,1.3,0,6.28); ctx.fill(); }
-
-    if(usePhoto){
-      // real skyline photo — its brightness tracks the day/night cycle so the
-      // city visibly "turns on" as night falls (and washes the stars out)
-      cityDiv.style.filter='brightness('+(0.30+night*0.95).toFixed(3)+') saturate(1.06) contrast(1.02)';
-    } else {
-      // ---- procedural skyline fallback (only if the photo fails to load) ----
-      drawLayer(LAYERS[0]);
-      haze(0.62,'34,32,56',0.28+night*0.12);
-      drawLayer(LAYERS[1]);
-      haze(0.74,'22,20,40',0.20+night*0.10);
-      drawLayer(LAYERS[2]);
-
-      // wet road glow along the ground
-      var rg=ctx.createLinearGradient(0,H*0.90,0,H);
-      rg.addColorStop(0,'rgba(90,55,28,0)'); rg.addColorStop(1,'rgba(150,86,40,'+(0.14+night*0.22)+')');
-      ctx.fillStyle=rg; ctx.fillRect(0,H*0.90,W,H*0.10);
-
-      // car headlight / taillight streaks with wet reflections
-      for(var i=0;i<cars.length;i++){
-        var c=cars[i]; c.x+=c.v; if(c.x>1.1) c.x=-0.1; if(c.x<-0.1) c.x=1.1;
-        var cxp=c.x*W, cyp=c.y*H, ln=c.len*W, dir=c.v>0?1:-1;
-        var col=c.red?'255,70,50':'255,240,210';
-        var lg=ctx.createLinearGradient(cxp-dir*ln,cyp,cxp,cyp);
-        lg.addColorStop(0,'rgba('+col+',0)'); lg.addColorStop(1,'rgba('+col+','+(0.35+night*0.4)+')');
-        ctx.strokeStyle=lg; ctx.lineWidth=Math.max(1,H*0.004); ctx.beginPath(); ctx.moveTo(cxp-dir*ln,cyp); ctx.lineTo(cxp,cyp); ctx.stroke();
-        ctx.strokeStyle='rgba('+col+','+(0.10+night*0.14)+')'; ctx.beginPath(); ctx.moveTo(cxp-dir*ln,cyp+H*0.012); ctx.lineTo(cxp,cyp+H*0.012); ctx.stroke();
-      }
-
-      // streetlights turning on, casting glow cones + reflections
-      for(var i=0;i<lamps.length;i++){
-        var l=lamps[i], on=night-l.thr; if(on<=0) continue;
-        var lit=Math.min(1,on*4), lx=l.x*W, ly=H-2;
-        var cone=ctx.createRadialGradient(lx,ly-6,0,lx,ly-6,H*0.10);
-        cone.addColorStop(0,'rgba(255,206,120,'+(lit*0.28)+')'); cone.addColorStop(1,'rgba(255,206,120,0)');
-        ctx.fillStyle=cone; ctx.fillRect(lx-H*0.10,ly-H*0.13,H*0.20,H*0.13);
-        ctx.fillStyle='rgba(255,230,160,'+lit+')'; ctx.beginPath(); ctx.arc(lx,ly-5,1.5,0,6.28); ctx.fill();
-        var refl=ctx.createLinearGradient(lx,ly,lx,ly+H*0.02);
-        refl.addColorStop(0,'rgba(255,210,130,'+(lit*0.22)+')'); refl.addColorStop(1,'rgba(255,210,130,0)');
-        ctx.fillStyle=refl; ctx.fillRect(lx-2,ly,4,H*0.02);
+    // ---- build the city (taller downtown toward the centre) ----
+    var city=new THREE.Group();
+    var GRID=22, SP=9, HALF=GRID*SP/2;
+    for(var ix=0; ix<GRID; ix++){
+      for(var iz=0; iz<GRID; iz++){
+        if(rnd()<0.08) continue;
+        var cx=(ix-GRID/2)*SP + (rnd()-0.5)*2.2;
+        var cz=(iz-GRID/2)*SP + (rnd()-0.5)*2.2;
+        var dist=Math.sqrt(cx*cx+cz*cz)/HALF;
+        var bw=SP*(0.5+rnd()*0.34), bd=SP*(0.5+rnd()*0.34);
+        var bh=Math.max(5, 6 + Math.pow(rnd(),2.2)*95*(1.15-dist*0.8));
+        var geo=new THREE.BoxGeometry(bw,bh,bd);
+        var tex=texs[(rnd()*texs.length)|0].clone(); tex.needsUpdate=true;
+        tex.repeat.set(Math.max(1,Math.round(bw/3.2)), Math.max(2,Math.round(bh/6)));
+        var mat=new THREE.MeshStandardMaterial({color:0x0a0c15, emissive:0xffffff, emissiveMap:tex, emissiveIntensity:1.35, roughness:0.9, metalness:0.18});
+        var m=new THREE.Mesh(geo, mat);
+        m.position.set(cx, bh/2, cz);
+        city.add(m);
       }
     }
+    scene.add(city);
+
+    // ground
+    var ground=new THREE.Mesh(new THREE.PlaneGeometry(HALF*10, HALF*10),
+      new THREE.MeshStandardMaterial({color:0x04050b, roughness:1.0, metalness:0.0}));
+    ground.rotation.x=-Math.PI/2; scene.add(ground);
+
+    // distant stars (unaffected by fog)
+    var sg=new THREE.BufferGeometry(), sp=[];
+    for(var i=0;i<1500;i++){
+      var r=1000+rnd()*1800, th=rnd()*Math.PI*2, ph=rnd()*Math.PI*0.5;
+      sp.push(Math.cos(th)*Math.sin(ph)*r, Math.cos(ph)*r+150, Math.sin(th)*Math.sin(ph)*r);
+    }
+    sg.setAttribute('position', new THREE.Float32BufferAttribute(sp,3));
+    var stars=new THREE.Points(sg, new THREE.PointsMaterial({color:0xcfe0ff, size:2.2, sizeAttenuation:false, transparent:true, opacity:0.85, fog:false}));
+    scene.add(stars);
+
+    // ---- orbiting pan camera ----
+    var angle=0, radius=HALF*2.15, camY=HALF*0.9, stopped=false, raf=0;
+    function resize(){
+      var w=window.innerWidth, h=window.innerHeight;
+      camera.aspect=w/h; camera.updateProjectionMatrix();
+      renderer.setSize(w,h,false);
+    }
+    window.addEventListener('resize', resize);
+
+    function animate(){
+      if(stopped) return;
+      if(!cv.isConnected){ stopped=true; return; }
+      raf=requestAnimationFrame(animate);
+      angle+=0.0013;
+      camera.position.set(Math.cos(angle)*radius, camY + Math.sin(angle*0.6)*HALF*0.2, Math.sin(angle)*radius);
+      camera.lookAt(0, HALF*0.22, 0);
+      stars.rotation.y=angle*0.15;
+      renderer.render(scene, camera);
+    }
+    window.__wyhlCleanup=function(){
+      stopped=true; if(raf) cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+      try{ renderer.dispose(); renderer.forceContextLoss(); }catch(e){}
+    };
+    animate();
+   } catch(err) { fallbackGradient(); }
   }
-  requestAnimationFrame(draw);
+
+  if(window.THREE){ startCity(); }
+  else {
+    var existing=document.getElementById('wyhl-three');
+    if(existing){ existing.addEventListener('load', startCity); }
+    else {
+      var s=document.createElement('script'); s.id='wyhl-three'; s.src=THREE_URL;
+      s.onload=startCity;
+      s.onerror=fallbackGradient;
+      document.head.appendChild(s);
+    }
+  }
 """)
 
 if st.session_state.page != "stars":
