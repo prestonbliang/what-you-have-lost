@@ -47,6 +47,8 @@ def canvas_bg(js: str, bg: str = '#03030a'):
     var pd = window.parent.document;
     var _old = pd.getElementById('wyhl-bg');
     if (_old) _old.remove();
+    var _oc = pd.getElementById('wyhl-city');
+    if (_oc) _oc.remove();
     cv = pd.createElement('canvas');
     cv.id = 'wyhl-bg';
     cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:9990;pointer-events:none;';
@@ -1492,6 +1494,8 @@ body, #root { background: transparent !important; }
     inject_js("""
   var old = document.getElementById('wyhl-bg');
   if (old) old.remove();
+  var oldCity = document.getElementById('wyhl-city');
+  if (oldCity) oldCity.remove();
   var cv = document.createElement('canvas');
   cv.id = 'wyhl-bg';
   cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
@@ -1806,7 +1810,7 @@ body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockCo
   if (old) old.remove();
   var cv = document.createElement('canvas');
   cv.id = 'wyhl-bg';
-  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
+  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-2;pointer-events:none;';
   document.body.insertBefore(cv, document.body.firstChild);
   var ctx = cv.getContext('2d');
   var W, H;
@@ -1816,7 +1820,28 @@ body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockCo
 
   var night = 0;
 
+  // Realistic city: a real night-skyline photo (Singapore, by Merlion444 on
+  // Wikimedia Commons, public domain / CC0) anchored to the bottom and faded
+  // into the animated sky. Its
+  // brightness is driven by the day/night cycle so the city "turns on"; if the
+  // image fails to load we fall back to the procedural skyline below.
+  var CITY_URL='https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Singapore_Skyline_at_Night_with_Black_Sky.JPG/1280px-Singapore_Skyline_at_Night_with_Black_Sky.JPG';
+  var usePhoto=false;
+  var oldCity=document.getElementById('wyhl-city'); if(oldCity) oldCity.remove();
+  var cityDiv=document.createElement('div');
+  cityDiv.id='wyhl-city';
+  cityDiv.style.cssText='position:fixed;left:0;bottom:0;width:100vw;height:64vh;z-index:-1;pointer-events:none;'
+    +'background-repeat:no-repeat;background-position:center bottom;background-size:cover;opacity:0;transition:opacity 1.4s ease;'
+    +'-webkit-mask-image:linear-gradient(to top,#000 44%,rgba(0,0,0,0.9) 60%,rgba(0,0,0,0) 100%);'
+    +'mask-image:linear-gradient(to top,#000 44%,rgba(0,0,0,0.9) 60%,rgba(0,0,0,0) 100%);';
+  document.body.insertBefore(cityDiv, document.body.firstChild);
+  var preImg=new Image();
+  preImg.onload=function(){ cityDiv.style.backgroundImage='url('+CITY_URL+')'; cityDiv.style.opacity='1'; usePhoto=true; };
+  preImg.onerror=function(){ usePhoto=false; };
+  preImg.src=CITY_URL;
+
   // three skyline layers, far -> near, muted & bluer in the distance
+  // (procedural fallback, used only if the photo fails to load)
   var LAYERS = [
     { arr:[], base:'36,42,68', winA:0.42, avgW:0.048, minH:0.09, maxH:0.20, gap:0.006, skip:0.34, beacon:false },
     { arr:[], base:'19,23,45', winA:0.72, avgW:0.066, minH:0.13, maxH:0.30, gap:0.005, skip:0.30, beacon:true  },
@@ -1950,40 +1975,46 @@ body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockCo
     var px=plane.t*W, py=H*0.14+Math.sin(plane.t*3)*H*0.02;
     if(px>-20&&px<W+20){ var blink=Math.sin(frame*0.3)>0?1:0.15; ctx.fillStyle='rgba(255,70,60,'+(blink*0.85)+')'; ctx.beginPath(); ctx.arc(px,py,1.3,0,6.28); ctx.fill(); }
 
-    // skyline, far to near, hazed between layers for depth
-    drawLayer(LAYERS[0]);
-    haze(0.62,'34,32,56',0.28+night*0.12);
-    drawLayer(LAYERS[1]);
-    haze(0.74,'22,20,40',0.20+night*0.10);
-    drawLayer(LAYERS[2]);
+    if(usePhoto){
+      // real skyline photo — its brightness tracks the day/night cycle so the
+      // city visibly "turns on" as night falls (and washes the stars out)
+      cityDiv.style.filter='brightness('+(0.30+night*0.95).toFixed(3)+') saturate(1.06) contrast(1.02)';
+    } else {
+      // ---- procedural skyline fallback (only if the photo fails to load) ----
+      drawLayer(LAYERS[0]);
+      haze(0.62,'34,32,56',0.28+night*0.12);
+      drawLayer(LAYERS[1]);
+      haze(0.74,'22,20,40',0.20+night*0.10);
+      drawLayer(LAYERS[2]);
 
-    // wet road glow along the ground
-    var rg=ctx.createLinearGradient(0,H*0.90,0,H);
-    rg.addColorStop(0,'rgba(90,55,28,0)'); rg.addColorStop(1,'rgba(150,86,40,'+(0.14+night*0.22)+')');
-    ctx.fillStyle=rg; ctx.fillRect(0,H*0.90,W,H*0.10);
+      // wet road glow along the ground
+      var rg=ctx.createLinearGradient(0,H*0.90,0,H);
+      rg.addColorStop(0,'rgba(90,55,28,0)'); rg.addColorStop(1,'rgba(150,86,40,'+(0.14+night*0.22)+')');
+      ctx.fillStyle=rg; ctx.fillRect(0,H*0.90,W,H*0.10);
 
-    // car headlight / taillight streaks with wet reflections
-    for(var i=0;i<cars.length;i++){
-      var c=cars[i]; c.x+=c.v; if(c.x>1.1) c.x=-0.1; if(c.x<-0.1) c.x=1.1;
-      var cxp=c.x*W, cyp=c.y*H, ln=c.len*W, dir=c.v>0?1:-1;
-      var col=c.red?'255,70,50':'255,240,210';
-      var lg=ctx.createLinearGradient(cxp-dir*ln,cyp,cxp,cyp);
-      lg.addColorStop(0,'rgba('+col+',0)'); lg.addColorStop(1,'rgba('+col+','+(0.35+night*0.4)+')');
-      ctx.strokeStyle=lg; ctx.lineWidth=Math.max(1,H*0.004); ctx.beginPath(); ctx.moveTo(cxp-dir*ln,cyp); ctx.lineTo(cxp,cyp); ctx.stroke();
-      ctx.strokeStyle='rgba('+col+','+(0.10+night*0.14)+')'; ctx.beginPath(); ctx.moveTo(cxp-dir*ln,cyp+H*0.012); ctx.lineTo(cxp,cyp+H*0.012); ctx.stroke();
-    }
+      // car headlight / taillight streaks with wet reflections
+      for(var i=0;i<cars.length;i++){
+        var c=cars[i]; c.x+=c.v; if(c.x>1.1) c.x=-0.1; if(c.x<-0.1) c.x=1.1;
+        var cxp=c.x*W, cyp=c.y*H, ln=c.len*W, dir=c.v>0?1:-1;
+        var col=c.red?'255,70,50':'255,240,210';
+        var lg=ctx.createLinearGradient(cxp-dir*ln,cyp,cxp,cyp);
+        lg.addColorStop(0,'rgba('+col+',0)'); lg.addColorStop(1,'rgba('+col+','+(0.35+night*0.4)+')');
+        ctx.strokeStyle=lg; ctx.lineWidth=Math.max(1,H*0.004); ctx.beginPath(); ctx.moveTo(cxp-dir*ln,cyp); ctx.lineTo(cxp,cyp); ctx.stroke();
+        ctx.strokeStyle='rgba('+col+','+(0.10+night*0.14)+')'; ctx.beginPath(); ctx.moveTo(cxp-dir*ln,cyp+H*0.012); ctx.lineTo(cxp,cyp+H*0.012); ctx.stroke();
+      }
 
-    // streetlights turning on, casting glow cones + reflections
-    for(var i=0;i<lamps.length;i++){
-      var l=lamps[i], on=night-l.thr; if(on<=0) continue;
-      var lit=Math.min(1,on*4), lx=l.x*W, ly=H-2;
-      var cone=ctx.createRadialGradient(lx,ly-6,0,lx,ly-6,H*0.10);
-      cone.addColorStop(0,'rgba(255,206,120,'+(lit*0.28)+')'); cone.addColorStop(1,'rgba(255,206,120,0)');
-      ctx.fillStyle=cone; ctx.fillRect(lx-H*0.10,ly-H*0.13,H*0.20,H*0.13);
-      ctx.fillStyle='rgba(255,230,160,'+lit+')'; ctx.beginPath(); ctx.arc(lx,ly-5,1.5,0,6.28); ctx.fill();
-      var refl=ctx.createLinearGradient(lx,ly,lx,ly+H*0.02);
-      refl.addColorStop(0,'rgba(255,210,130,'+(lit*0.22)+')'); refl.addColorStop(1,'rgba(255,210,130,0)');
-      ctx.fillStyle=refl; ctx.fillRect(lx-2,ly,4,H*0.02);
+      // streetlights turning on, casting glow cones + reflections
+      for(var i=0;i<lamps.length;i++){
+        var l=lamps[i], on=night-l.thr; if(on<=0) continue;
+        var lit=Math.min(1,on*4), lx=l.x*W, ly=H-2;
+        var cone=ctx.createRadialGradient(lx,ly-6,0,lx,ly-6,H*0.10);
+        cone.addColorStop(0,'rgba(255,206,120,'+(lit*0.28)+')'); cone.addColorStop(1,'rgba(255,206,120,0)');
+        ctx.fillStyle=cone; ctx.fillRect(lx-H*0.10,ly-H*0.13,H*0.20,H*0.13);
+        ctx.fillStyle='rgba(255,230,160,'+lit+')'; ctx.beginPath(); ctx.arc(lx,ly-5,1.5,0,6.28); ctx.fill();
+        var refl=ctx.createLinearGradient(lx,ly,lx,ly+H*0.02);
+        refl.addColorStop(0,'rgba(255,210,130,'+(lit*0.22)+')'); refl.addColorStop(1,'rgba(255,210,130,0)');
+        ctx.fillStyle=refl; ctx.fillRect(lx-2,ly,4,H*0.02);
+      }
     }
   }
   requestAnimationFrame(draw);
