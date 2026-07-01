@@ -1799,117 +1799,184 @@ if st.session_state.page == "finder":
 html{background:#03030a!important;}
 body,#root,.stApp,[data-testid="stAppViewContainer"],[data-testid="stMainBlockContainer"],.main,.block-container,section.main{background:transparent!important;background-image:none!important;}
 </style>""")
-    canvas_bg("""
-  // ===== EXPLORE: a city waking up — windows & streetlights turn on,
-  // the light-pollution glow grows and washes the stars out of the sky. =====
-  var night=0;
+    inject_js("""
+  // ===== EXPLORE: a layered nighttime city view (light-pollution demo).
+  // Rendered opaque BEHIND the page content, like the landing page. =====
+  var old = document.getElementById('wyhl-bg');
+  if (old) old.remove();
+  var cv = document.createElement('canvas');
+  cv.id = 'wyhl-bg';
+  cv.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;';
+  document.body.insertBefore(cv, document.body.firstChild);
+  var ctx = cv.getContext('2d');
+  var W, H;
+  function resize(){ W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
 
-  var far=[], near=[];
-  function genLayer(arr, avgW, minH, maxH){
-    var x=-0.03;
-    while(x<1.05){
-      var w=avgW*(0.55+Math.random()*0.95);
-      var h=minH+Math.random()*(maxH-minH);
-      var cols=Math.max(1,Math.round(w/0.016));
-      var rows=Math.max(2,Math.round(h/0.05));
-      var b={x:x,w:w,h:h,cols:cols,rows:rows,win:[]};
+  var night = 0;
+
+  // three skyline layers, far -> near, muted & bluer in the distance
+  var LAYERS = [
+    { arr:[], base:'36,42,68', winA:0.42, avgW:0.048, minH:0.09, maxH:0.20, gap:0.006, skip:0.34, beacon:false },
+    { arr:[], base:'19,23,45', winA:0.72, avgW:0.066, minH:0.13, maxH:0.30, gap:0.005, skip:0.30, beacon:true  },
+    { arr:[], base:'8,10,22',  winA:1.00, avgW:0.088, minH:0.17, maxH:0.44, gap:0.004, skip:0.28, beacon:true  }
+  ];
+
+  function gen(L){
+    var x=-0.05;
+    while(x<1.07){
+      var w=L.avgW*(0.6+Math.random()*0.95);
+      var h=L.minH+Math.random()*(L.maxH-L.minH);
+      var glass=Math.random()<0.42;
+      var cols=Math.max(2,Math.round(w/(glass?0.011:0.015)));
+      var rows=Math.max(3,Math.round(h/0.030));
+      var rr=Math.random();
+      var roof=rr<0.42?'flat':rr<0.60?'step':rr<0.74?'taper':rr<0.89?'antenna':'tank';
+      var b={x:x,w:w,h:h,cols:cols,rows:rows,glass:glass,roof:roof,rp:Math.random()*6.28,win:[]};
       for(var r=0;r<rows;r++) for(var c=0;c<cols;c++){
-        if(Math.random()<0.24) continue;
-        b.win.push({c:c,r:r,thr:Math.random(),warm:Math.random()<0.72,
-          flick:Math.random()<0.10,fr:0.03+Math.random()*0.06,fp:Math.random()*6.28});
+        if(Math.random()<L.skip) continue;
+        b.win.push({c:c,r:r,thr:Math.random(),warm:Math.random()<0.66,bright:Math.random()<0.12,
+          flick:Math.random()<0.07,fr:0.03+Math.random()*0.06,fp:Math.random()*6.28});
       }
-      arr.push(b);
-      x+=w+0.003+Math.random()*0.012;
+      L.arr.push(b);
+      x+=w+L.gap+Math.random()*0.012;
     }
   }
-  genLayer(far,0.055,0.09,0.20);
-  genLayer(near,0.08,0.15,0.33);
+  LAYERS.forEach(gen);
 
   var lamps=[];
-  for(var i=0;i<30;i++) lamps.push({x:(i+0.5)/30+(Math.random()-0.5)*0.008,thr:0.12+Math.random()*0.5});
+  for(var i=0;i<34;i++) lamps.push({x:(i+0.5)/34+(Math.random()-0.5)*0.006,thr:0.10+Math.random()*0.4});
+
+  var cars=[];
+  for(var i=0;i<18;i++){ var red=Math.random()<0.5; cars.push({x:Math.random(),y:0.93+Math.random()*0.05,red:red,v:(red?-1:1)*(0.0016+Math.random()*0.0026),len:0.02+Math.random()*0.03}); }
 
   var skyS=[];
-  for(var i=0;i<130;i++) skyS.push({x:Math.random(),y:Math.random()*0.6,r:0.3+Math.random()*0.9,a:0.1+Math.random()*0.3,tw:Math.random()*6.28,twr:0.004+Math.random()*0.012});
+  for(var i=0;i<150;i++) skyS.push({x:Math.random(),y:Math.random()*0.62,r:0.3+Math.random()*0.9,a:0.1+Math.random()*0.32,tw:Math.random()*6.28,twr:0.004+Math.random()*0.012});
 
   var plane={t:1.5}, frame=0,lastT=0,FRATE=1000/42;
 
-  function drawLayer(arr, silA, winA){
-    for(var i=0;i<arr.length;i++){
-      var b=arr[i], bw=b.w*W, bx=b.x*W, bh=b.h*H, by=H-bh;
-      ctx.fillStyle='rgba(5,6,14,'+silA+')';
+  function drawLayer(L){
+    for(var i=0;i<L.arr.length;i++){
+      var b=L.arr[i], bw=b.w*W, bx=b.x*W, bh=b.h*H, by=H-bh;
+      ctx.fillStyle='rgb('+L.base+')';
       ctx.fillRect(bx,by,bw,bh);
+      var acx=bx+bw*0.5, ah=0;
+      if(b.roof==='step'){ var sw=bw*0.5,sh=bh*0.10; ctx.fillRect(acx-sw/2,by-sh,sw,sh); }
+      else if(b.roof==='taper'){ var tw2=bw*0.46,th=bh*0.13; ctx.beginPath(); ctx.moveTo(bx,by); ctx.lineTo(acx-tw2/2,by-th); ctx.lineTo(acx+tw2/2,by-th); ctx.lineTo(bx+bw,by); ctx.closePath(); ctx.fill(); }
+      else if(b.roof==='antenna'){ ah=bh*0.22; ctx.strokeStyle='rgb('+L.base+')'; ctx.lineWidth=Math.max(1,bw*0.04); ctx.beginPath(); ctx.moveTo(acx,by); ctx.lineTo(acx,by-ah); ctx.stroke(); }
+      else if(b.roof==='tank'){ var kw=bw*0.26,kh=bh*0.07; ctx.fillRect(bx+bw*0.18,by-kh,kw,kh); }
+
       var cw=bw/b.cols, ch=bh/b.rows;
-      var pw=Math.max(1,cw*0.5), ph=Math.max(1.3,ch*0.55);
+      var pw=Math.max(1,cw*(b.glass?0.62:0.5)), ph=Math.max(1.2,ch*(b.glass?0.7:0.55));
       for(var j=0;j<b.win.length;j++){
-        var wn=b.win[j], on=night-wn.thr;
-        if(on<=0) continue;
-        var lit=Math.min(1,on*5);
-        if(wn.flick) lit*=0.55+0.45*Math.sin(frame*wn.fr+wn.fp);
+        var wn=b.win[j], on=night-wn.thr; if(on<=0) continue;
+        var lit=Math.min(1,on*5); if(wn.flick) lit*=0.55+0.45*Math.sin(frame*wn.fr+wn.fp);
         if(lit<0.03) continue;
         var wx=bx+(wn.c+0.5)*cw, wy=by+(wn.r+0.5)*ch;
-        var col=wn.warm?'255,198,96':'176,206,255';
-        ctx.fillStyle='rgba('+col+','+(lit*winA)+')';
+        var col=wn.warm?(wn.bright?'255,214,150':'255,194,108'):(wn.bright?'196,222,255':'150,190,255');
+        ctx.fillStyle='rgba('+col+','+(lit*L.winA*(wn.bright?1:0.85))+')';
         ctx.fillRect(wx-pw/2,wy-ph/2,pw,ph);
+        if(wn.bright && lit>0.5 && L.winA>0.9){
+          var gr=cw*2.2, gg=ctx.createRadialGradient(wx,wy,0,wx,wy,gr);
+          gg.addColorStop(0,'rgba('+col+','+(lit*0.35)+')'); gg.addColorStop(1,'rgba('+col+',0)');
+          ctx.fillStyle=gg; ctx.fillRect(wx-gr,wy-gr,gr*2,gr*2);
+        }
+      }
+      if(L.beacon && b.roof==='antenna'){
+        var beac=0.5+0.5*Math.sin(frame*0.09+b.rp);
+        ctx.fillStyle='rgba(255,64,52,'+(0.25+beac*0.72)+')';
+        ctx.beginPath(); ctx.arc(acx,by-ah,Math.max(1.2,bw*0.06),0,6.28); ctx.fill();
       }
     }
+  }
+
+  function haze(topF,rgb,a){
+    var g=ctx.createLinearGradient(0,H*topF,0,H);
+    g.addColorStop(0,'rgba('+rgb+',0)'); g.addColorStop(1,'rgba('+rgb+','+a+')');
+    ctx.fillStyle=g; ctx.fillRect(0,H*topF,W,H*(1-topF));
   }
 
   function draw(t){
     requestAnimationFrame(draw);
     if(t-lastT<FRATE) return;
     lastT=t; frame++;
-    ctx.clearRect(0,0,W,H);
-
-    // day/night cycle 0 -> 1 -> 0 (~21s): dusk fills up with light, then empties
-    var cyc=(frame*0.0020)%2, raw=cyc<1?cyc:2-cyc;
+    var cyc=(frame*0.0016)%2, raw=cyc<1?cyc:2-cyc;
     night=0.5-0.5*Math.cos(raw*Math.PI);
 
-    // stars — progressively washed out by the growing glow (light pollution)
+    // sky: deep indigo up top fading to a warm, light-polluted horizon
+    var sky=ctx.createLinearGradient(0,0,0,H);
+    sky.addColorStop(0,'#05060f');
+    sky.addColorStop(0.42,'#090b1c');
+    sky.addColorStop(0.70,'#12112e');
+    sky.addColorStop(0.86,'rgb('+Math.round(38+night*80)+','+Math.round(26+night*40)+','+Math.round(42+night*24)+')');
+    sky.addColorStop(1,'rgb('+Math.round(66+night*110)+','+Math.round(38+night*48)+','+Math.round(30+night*16)+')');
+    ctx.fillStyle=sky; ctx.fillRect(0,0,W,H);
+
+    // light-pollution dome above the city, grows with the lights
+    var da=0.08+night*0.34;
+    var dome=ctx.createRadialGradient(W*0.5,H*0.94,0,W*0.5,H*0.94,H*0.75);
+    dome.addColorStop(0,'rgba(240,152,60,'+da+')');
+    dome.addColorStop(0.5,'rgba(205,102,40,'+(da*0.4)+')');
+    dome.addColorStop(1,'rgba(205,102,40,0)');
+    ctx.fillStyle=dome; ctx.fillRect(0,0,W,H);
+
+    // moon
+    var mx=W*0.80,my=H*0.17, mr=Math.min(W,H)*0.028;
+    var mh=ctx.createRadialGradient(mx,my,0,mx,my,mr*5);
+    mh.addColorStop(0,'rgba(220,228,245,0.22)'); mh.addColorStop(1,'rgba(220,228,245,0)');
+    ctx.fillStyle=mh; ctx.fillRect(mx-mr*5,my-mr*5,mr*10,mr*10);
+    ctx.beginPath(); ctx.arc(mx,my,mr,0,6.28); ctx.fillStyle='rgba(232,236,248,'+(0.85-night*0.25)+')'; ctx.fill();
+
+    // stars, progressively washed out by the glow
     for(var i=0;i<skyS.length;i++){
       var s=skyS[i]; s.tw+=s.twr;
-      var fade=(1-night*0.88)*Math.max(0.05,1-s.y*1.4);
+      var fade=(1-night*0.9)*Math.max(0.04,1-s.y*1.5);
       var a=s.a*(0.55+0.45*Math.sin(s.tw))*fade;
       if(a<0.01) continue;
       ctx.beginPath(); ctx.arc(s.x*W,s.y*H,s.r,0,6.28);
       ctx.fillStyle='rgba(214,224,255,'+a+')'; ctx.fill();
     }
 
-    // amber light-pollution dome, rising with the city lights
-    var da=0.04+night*0.30;
-    var dome=ctx.createRadialGradient(W*0.5,H*1.05,0,W*0.5,H*1.05,H*1.05);
-    dome.addColorStop(0,'rgba(234,150,54,'+da+')');
-    dome.addColorStop(0.35,'rgba(206,110,36,'+(da*0.55)+')');
-    dome.addColorStop(0.7,'rgba(160,78,26,'+(da*0.16)+')');
-    dome.addColorStop(1,'rgba(160,78,26,0)');
-    ctx.fillStyle=dome; ctx.fillRect(0,0,W,H);
-    [[0.22,'236,168,70'],[0.78,'226,150,52']].forEach(function(d){
-      var g=ctx.createRadialGradient(d[0]*W,H*1.02,0,d[0]*W,H*1.02,H*0.6);
-      g.addColorStop(0,'rgba('+d[1]+','+(night*0.09)+')'); g.addColorStop(1,'rgba('+d[1]+',0)');
-      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-    });
+    // blinking aircraft
+    plane.t-=0.0010; if(plane.t<-0.6) plane.t=1.6;
+    var px=plane.t*W, py=H*0.14+Math.sin(plane.t*3)*H*0.02;
+    if(px>-20&&px<W+20){ var blink=Math.sin(frame*0.3)>0?1:0.15; ctx.fillStyle='rgba(255,70,60,'+(blink*0.85)+')'; ctx.beginPath(); ctx.arc(px,py,1.3,0,6.28); ctx.fill(); }
 
-    // blinking aircraft drifting across the skyline
-    plane.t-=0.0011; if(plane.t<-0.6) plane.t=1.6;
-    var px=plane.t*W, py=H*0.16+Math.sin(plane.t*3)*H*0.02;
-    if(px>-20&&px<W+20){
-      var blink=Math.sin(frame*0.3)>0?1:0.15;
-      ctx.fillStyle='rgba(255,70,60,'+(blink*0.8)+')';
-      ctx.beginPath(); ctx.arc(px,py,1.3,0,6.28); ctx.fill();
+    // skyline, far to near, hazed between layers for depth
+    drawLayer(LAYERS[0]);
+    haze(0.62,'34,32,56',0.28+night*0.12);
+    drawLayer(LAYERS[1]);
+    haze(0.74,'22,20,40',0.20+night*0.10);
+    drawLayer(LAYERS[2]);
+
+    // wet road glow along the ground
+    var rg=ctx.createLinearGradient(0,H*0.90,0,H);
+    rg.addColorStop(0,'rgba(90,55,28,0)'); rg.addColorStop(1,'rgba(150,86,40,'+(0.14+night*0.22)+')');
+    ctx.fillStyle=rg; ctx.fillRect(0,H*0.90,W,H*0.10);
+
+    // car headlight / taillight streaks with wet reflections
+    for(var i=0;i<cars.length;i++){
+      var c=cars[i]; c.x+=c.v; if(c.x>1.1) c.x=-0.1; if(c.x<-0.1) c.x=1.1;
+      var cxp=c.x*W, cyp=c.y*H, ln=c.len*W, dir=c.v>0?1:-1;
+      var col=c.red?'255,70,50':'255,240,210';
+      var lg=ctx.createLinearGradient(cxp-dir*ln,cyp,cxp,cyp);
+      lg.addColorStop(0,'rgba('+col+',0)'); lg.addColorStop(1,'rgba('+col+','+(0.35+night*0.4)+')');
+      ctx.strokeStyle=lg; ctx.lineWidth=Math.max(1,H*0.004); ctx.beginPath(); ctx.moveTo(cxp-dir*ln,cyp); ctx.lineTo(cxp,cyp); ctx.stroke();
+      ctx.strokeStyle='rgba('+col+','+(0.10+night*0.14)+')'; ctx.beginPath(); ctx.moveTo(cxp-dir*ln,cyp+H*0.012); ctx.lineTo(cxp,cyp+H*0.012); ctx.stroke();
     }
 
-    drawLayer(far,0.4,0.7);
-    drawLayer(near,0.72,0.95);
-
-    // streetlights flicking on along the ground, casting glow cones
+    // streetlights turning on, casting glow cones + reflections
     for(var i=0;i<lamps.length;i++){
       var l=lamps[i], on=night-l.thr; if(on<=0) continue;
       var lit=Math.min(1,on*4), lx=l.x*W, ly=H-2;
-      var cone=ctx.createRadialGradient(lx,ly-6,0,lx,ly-6,H*0.11);
-      cone.addColorStop(0,'rgba(255,206,116,'+(lit*0.26)+')');
-      cone.addColorStop(1,'rgba(255,206,116,0)');
-      ctx.fillStyle=cone; ctx.fillRect(lx-H*0.11,ly-H*0.14,H*0.22,H*0.14);
-      ctx.fillStyle='rgba(255,228,158,'+lit+')';
-      ctx.beginPath(); ctx.arc(lx,ly-5,1.5,0,6.28); ctx.fill();
+      var cone=ctx.createRadialGradient(lx,ly-6,0,lx,ly-6,H*0.10);
+      cone.addColorStop(0,'rgba(255,206,120,'+(lit*0.28)+')'); cone.addColorStop(1,'rgba(255,206,120,0)');
+      ctx.fillStyle=cone; ctx.fillRect(lx-H*0.10,ly-H*0.13,H*0.20,H*0.13);
+      ctx.fillStyle='rgba(255,230,160,'+lit+')'; ctx.beginPath(); ctx.arc(lx,ly-5,1.5,0,6.28); ctx.fill();
+      var refl=ctx.createLinearGradient(lx,ly,lx,ly+H*0.02);
+      refl.addColorStop(0,'rgba(255,210,130,'+(lit*0.22)+')'); refl.addColorStop(1,'rgba(255,210,130,0)');
+      ctx.fillStyle=refl; ctx.fillRect(lx-2,ly,4,H*0.02);
     }
   }
   requestAnimationFrame(draw);
